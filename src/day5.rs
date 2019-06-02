@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 pub fn part1_input() -> usize {
     part1(&input())
 }
@@ -31,16 +29,6 @@ fn is_nice_part2(s: &str) -> bool {
     p4(s) && p5(s)
 }
 
-fn lowercase_vowels() -> HashSet<char> {
-    let mut s = HashSet::new();
-    s.insert('a');
-    s.insert('e');
-    s.insert('i');
-    s.insert('o');
-    s.insert('u');
-    s
-}
-
 // does not contain ab, cd, pq, or xy
 fn p1(s: &str) -> bool {
     let sl = s.to_ascii_lowercase();
@@ -63,16 +51,6 @@ fn p2(s: &str) -> bool {
     n >= 3
 }
 
-// should have read the spec more closely - vowels don't need to be distinct
-fn p2_distinct(s: &str) -> bool {
-    let mut letters: HashSet<char> = HashSet::new();
-    for c in s.chars() {
-        let lc = c.to_ascii_lowercase();
-        letters.insert(lc);
-    }
-    letters.intersection(&lowercase_vowels()).count() >= 3
-}
-
 // at least one letter that appears twice in a row
 fn p3(s: &str) -> bool {
     let buf = s.as_bytes();
@@ -85,8 +63,31 @@ fn p3(s: &str) -> bool {
 }
 
 // a pair of any two letters that appears at least twice in the string without overlapping
+//
+// +---+---+---+---+---+---+---+---+---+---+
+// |   |   |   |   |   |   |   |   |   |   | len = 10
+// +---+---+---+---+---+---+---+---+---+---+
+//           ^               ^
+//         start            stop
+//
 fn p4(s: &str) -> bool {
-    // TODO
+    let start = 2;
+    let stop = s.len() - 4;
+    for i in start..stop {
+        let pair = &s[i..i + 2];
+        let left = &s[0..i];
+        if left.contains(pair) {
+            return true;
+        }
+        let right = &s[i + 2..stop + 4];
+        if right.contains(pair) {
+            return true;
+        }
+    }
+    // we haven't checked yet if first two characters are the same as last two characters
+    if &s[0..2] == &s[s.len() - 2..s.len()] {
+        return true;
+    }
     false
 }
 
@@ -120,15 +121,15 @@ mod tests {
 
     #[test]
     fn part2_examples() {
-        assert_eq!(super::NICE, super::is_nice_part1("qjhvhtzxzqqjkmpb"));
-        assert_eq!(super::NICE, super::is_nice_part1("xxyxx"));
-        assert_eq!(super::NAUGHTY, super::is_nice_part1("uurcxstgmygtbstg"));
-        assert_eq!(super::NAUGHTY, super::is_nice_part1("ieodomkazucvgmuy"));
+        assert_eq!(super::NICE, super::is_nice_part2("qjhvhtzxzqqjkmpb"));
+        assert_eq!(super::NICE, super::is_nice_part2("xxyxx"));
+        assert_eq!(super::NAUGHTY, super::is_nice_part2("uurcxstgmygtbstg"));
+        assert_eq!(super::NAUGHTY, super::is_nice_part2("ieodomkazucvgmuy"));
     }
 
     #[test]
     fn part2_input() {
-        assert_eq!(0, super::part2_input())
+        assert_eq!(66, super::part2_input())
     }
 }
 
