@@ -1,26 +1,81 @@
 use std::fs;
 
-pub fn part1_input() -> usize {
+// max return value is WIDTH*HEIGHT = 1_000_000
+pub fn part1_input() -> u32 {
     part1(&input())
+}
+
+// max return value is WIDTH * HEIGHT * sizeof(u8) = 256_000_000
+pub fn part2_input() -> u32 {
+    part2(&input())
 }
 
 fn input() -> String {
     fs::read_to_string("testdata/day6.txt").expect("error reading input for day 6")
 }
 
-fn part1(text: &str) -> usize {
-    let mut l: Lights = Lights::new();
-    for instruction in text.lines() {
-        l.execute(&instruction)
-    }
-    l.count(ON)
+fn part1(text: &str) -> u32 {
+    using(text, IS_PART_1)
 }
 
-const WIDTH: usize = 1000;
-const HEIGHT: usize = 1000;
+fn part2(text: &str) -> u32 {
+    using(text, IS_PART_2)
+}
 
-const ON: bool = true;
-const OFF: bool = false;
+fn using(text: &str, is: InstructionSet) -> u32 {
+    let mut l: Lights = Lights::new();
+    for instruction in text.lines() {
+        l.execute(&instruction, is)
+    }
+    l.count()
+}
+
+// Underlying type that supports both part 1 (on/off) and part 2 (brightness)
+// maximum brightness is undefined, so number range is a guess
+type Light = u8;
+
+const ON: Light = 1;
+const OFF: Light = 0;
+
+type Mutator = fn(Light) -> Light;
+
+// our instructin sets know on, off and toggle
+type InstructionSet = (Mutator, Mutator, Mutator);
+const IS_PART_1: InstructionSet = (f_on, f_off, f_toggle);
+const IS_PART_2: InstructionSet = (f_inc, f_dec, f_inc2);
+
+fn f_on(_: Light) -> Light {
+    ON
+}
+
+fn f_off(_: Light) -> Light {
+    OFF
+}
+
+fn f_toggle(l: Light) -> Light {
+    1 - l
+}
+
+fn f_inc(l: Light) -> Light {
+    if l == 255 {
+        panic!("overflow in inc");
+    }
+    l + 1
+}
+
+fn f_inc2(l: Light) -> Light {
+    if l > 253 {
+        panic!("overflow in inc2");
+    }
+    l + 2
+}
+
+fn f_dec(l: Light) -> Light {
+    if l == 0 {
+        return 0;
+    }
+    l - 1
+}
 
 #[derive(Debug)]
 pub struct Grid {
@@ -28,9 +83,12 @@ pub struct Grid {
     through: (usize, usize),
 }
 
+const WIDTH: usize = 1000;
+const HEIGHT: usize = 1000;
+
 pub struct Lights {
     // bit-vect is external, so go for underlying type bool
-    lights: [[bool; WIDTH]; HEIGHT],
+    lights: [[Light; WIDTH]; HEIGHT],
 }
 
 impl Default for Lights {
@@ -39,19 +97,7 @@ impl Default for Lights {
     }
 }
 
-pub fn f_on(_: bool) -> bool {
-    ON
-}
-
-pub fn f_off(_: bool) -> bool {
-    OFF
-}
-
-pub fn f_toggle(status: bool) -> bool {
-    !status
-}
-
-// Convert string coordinate to tupel"500,500" to (500,500)
+// Convert "500,500" to (500,500)
 fn atot(coordinates: &str) -> (usize, usize) {
     let mut pi = coordinates.split(",");
     let x = pi.next().expect("missing x value");
@@ -61,62 +107,40 @@ fn atot(coordinates: &str) -> (usize, usize) {
     (x, y)
 }
 
-// No function types? type Mutator fn(bool) -> bool;
-
 impl Lights {
     pub fn new() -> Self {
         Lights {
-            lights: [[false; WIDTH]; HEIGHT],
+            // lights start off
+            lights: [[OFF; WIDTH]; HEIGHT],
         }
     }
 
-    pub fn on(&mut self, g: Grid) {
-        self.set(g, f_on);
-    }
-
-    pub fn off(&mut self, g: Grid) {
-        self.set(g, f_off);
-    }
-    pub fn toggle(&mut self, g: Grid) {
-        self.set(g, f_toggle);
-    }
-
-    pub fn count(&self, status: bool) -> usize {
-        let mut n: usize = 0;
+    // works for both on/off and brightness mode
+    fn count(&self) -> u32 {
+        let mut n = 0;
         for x in 0..WIDTH {
             for y in 0..HEIGHT {
-                if self.lights[x][y] == status {
-                    n += 1;
-                }
+                n += self.lights[x][y] as u32
             }
         }
         n
     }
 
-    pub fn set(&mut self, g: Grid, f: fn(bool) -> bool) {
-        // grids are [x..y[
-        for x in g.from.0..g.through.0 + 1 {
-            for y in g.from.1..g.through.1 + 1 {
-                self.lights[x][y] = f(self.lights[x][y]);
-            }
-        }
-    }
-
     // "turn on 0,0 through 999,999"
     // "toggle 0,0 through 999,0"
     // "turn off 499,499 through 500,500"
-    pub fn execute(&mut self, instruction: &str) {
-        let f: fn(bool) -> bool;
+    pub fn execute(&mut self, instruction: &str, is: InstructionSet) {
+        let f: Mutator;
         let mut pi = instruction.split_ascii_whitespace();
         let op1 = pi.next().expect("missing operation #1");
         if op1 == "toggle" {
-            f = f_toggle;
+            f = is.2;
         } else {
             let op2 = pi.next().expect("missing operation #2");
             if op2 == "on" {
-                f = f_on;
+                f = is.0;
             } else {
-                f = f_off;
+                f = is.1;
             }
         }
         let from = pi.next().expect("missing from value");
@@ -128,15 +152,29 @@ impl Lights {
         let g = Grid { from, through };
         self.set(g, f);
     }
+
+    fn set(&mut self, g: Grid, f: Mutator) {
+        // grids are [x..y[
+        for x in g.from.0..g.through.0 + 1 {
+            for y in g.from.1..g.through.1 + 1 {
+                self.lights[x][y] = f(self.lights[x][y]);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{part1, Grid, Lights, HEIGHT, WIDTH};
+    use super::part1;
 
     #[test]
     fn part1_input() {
         assert_eq!(400410, super::part1_input());
+    }
+
+    #[test]
+    fn part2_input() {
+        assert_eq!(15343601, super::part2_input());
     }
 
     #[test]
@@ -147,7 +185,7 @@ mod tests {
 
     #[test]
     fn part1_example1() {
-        assert_eq!(WIDTH * HEIGHT, part1("turn on 0,0 through 999,999"));
+        assert_eq!(1_000_000, part1("turn on 0,0 through 999,999"));
     }
 
     #[test]
@@ -163,20 +201,9 @@ mod tests {
     #[test]
     fn part1_example4() {
         assert_eq!(
-            WIDTH * HEIGHT - 4,
+            1_000_000 - 4,
             part1("turn on 0,0 through 999,999\nturn off 499,499 through 500,500")
         );
-    }
-
-    #[test]
-    fn inclusive() {
-        let g = Grid {
-            from: (0, 0),
-            through: (2, 2),
-        };
-        let mut l = Lights::new();
-        l.on(g);
-        assert_eq!(9, l.count(super::ON));
     }
 }
 
@@ -185,5 +212,10 @@ mod benches {
     #[bench]
     fn part1_input(b: &mut test::Bencher) {
         b.iter(|| super::part1_input());
+    }
+
+    #[bench]
+    fn part2_input(b: &mut test::Bencher) {
+        b.iter(|| super::part2_input());
     }
 }
