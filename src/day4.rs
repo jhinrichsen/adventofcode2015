@@ -56,18 +56,3 @@ mod tests {
         assert_eq!(1_038_736, super::part2_input())
     }
 }
-
-#[cfg(test)]
-mod benches {
-    use test::Bencher;
-
-    #[bench]
-    fn part1_input(b: &mut Bencher) {
-        b.iter(super::part1_input);
-    }
-
-    #[bench]
-    fn part2_input(b: &mut Bencher) {
-        b.iter(super::part2_input);
-    }
-}

@@ -1,5 +1,3 @@
-use std::fs;
-
 // max return value is WIDTH*HEIGHT = 1_000_000
 pub fn part1_input() -> u32 {
     part1(&input())
@@ -11,7 +9,7 @@ pub fn part2_input() -> u32 {
 }
 
 fn input() -> String {
-    fs::read_to_string("testdata/day6.txt").expect("error reading input for day 6")
+    std::fs::read_to_string("testdata/day6.txt").expect("error reading input for day 6")
 }
 
 fn part1(text: &str) -> u32 {
@@ -204,18 +202,5 @@ mod tests {
             1_000_000 - 4,
             part1("turn on 0,0 through 999,999\nturn off 499,499 through 500,500")
         );
-    }
-}
-
-#[cfg(test)]
-mod benches {
-    #[bench]
-    fn part1_input(b: &mut test::Bencher) {
-        b.iter(|| super::part1_input());
-    }
-
-    #[bench]
-    fn part2_input(b: &mut test::Bencher) {
-        b.iter(|| super::part2_input());
     }
 }

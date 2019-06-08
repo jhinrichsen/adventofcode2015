@@ -1,4 +1,18 @@
-fn day1_part1(s: &str) -> isize {
+use std::fs;
+
+pub fn part1_input() -> isize {
+    part1(&input())
+}
+
+pub fn part2_input() -> usize {
+    part2(&input())
+}
+
+fn input() -> String {
+    fs::read_to_string("testdata/day1.txt").expect("failed to read day 1")
+}
+
+fn part1(s: &str) -> isize {
     let mut floor = 0;
     for c in s.chars() {
         if c == '(' {
@@ -10,7 +24,7 @@ fn day1_part1(s: &str) -> isize {
     floor
 }
 
-fn day1_part2(s: &str) -> usize {
+fn part2(s: &str) -> usize {
     let mut floor = 0;
     for (i, c) in s.chars().enumerate() {
         if c == '(' {
@@ -28,12 +42,9 @@ fn day1_part2(s: &str) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use std::fs::File;
-    use std::io::Read;
-
     #[test]
-    fn day1_part1_examples() {
-        let f = super::day1_part1;
+    fn part1_examples() {
+        let f = super::part1;
         assert_eq!(f("(())"), 0);
         assert_eq!(f("()()"), 0);
         assert_eq!(f("((("), 3);
@@ -46,47 +57,18 @@ mod tests {
     }
 
     #[test]
-    fn day1_part1() {
-        let mut buf = String::new();
-        let mut f = File::open("testdata/day1.txt").unwrap();
-        f.read_to_string(&mut buf).unwrap();
-        assert_eq!(232, super::day1_part1(&buf));
+    fn part1_input() {
+        assert_eq!(232, super::part1_input());
     }
 
     #[test]
-    fn day1_part2_examples() {
-        assert_eq!(super::day1_part2(")"), 1);
-        assert_eq!(super::day1_part2("()())"), 5);
+    fn part2_examples() {
+        assert_eq!(super::part2(")"), 1);
+        assert_eq!(super::part2("()())"), 5);
     }
 
     #[test]
-    fn day1_part2() {
-        let mut buf = String::new();
-        let mut f = File::open("testdata/day1.txt").unwrap();
-        f.read_to_string(&mut buf).unwrap();
-        assert_eq!(1783, super::day1_part2(&buf));
-    }
-}
-
-#[cfg(test)]
-mod benches {
-    use std::fs::File;
-    use std::io::Read;
-    use test::Bencher;
-
-    #[bench]
-    fn day1_part1(b: &mut Bencher) {
-        let mut buf = String::new();
-        let mut f = File::open("testdata/day1.txt").unwrap();
-        f.read_to_string(&mut buf).unwrap();
-        b.iter(|| super::day1_part1(&buf));
-    }
-
-    #[bench]
-    fn day1_part2(b: &mut Bencher) {
-        let mut buf = String::new();
-        let mut f = File::open("testdata/day1.txt").unwrap();
-        f.read_to_string(&mut buf).unwrap();
-        b.iter(|| super::day1_part2(&buf));
+    fn part2_input() {
+        assert_eq!(1783, super::part2_input());
     }
 }
