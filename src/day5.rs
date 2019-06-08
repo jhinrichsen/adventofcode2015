@@ -63,36 +63,25 @@ fn p3(s: &str) -> bool {
 }
 
 // a pair of any two letters that appears at least twice in the string without overlapping
-//
-// +---+---+---+---+---+---+---+---+---+---+
-// |   |   |   |   |   |   |   |   |   |   | len = 10
-// +---+---+---+---+---+---+---+---+---+---+
-//           ^               ^
-//         start            stop
-//
 fn p4(s: &str) -> bool {
-    let start = 2;
-    let stop = s.len() - 4;
-    for i in start..stop {
+    if s.len() < 4 {
+        return false;
+    }
+    for i in 0..s.len() - 3 {
         let pair = &s[i..i + 2];
-        let left = &s[0..i];
-        if left.contains(pair) {
-            return true;
-        }
-        let right = &s[i + 2..stop + 4];
+        let right = &s[i + 2..s.len()];
         if right.contains(pair) {
-            return true;
+            return NICE;
         }
     }
-    // we haven't checked yet if first two characters are the same as last two characters
-    if &s[0..2] == &s[s.len() - 2..s.len()] {
-        return true;
-    }
-    false
+    NAUGHTY
 }
 
 // at least one letter which repeats with exactly one letter between them
 fn p5(s: &str) -> bool {
+    if s.len() < 3 {
+        return false;
+    }
     let buf = s.as_bytes();
     for i in 1..buf.len() - 1 {
         if buf[i - 1] == buf[i + 1] {
@@ -106,17 +95,56 @@ fn p5(s: &str) -> bool {
 mod tests {
 
     #[test]
-    fn part1_examples() {
+    fn part1_example1() {
         assert_eq!(super::NICE, super::is_nice_part1("ugknbfddgicrmopn"));
+    }
+
+    #[test]
+    fn part1_example2() {
         assert_eq!(super::NICE, super::is_nice_part1("aaa"));
+    }
+
+    #[test]
+    fn part1_example3() {
         assert_eq!(super::NAUGHTY, super::is_nice_part1("jchzalrnumimnmhp"));
+    }
+
+    #[test]
+    fn part1_example4() {
         assert_eq!(super::NAUGHTY, super::is_nice_part1("haegwjzuvuyypxyu"));
+    }
+
+    #[test]
+    fn part1_example5() {
         assert_eq!(super::NAUGHTY, super::is_nice_part1("dvszwmarrgswjxmb"));
     }
 
     #[test]
     fn part1_input() {
         assert_eq!(238, super::part1_input())
+    }
+
+    #[test]
+    fn part2_p4() {
+        assert_eq!(super::NICE, super::p4("xyxy"));
+        assert_eq!(super::NICE, super::p4("aabcdefgaa"));
+        assert_eq!(super::NAUGHTY, super::p4("aaa"));
+    }
+
+    // the initial implementation considers  these three strings naughty, but
+    // they are nice
+    #[test]
+    fn part2_missing_p4() {
+        assert_eq!(super::NICE, super::is_nice_part2("komgvqejojpnykol"));
+        assert_eq!(super::NICE, super::is_nice_part2("wkkypomlvyglpfpf"));
+        assert_eq!(super::NICE, super::is_nice_part2("xojwroydfeoqupup"));
+    }
+
+    #[test]
+    fn part2_p5() {
+        assert_eq!(super::NICE, super::p5("xyxy"));
+        assert_eq!(super::NICE, super::p5("abcdefeghi"));
+        assert_eq!(super::NICE, super::p5("aaa"));
     }
 
     #[test]
@@ -129,7 +157,7 @@ mod tests {
 
     #[test]
     fn part2_input() {
-        assert_eq!(66, super::part2_input())
+        assert_eq!(69, super::part2_input())
     }
 }
 
