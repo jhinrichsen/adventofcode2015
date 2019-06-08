@@ -111,15 +111,12 @@ impl Lights {
         let op1 = pi.next().expect("missing operation #1");
         if op1 == "toggle" {
             f = f_toggle;
-            println!("instruction: toggle");
         } else {
             let op2 = pi.next().expect("missing operation #2");
             if op2 == "on" {
                 f = f_on;
-                println!("instruction: turn on");
             } else {
                 f = f_off;
-                println!("instruction: turn off");
             }
         }
         let from = pi.next().expect("missing from value");
@@ -129,10 +126,7 @@ impl Lights {
         let through = atot(through);
 
         let g = Grid { from, through };
-        println!("before {}", self.count(ON));
-        println!("executing {:?}", g);
         self.set(g, f);
-        println!("after {}", self.count(ON));
     }
 }
 
