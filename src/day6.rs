@@ -167,12 +167,12 @@ mod tests {
 
     #[test]
     fn part1_input() {
-        assert_eq!(400410, super::part1_input());
+        assert_eq!(400_410, super::part1_input());
     }
 
     #[test]
     fn part2_input() {
-        assert_eq!(15343601, super::part2_input());
+        assert_eq!(15_343_601, super::part2_input());
     }
 
     #[test]
