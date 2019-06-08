@@ -25,7 +25,7 @@ test:nightly:
 
 # Always want to run rustfmt and clippy against our tests, to ensure that
 # we aren't using any anti-patterns or failing to follow our style guide
-lint:rustfmt:
+verify:
   image: "guangie88/rustfmt-clippy"
   script:
     - cargo fmt -- --check
