@@ -97,7 +97,7 @@ impl Default for Lights {
 
 // Convert "500,500" to (500,500)
 fn atot(coordinates: &str) -> (usize, usize) {
-    let mut pi = coordinates.split(",");
+    let mut pi = coordinates.split(',');
     let x = pi.next().expect("missing x value");
     let x = usize::from_str_radix(x, 10).expect("cannot convert x");
     let y = pi.next().expect("missing y value");
@@ -118,7 +118,7 @@ impl Lights {
         let mut n = 0;
         for x in 0..WIDTH {
             for y in 0..HEIGHT {
-                n += self.lights[x][y] as u32
+                n += u32::from(self.lights[x][y])
             }
         }
         n
@@ -153,8 +153,8 @@ impl Lights {
 
     fn set(&mut self, g: Grid, f: Mutator) {
         // grids are [x..y[
-        for x in g.from.0..g.through.0 + 1 {
-            for y in g.from.1..g.through.1 + 1 {
+        for x in g.from.0..=g.through.0 {
+            for y in g.from.1..=g.through.1 {
                 self.lights[x][y] = f(self.lights[x][y]);
             }
         }
