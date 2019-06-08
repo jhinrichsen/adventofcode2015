@@ -48,4 +48,4 @@ lint:clippy:
   image: "guangie88/rustfmt-clippy"
   allow_failure: false
   script:
-    - cargo clippy
+    - cargo clippy --all-targets --all-features -- -D warnings
