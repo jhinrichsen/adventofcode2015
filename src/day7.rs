@@ -25,45 +25,109 @@ impl Circuit {
         }
     }
 
-    fn wire(&mut self, c: Component) {
+    fn add(&mut self, c: SignalProvider) {
         match c {
-            Component::Wire(id, signal) => {
+            SignalProvider::Wire(id, signal) => {
                 self.wires.insert(id, Some(signal));
             }
-            Component::Gate(g) => {
+            SignalProvider::Gate(g) => {
                 self.gates.push(g);
             }
+            SignalProvider::Value(signal) => {}
         }
     }
 
     fn step(&mut self) {
         for gate in &self.gates {
+            println!("triggering gate {:?}", gate);
             match gate {
-                Gate::And(g) => {
-                    let s1 = self.wires.get(&g.input1).expect("missing input 1 wire");
-                    if s1.is_none() {
-                        println!("no signal yet on {}", &g.input1);
+                // Unary gates
+                Gate::Identity(g) => {
+                    let signal = self.wires.get(&g.input);
+                    if signal.is_none() {
+                        println!("no signal yet on {}", &g.input);
                         continue;
                     }
-                    let s2 = self.wires.get(&g.input2).expect("missing input 2 wire");
-                    if s2.is_none() {
-                        println!("no signal yet on {}", &g.input2);
-                        continue;
-                    }
-                    let signal = Some(s1.unwrap() & s2.unwrap());
-                    // self.wires.entry(g.output.clone()).or_insert(signal);
+                    let signal = Some(signal.unwrap().unwrap());
                     self.wires.entry(g.output.clone()).or_insert(signal);
                 }
-                _ => panic!("missing impl"),
+                Gate::Not(g) => {
+                    let s1 = self.wires.get(&g.input);
+                    if s1.is_none() {
+                        println!("no signal yet on {}", &g.input);
+                        continue;
+                    }
+                    let signal = Some(!s1.unwrap().unwrap());
+                    self.wires.entry(g.output.clone()).or_insert(signal);
+                }
+                // Binary gates
+                Gate::And(g) => {
+                    let s1 = self.wires.get(&g.input1);
+                    if s1.is_none() {
+                        println!("no signal yet on {:?}", &g.input1);
+                        continue;
+                    }
+                    let s2 = self.wires.get(&g.input2);
+                    if s2.is_none() {
+                        println!("no signal yet on {:?}", &g.input2);
+                        continue;
+                    }
+                    let signal = Some(s1.unwrap().unwrap() & s2.unwrap().unwrap());
+                    self.wires.entry(g.output.clone()).or_insert(signal);
+                }
+                Gate::Or(g) => {
+                    let s1 = self.wires.get(&g.input1);
+                    if s1.is_none() {
+                        println!("no signal yet on {:?}", &g.input1);
+                        continue;
+                    }
+                    let s2 = self.wires.get(&g.input2);
+                    if s2.is_none() {
+                        println!("no signal yet on {:?}", &g.input2);
+                        continue;
+                    }
+                    let signal = Some(s1.unwrap().unwrap() | s2.unwrap().unwrap());
+                    self.wires.entry(g.output.clone()).or_insert(signal);
+                }
+                Gate::Lshift(g) => {
+                    let s1 = self.wires.get(&g.input);
+                    if s1.is_none() {
+                        println!("no signal yet on {:?}", &g.input);
+                        continue;
+                    }
+                    let signal = Some(s1.unwrap().unwrap() << g.operand);
+                    self.wires.entry(g.output.clone()).or_insert(signal);
+                }
+                Gate::Rshift(g) => {
+                    let s1 = self.wires.get(&g.input);
+                    if s1.is_none() {
+                        println!("no signal yet on {:?}", &g.input);
+                        continue;
+                    }
+                    let signal = Some(s1.unwrap().unwrap() >> g.operand);
+                    self.wires.entry(g.output.clone()).or_insert(signal);
+                }
             }
         }
     }
 }
 
-fn parse(s: &str) -> Component {
-    let mut c: Component;
-    let mut pi = s.split_ascii_whitespace();
-    if s.contains("AND") || s.contains("OR") {
+// optionally resolve constants
+fn res(s: &str) -> Value {
+    match Signal::from_str_radix(s, 10) {
+        Ok(n) => {
+            return Value(n);
+        }
+        Err(_e) => {
+            return Wire(s);
+        }
+    }
+}
+
+fn parse(line: &str) -> SignalProvider {
+    let mut c: SignalProvider;
+    let mut pi = line.split_ascii_whitespace();
+    if line.contains("AND") || line.contains("OR") {
         // x AND y -> d
         let w1 = pi.next().expect("binary w1");
         let op = pi.next().expect("binary: missing op");;
@@ -71,95 +135,122 @@ fn parse(s: &str) -> Component {
         let _ = pi.next();
         let w3 = pi.next().expect("binary w3");
         let bg = BinaryGate {
-            input1: w1.to_string(),
-            input2: w2.to_string(),
-            output: w3.to_string(),
+            input1: res(w1),
+            input2: res(w2),
+            output: res(w3),
         };
 
         if op == "AND" {
-            c = Component::Gate(Gate::And(bg));
+            c = SignalProvider::Gate(Gate::And(bg));
         } else {
-            c = Component::Gate(Gate::Or(bg));
+            c = SignalProvider::Gate(Gate::Or(bg));
         }
-    } else if s.contains("NOT") {
+    } else if line.contains("NOT") {
         // NOT e -> f
         let _ = pi.next();
         let w1 = pi.next().expect("unary w1");
+        pi.next();
         let w2 = pi.next().expect("binary w2");
         let ug = UnaryGate {
-            input: w1.to_string(),
-            output: w2.to_string(),
+            input: res(w1),
+            output: res(w2),
         };
-        c = Component::Gate(Gate::Not(ug));
-    } else if s.contains("SHIFT") {
+        c = SignalProvider::Gate(Gate::Not(ug));
+    } else if line.contains("SHIFT") {
         // p LSHIFT 2 -> q
         let w1 = pi.next().expect("operand w1");
-        let op = pi.next().expect("operand missing");;
+        let op = pi.next().expect("operand missing");
         let w2 = pi.next().expect("operand w2");
+        pi.next();
+        let w3 = pi.next().expect("operand w3");
         let og = OperandGate {
-            input: w1.to_string(),
-            operand: Signal::from_str_radix(w2, 10).expect("operand: illegal value"),
-            output: w2.to_string(),
+            input: res(w1),
+            operand: res(w2),
+            output: res(w3),
         };
 
         if op == "LSHIFT" {
-            c = Component::Gate(Gate::Lshift(og));
+            c = SignalProvider::Gate(Gate::Lshift(og));
         } else {
-            c = Component::Gate(Gate::Rshift(og));
+            c = SignalProvider::Gate(Gate::Rshift(og));
         }
     } else {
         // 123 -> x
+        println!("converting line {}", line);
         let w1 = pi.next().expect("wire signal");
-        let _ = pi.next();
+        pi.next();
         let w2 = pi.next().expect("signal");
-        let w2 = Signal::from_str_radix(w2, 10).expect("bad signal");
-        c = Component::Wire(w1.to_string(), w2);
+        let ug = UnaryGate {
+            input: res(w1),
+            output: res(w2),
+        };
+        c = SignalProvider::Gate(Gate::Identity(ug));
     }
+    println!("parsed component {:?}", c);
     c
 }
 
 type WireId = String;
 
-enum Component {
-    Wire(String, Signal),
-    Gate(Gate),
+#[derive(Debug)]
+enum Value {
+    Constant(Signal),
+    Wire(WireId),
 }
 
+#[derive(Debug)]
+enum SignalProvider {
+    Gate(Gate),
+    Value,
+}
+
+#[derive(Debug)]
 enum Gate {
     And(BinaryGate),
+    Identity(UnaryGate),
     Not(UnaryGate),
     Or(BinaryGate),
     Lshift(OperandGate),
     Rshift(OperandGate),
 }
 
+#[derive(Debug)]
 struct UnaryGate {
-    input: WireId,
-    output: WireId,
+    input: Value,
+    output: Value,
 }
 
+#[derive(Debug)]
 struct BinaryGate {
-    input1: WireId,
-    input2: WireId,
-    output: WireId,
+    input1: Value,
+    input2: Value,
+    output: Value,
 }
 
+#[derive(Debug)]
 struct OperandGate {
-    input: WireId,
-    operand: Signal,
-    output: WireId,
+    input: Value,
+    operand: Value,
+    output: Value,
 }
 
 fn part1(text: &str) -> HashMap<WireId, Option<Signal>> {
+    println!("part1");
+
     let mut board = Circuit::new();
     for line in text.lines() {
+        println!("line: {}", line);
         let c = parse(line);
-        board.wire(c);
+        board.add(c);
     }
+    let want = board.wires.len();
+    println!("want {} signals", want);
     loop {
         if board.wires.get("a").is_some() {
             return board.wires;
         }
+        println!("got {} signals", board.wires.len());
+        println!("stepping...");
         board.step();
     }
 }
@@ -168,8 +259,9 @@ fn part1(text: &str) -> HashMap<WireId, Option<Signal>> {
 mod tests {
     use std::collections::HashMap;
 
-    // #[test]
+    #[test]
     fn part1_input() {
+        println!("part1_input()");
         assert_eq!(42, super::part1_input());
     }
 
@@ -190,14 +282,14 @@ mod tests {
         r
     }
 
-    // #[test]
+    #[test]
     fn part1_example() {
         assert_eq!(part1_example_result(), super::part1(&example()));
     }
 
     // The example for part 1 suggests that wires appear in order, but the input for part 1 shows
     // this is not the case
-    // #[test]
+    #[test]
     fn part1_example_rev() {
         let text = &example()
             .lines()
