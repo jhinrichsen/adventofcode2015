@@ -29,15 +29,6 @@ impl Circuit {
         }
     }
 
-    fn add(&mut self, c: SignalProvider) {
-        match c {
-            SignalProvider::Gate(g) => {
-                self.gates.push(g);
-            }
-            SignalProvider::Value => {}
-        }
-    }
-
     fn get(&self, v: &Value) -> Option<Signal> {
         match v {
             Value::Constant(c) => Some(*c),
@@ -151,8 +142,8 @@ fn res(s: &str) -> Value {
     }
 }
 
-fn parse(line: &str) -> SignalProvider {
-    let c: SignalProvider;
+fn parse(line: &str) -> Gate {
+    let c: Gate;
     let mut pi = line.split_ascii_whitespace();
     if line.contains("AND") || line.contains("OR") || line.contains("SHIFT") {
         // x AND y -> d
@@ -168,13 +159,13 @@ fn parse(line: &str) -> SignalProvider {
         };
 
         if op == "AND" {
-            c = SignalProvider::Gate(Gate::And(bg));
+            c = Gate::And(bg);
         } else if op == "OR" {
-            c = SignalProvider::Gate(Gate::Or(bg));
+            c = Gate::Or(bg);
         } else if op == "LSHIFT" {
-            c = SignalProvider::Gate(Gate::Lshift(bg));
+            c = Gate::Lshift(bg);
         } else if op == "RSHIFT" {
-            c = SignalProvider::Gate(Gate::Rshift(bg));
+            c = Gate::Rshift(bg);
         } else {
             panic!(format!("unknown gate: {}", op))
         }
@@ -188,7 +179,7 @@ fn parse(line: &str) -> SignalProvider {
             input: res(w1),
             output: w2.to_string(),
         };
-        c = SignalProvider::Gate(Gate::Not(ug));
+        c = Gate::Not(ug);
     } else {
         // 123 -> x
         let w1 = pi.next().expect("wire signal");
@@ -198,7 +189,7 @@ fn parse(line: &str) -> SignalProvider {
             input: res(w1),
             output: w2.to_string(),
         };
-        c = SignalProvider::Gate(Gate::Identity(ug));
+        c = Gate::Identity(ug);
     }
     c
 }
@@ -209,12 +200,6 @@ type WireId = String;
 enum Value {
     Constant(Signal),
     Wire(WireId),
-}
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-enum SignalProvider {
-    Gate(Gate),
-    Value,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -243,8 +228,8 @@ struct BinaryGate {
 fn part1(text: &str) -> Wires {
     let mut board = Circuit::new();
     for line in text.lines() {
-        let c = parse(line);
-        board.add(c);
+        let g = parse(line);
+        board.gates.push(g);
     }
     let mut complete = false;
     while !complete {
@@ -265,8 +250,8 @@ fn part2(text: &str) -> Wires {
         if line.ends_with("-> b") {
             line = b_line;
         }
-        let c = parse(line);
-        board.add(c);
+        let g = parse(line);
+        board.gates.push(g);
     }
     let mut complete = false;
     while !complete {
