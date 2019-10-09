@@ -4,6 +4,10 @@ pub fn part1_input() -> Signal {
     let wires = part1(&input());
     *wires.get("a").expect("wire a has no signal")
 }
+pub fn part2_input() -> Signal {
+    let wires = part2(&input());
+    *wires.get("a").expect("wire a has no signal")
+}
 
 fn input() -> String {
     std::fs::read_to_string("testdata/day7.txt").expect("missing day 7")
@@ -196,7 +200,6 @@ fn parse(line: &str) -> SignalProvider {
         };
         c = SignalProvider::Gate(Gate::Identity(ug));
     }
-    println!("parsed component {:?}", c);
     c
 }
 
@@ -238,11 +241,30 @@ struct BinaryGate {
 }
 
 fn part1(text: &str) -> Wires {
-    println!("part1");
-
     let mut board = Circuit::new();
     for line in text.lines() {
-        println!("line: {}", line);
+        let c = parse(line);
+        board.add(c);
+    }
+    let mut complete = false;
+    while !complete {
+        board.step();
+        complete = board.complete();
+    }
+    board.wires
+}
+
+fn part2(text: &str) -> Wires {
+    // "Now, take the signal you got on wire a"
+    let a = 16076;
+    let b_line = &format!("{} -> b", a);
+
+    let mut board = Circuit::new();
+    for mut line in text.lines() {
+        // "override wire b to that signal, "
+        if line.ends_with("-> b") {
+            line = b_line;
+        }
         let c = parse(line);
         board.add(c);
     }
@@ -261,6 +283,10 @@ mod tests {
     #[test]
     fn part1_input() {
         assert_eq!(16076, super::part1_input());
+    }
+    #[test]
+    fn day7_part2_input() {
+        assert_eq!(2797, super::part2_input());
     }
 
     fn example() -> String {
