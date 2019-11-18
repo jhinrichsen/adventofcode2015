@@ -2,40 +2,9 @@ package adventofcode2015
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"testing"
 )
-
-func chars(buf []byte) int {
-	n := 0
-	fmt.Println()
-	for i := 0; i < len(buf); i++ {
-		fmt.Printf("i=%d, checking %s\n", i, string(buf[i]))
-		switch buf[i] {
-		case '"':
-			fmt.Println("found a double quote")
-		case '\\':
-			fmt.Println("found a backslash")
-			i++
-			switch buf[i] {
-			case 'x':
-				fmt.Println("found a hex")
-				i += 2
-				n++
-			default:
-				fmt.Println("found single char escape")
-				n++
-			}
-		default:
-			fmt.Println("found regular character")
-			n++
-		}
-		fmt.Printf("n=%d\n", n)
-	}
-	fmt.Printf("%s: m=%d, n=%d\n", string(buf), len(buf), n)
-	return n
-}
 
 func TestHexEscape(t *testing.T) {
 	// "\xa8br\x8bjr\""
@@ -52,7 +21,7 @@ func TestHexEscape(t *testing.T) {
 	}
 
 	want := 7
-	got := chars(buf)
+	got := Day8Part1(buf)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
 	}
@@ -77,7 +46,7 @@ func test(t *testing.T, filename string, want int) {
 	for sc.Scan() {
 		line := sc.Bytes()
 		mm += len(line)
-		nn += chars(line)
+		nn += Day8Part1(line)
 	}
 	got := mm - nn
 	if want != got {
