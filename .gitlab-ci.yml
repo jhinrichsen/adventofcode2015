@@ -1,3 +1,6 @@
+before_script:
+    - go get -u golang.org/x/lint/golint
+
 # Define a yaml template for running a build and then running your tests
 .cargo_test_template: &cargo_test
     script:
