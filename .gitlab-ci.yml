@@ -33,7 +33,7 @@ verify_rust:
         - cargo fmt -- --check
 
 
-test-job:
+test-go:
     image: golang
     stage: test
     script:
