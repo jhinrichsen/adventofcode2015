@@ -1,10 +1,5 @@
-stages:
-        - rust-test
-        - go-test
-
 # Define a yaml template for running a build and then running your tests
 .cargo_test_template: &cargo_test
-    stage: rust-test
     script:
     - rustc --version
     - cargo --version
@@ -33,14 +28,12 @@ test_rust:nightly:
 # benchmarks cannot be used on Rust stable, so we disable clippy for now
 # - cargo clippy --all-targets --all-features -- -D warnings
 verify-rust:
-    stage: rust-test
     image: "guangie88/rustfmt-clippy"
     script:
         - cargo fmt -- --check
 
 test-go:
     image: golang
-    stage: go-test
     script:
         - golint
         - go vet
