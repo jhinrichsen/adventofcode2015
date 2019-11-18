@@ -1,5 +1,10 @@
+stages:
+        - rust-test
+        - go-test
+
 # Define a yaml template for running a build and then running your tests
 .cargo_test_template: &cargo_test
+    stage: rust-test
     script:
     - rustc --version
     - cargo --version
@@ -11,11 +16,11 @@ variables:
 
 # The following test: stages inherit from the test template above and
 # configure the image used for the various Rust release trains
-test_rust:stable:
+test-rust:stable:
     image: "rustdocker/rust:stable"
     <<: *cargo_test
 
-test_rust:beta:
+test-rust:beta:
     image: "rustdocker/rust:beta"
     <<: *cargo_test
 
@@ -27,15 +32,17 @@ test_rust:nightly:
 # we aren't using any anti-patterns or failing to follow our style guide
 # benchmarks cannot be used on Rust stable, so we disable clippy for now
 # - cargo clippy --all-targets --all-features -- -D warnings
-verify_rust:
+verify-rust:
+    stage: rust-test
     image: "guangie88/rustfmt-clippy"
     script:
         - cargo fmt -- --check
 
-
 test-go:
     image: golang
-    stage: test
+    stage: go-test
     script:
+        - golint
+        - go vet
         - go test -cover
     coverage: '/coverage: \d+\.\d+%/'
