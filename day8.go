@@ -22,3 +22,21 @@ func Day8Part1(buf []byte) int {
 	}
 	return n
 }
+
+// Day8Part2 escapes a buffer and returns the number of escaped bytes, including
+// a starting and leading ".
+// " -> \"
+// \ -> \\
+func Day8Part2(buf []byte) int {
+	total := len(buf)
+	for _, b := range buf {
+		if b == '\\' {
+			total++
+		}
+		if b == '"' {
+			total++
+		}
+	}
+	// leading adn trailing "
+	return total + 2
+}

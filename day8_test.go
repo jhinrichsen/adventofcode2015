@@ -6,6 +6,11 @@ import (
 	"testing"
 )
 
+const (
+	examples = "testdata/day8_example.txt"
+	filename = "testdata/day8.txt"
+)
+
 func TestHexEscape(t *testing.T) {
 	// "\xa8br\x8bjr\""
 	buf := []byte{
@@ -27,11 +32,11 @@ func TestHexEscape(t *testing.T) {
 	}
 }
 func TestDay8Part1Example(t *testing.T) {
-	test(t, "testdata/day8_example.txt", 12)
+	test(t, examples, 12)
 }
 
 func TestDay8Part1(t *testing.T) {
-	test(t, "testdata/day8.txt", 1371)
+	test(t, filename, 1371)
 }
 
 func test(t *testing.T, filename string, want int) {
@@ -51,5 +56,57 @@ func test(t *testing.T, filename string, want int) {
 	got := mm - nn
 	if want != got {
 		t.Fatalf("want %d but got %d\n", want, got)
+	}
+}
+
+var part2Tests = []struct {
+	in  []byte
+	out int
+}{
+	{[]byte{'"', '"'}, 6},
+	{[]byte{'"', 'a', 'b', 'c', '"'}, 9},
+	{[]byte{'"', 'a', 'a', 'a', '\\', '"', 'a', 'a', 'a', '"'}, 16},
+	{[]byte{'"', '\\', 'x', '2', '7', '"'}, 11},
+}
+
+func TestDay8Part2Examples(t *testing.T) {
+	for _, tt := range part2Tests {
+		t.Run(string(tt.in), func(t *testing.T) {
+			want := tt.out
+			got := Day8Part2(tt.in)
+			if want != got {
+				t.Fatalf("%q: want %d but got %d", string(tt.in),
+					want, got)
+			}
+		})
+	}
+	want := 6
+	buf := []byte{
+		'"',
+		'"',
+	}
+	got := Day8Part2(buf)
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func TestDay8Part2(t *testing.T) {
+	f, err := os.Open(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	mm := 0
+	nn := 0
+	sc := bufio.NewScanner(f)
+	for sc.Scan() {
+		line := sc.Bytes()
+		mm += len(line)
+		nn += Day8Part2(line)
+	}
+	want := 2117
+	got := nn - mm
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
 	}
 }
