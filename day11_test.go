@@ -22,16 +22,47 @@ func TestDay11Inc(t *testing.T) {
 	}
 }
 
-func inc(s string) string {
-	bs := []byte(s)
-	idx := len(bs) - 1
-_inc:
-	if bs[idx] == 'z' {
-		bs[idx] = 'a'
-		idx--
-		goto _inc
-	} else {
-		bs[idx]++
+func TestDay11hijklmn(t *testing.T) {
+	const s = "hijklmn"
+	if !req1(s) {
+		t.Fatalf("%q does not meet requirement #1", s)
 	}
-	return string(bs)
+	if req2(s) {
+		t.Fatalf("%q does meet requirement #2", s)
+	}
+}
+
+func TestDay11abbceffg(t *testing.T) {
+	const s = "abbceffg"
+	if req1(s) {
+		t.Fatalf("%q does meet requirement #1", s)
+	}
+	if !req3(s) {
+		t.Fatalf("%q does not meet requirement #3", s)
+	}
+
+}
+
+func TestDay11Nextabcdefgh(t *testing.T) {
+	const want = "abcdffaa"
+	got := next("abcdefgh")
+	if want != got {
+		t.Fatalf("want %q but got %q", want, got)
+	}
+}
+
+func TestDay11Nextghijklmn(t *testing.T) {
+	const want = "ghjaabcc"
+	got := next("ghijklmn")
+	if want != got {
+		t.Fatalf("want %q but got %q", want, got)
+	}
+}
+
+func TestDay11Part1(t *testing.T) {
+	want := "hepxxyzz"
+	got := next("hepxcrrq")
+	if want != got {
+		t.Fatalf("want %q but got %q", want, got)
+	}
 }
