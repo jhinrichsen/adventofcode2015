@@ -60,7 +60,7 @@ func TestDay11Nextghijklmn(t *testing.T) {
 }
 
 func TestDay11Part1(t *testing.T) {
-	want := "hepxxyzz"
+	const want = "hepxxyzz"
 	got := next("hepxcrrq")
 	if want != got {
 		t.Fatalf("want %q but got %q", want, got)
