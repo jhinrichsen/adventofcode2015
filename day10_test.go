@@ -43,3 +43,15 @@ func TestDay10Part1(t *testing.T) {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
+
+func TestDay10Part2(t *testing.T) {
+	const want = 5103798
+	s := inputDay10
+	for i := 0; i < 50; i++ {
+		s = lookAndSay(s)
+	}
+	got := len(s)
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
+	}
+}
