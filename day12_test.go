@@ -2,6 +2,7 @@ package adventofcode2015
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strconv"
 	"strings"
@@ -56,5 +57,18 @@ func TestDay12Samples(t *testing.T) {
 				t.Fatalf("%q: want %d but got %d", id, want, got)
 			}
 		})
+	}
+}
+
+func TestDay12Part1(t *testing.T) {
+	filename := "testdata/day12.txt"
+	buf, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const want = 111754
+	got := sum(string(buf))
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
 	}
 }
