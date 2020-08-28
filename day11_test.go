@@ -66,3 +66,11 @@ func TestDay11Part1(t *testing.T) {
 		t.Fatalf("want %q but got %q", want, got)
 	}
 }
+
+func TestDay11Part2(t *testing.T) {
+	const want = "heqaabcc"
+	got := next(next("hepxcrrq"))
+	if want != got {
+		t.Fatalf("want %q but got %q", want, got)
+	}
+}
