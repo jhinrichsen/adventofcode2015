@@ -14,7 +14,7 @@ func TestDay14ExampleParsing(t *testing.T) {
 	if len(lines) != 2 {
 		t.Fatalf("want %d but got %d", 2, len(lines))
 	}
-	var rs []reindeer
+	var rs []Reindeer
 	for i, line := range lines {
 		r, err := newReindeer(line)
 		if err != nil {
@@ -22,7 +22,7 @@ func TestDay14ExampleParsing(t *testing.T) {
 		}
 		rs = append(rs, r)
 	}
-	want0 := reindeer{"Comet", 14, 10, 127}
+	want0 := Reindeer{"Comet", 14, 10, 127}
 	got0 := rs[0]
 	if want0 != got0 {
 		t.Fatalf("want %+v but got %+v", want0, got0)
@@ -35,7 +35,7 @@ func TestDay14Example(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var rs []reindeer
+	var rs []Reindeer
 	for i, line := range lines {
 		r, err := newReindeer(line)
 		if err != nil {
@@ -46,7 +46,7 @@ func TestDay14Example(t *testing.T) {
 	comet := rs[0]
 	dancer := rs[1]
 	var distances = []struct {
-		r       reindeer
+		r       Reindeer
 		seconds uint
 		km      uint
 	}{
@@ -66,8 +66,29 @@ func TestDay14Example(t *testing.T) {
 			got := tt.r.km(tt.seconds)
 			if want != got {
 				t.Fatalf("%s after %d sec: want %d but got %d",
-					tt.r.name, tt.seconds, want, got)
+					tt.r.Name, tt.seconds, want, got)
 			}
 		})
+	}
+}
+
+func TestDay14Part1(t *testing.T) {
+	lines, err := linesFromFilename(filename(14))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var rs []Reindeer
+	for i, line := range lines {
+		r, err := newReindeer(line)
+		if err != nil {
+			t.Fatalf("file %q, line %d: %+v",
+				filename(14), i, err)
+		}
+		rs = append(rs, r)
+	}
+	const want = 2655
+	got := Day14(rs, 2503)
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
 	}
 }

@@ -6,11 +6,19 @@ import (
 	"strings"
 )
 
-type reindeer struct {
-	name     string
-	velocity uint
-	flying   uint
-	resting  uint
+// Reindeer holds a day 15 domain model.
+type Reindeer struct {
+	Name     string
+	Velocity uint
+	Flying   uint
+	Resting  uint
+}
+
+func max(a, b uint) uint {
+	if a < b {
+		return b
+	}
+	return a
 }
 
 func min(a, b uint) uint {
@@ -19,24 +27,26 @@ func min(a, b uint) uint {
 	}
 	return b
 }
-func (a reindeer) km(sec uint) uint {
-	oneFrame := a.flying + a.resting
+
+// km returns distance in km after n seconds.
+func (a Reindeer) km(sec uint) uint {
+	oneFrame := a.Flying + a.Resting
 
 	// full frames
 	frames := sec / oneFrame
-	kmPerFrame := a.velocity * a.flying // [km/s] * [s]
+	kmPerFrame := a.Flying * a.Velocity // [s] * [km/s]
 	d1 := frames * kmPerFrame           // [] * [km]
 
 	// partial frames
 	// only seconds in flight mode will add to distance
-	d2 := min(sec%oneFrame, a.flying) * a.velocity // [s] * [km/s]
+	d2 := min(sec%oneFrame, a.Flying) * a.Velocity // [s] * [km/s]
 	return d1 + d2
 }
 
-func newReindeer(line string) (reindeer, error) {
+func newReindeer(line string) (Reindeer, error) {
 	fields := strings.Fields(line)
 	if len(fields) != 15 {
-		return reindeer{},
+		return Reindeer{},
 			fmt.Errorf("want 15 fields but got %d", len(fields))
 	}
 	const (
@@ -45,24 +55,33 @@ func newReindeer(line string) (reindeer, error) {
 	)
 	i3, err := strconv.ParseUint(fields[3], base, bits)
 	if err != nil {
-		return reindeer{},
+		return Reindeer{},
 			fmt.Errorf("col %d: no number: %s", 3, fields[3])
 	}
 	i6, err := strconv.ParseUint(fields[6], base, bits)
 	if err != nil {
-		return reindeer{},
+		return Reindeer{},
 			fmt.Errorf("col %d: no number: %s", 6, fields[6])
 	}
 	i13, err := strconv.ParseUint(fields[13], base, bits)
 	if err != nil {
-		return reindeer{},
+		return Reindeer{},
 			fmt.Errorf("col %d: no number: %s", 13, fields[13])
 	}
 
-	return reindeer{
+	return Reindeer{
 		fields[0],
 		uint(i3),
 		uint(i6),
 		uint(i13),
 	}, nil
+}
+
+// Day14 returns maximum distance in km after sec seconds.
+func Day14(rs []Reindeer, sec uint) uint {
+	var d uint
+	for _, r := range rs {
+		d = max(d, r.km(sec))
+	}
+	return d
 }
