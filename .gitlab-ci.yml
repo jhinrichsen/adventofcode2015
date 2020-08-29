@@ -1,9 +1,13 @@
 # Define a yaml template for running a build and then running your tests
 .cargo_test_template: &cargo_test
     script:
-    - rustc --version
-    - cargo --version
-    - cargo test --verbose
+        - rustc --version
+        - cargo --version
+        - cargo test --verbose
+    only:
+        changes:
+            - .gitlab-ci.yml
+            - **/*.rs
 
 # Set any required environment variables here
 variables:
@@ -40,3 +44,8 @@ test-go:
         - go vet
         - go test -cover
     coverage: '/coverage: \d+\.\d+%/'
+    only:
+        changes:
+            - .gitlab-ci.yml
+            - **/*.go
+            - go.mod
