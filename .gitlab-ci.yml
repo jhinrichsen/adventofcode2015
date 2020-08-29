@@ -35,6 +35,10 @@ verify-rust:
     image: "guangie88/rustfmt-clippy"
     script:
         - cargo fmt -- --check
+    only:
+        changes:
+            - .gitlab-ci.yml
+            - src/*.rs
 
 test-go:
     image: golang
