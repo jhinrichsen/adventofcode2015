@@ -87,7 +87,59 @@ func TestDay14Part1(t *testing.T) {
 		rs = append(rs, r)
 	}
 	const want = 2655
-	got := Day14(rs, 2503)
+	got := Day14Part1(rs, 2503)
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func TestDay14Part2Example(t *testing.T) {
+	filename := exampleFilename(14)
+	lines, err := linesFromFilename(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var rs []Reindeer
+	for i, line := range lines {
+		r, err := newReindeer(line)
+		if err != nil {
+			t.Fatalf("%s col %d: %+v", filename, i, err)
+		}
+		rs = append(rs, r)
+	}
+
+	m := make(map[string]ReindeerScore)
+	for _, sc := range scores(rs, 1000) {
+		m[sc.Name] = sc
+	}
+	const wantDancer = 689
+	gotDancer := m["Dancer"].Score
+	if wantDancer != gotDancer {
+		t.Fatalf("want %d but got %d", wantDancer, gotDancer)
+	}
+	const wantComet = 312
+	gotComet := m["Comet"].Score
+	if wantComet != gotComet {
+		t.Fatalf("want %d but got %d", wantComet, gotComet)
+	}
+}
+
+func TestDay14Part2(t *testing.T) {
+	lines, err := linesFromFilename(filename(14))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var rs []Reindeer
+	for i, line := range lines {
+		r, err := newReindeer(line)
+		if err != nil {
+			t.Fatalf("file %q, line %d: %+v",
+				filename(14), i, err)
+		}
+		rs = append(rs, r)
+	}
+	const want = 1059
+	got := Day14Part2(rs, 2503)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
 	}

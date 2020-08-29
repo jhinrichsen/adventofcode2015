@@ -77,11 +77,64 @@ func newReindeer(line string) (Reindeer, error) {
 	}, nil
 }
 
-// Day14 returns maximum distance in km after sec seconds.
-func Day14(rs []Reindeer, sec uint) uint {
+// Day14Part1 returns maximum distance in km after sec seconds.
+func Day14Part1(rs []Reindeer, sec uint) uint {
 	var d uint
 	for _, r := range rs {
 		d = max(d, r.km(sec))
 	}
 	return d
+}
+
+// ReindeerScore holds a reindeer and its associated score.
+type ReindeerScore struct {
+	Reindeer
+	Score uint
+}
+
+// Day14Part2 returns the highest score.
+func Day14Part2(rs []Reindeer, sec uint) uint {
+	ss := scores(rs, sec)
+	var n uint
+	for _, s := range ss {
+		n = max(n, s.Score)
+	}
+	return n
+}
+
+func scores(rs []Reindeer, sec uint) []ReindeerScore {
+	var rss []ReindeerScore
+	for _, r := range rs {
+		rss = append(rss, ReindeerScore{
+			r,
+			0,
+		})
+	}
+
+	for i := uint(1); i <= sec; i++ {
+		ls := leaders(rs, i)
+		// increase score by one for all leaders
+		for j := range rss {
+			if ls[rss[j].Name] {
+				rss[j].Score++
+			}
+		}
+	}
+	return rss
+}
+
+func leaders(rs []Reindeer, sec uint) map[string]bool {
+	var d uint
+	// determine maximum distance
+	for _, r := range rs {
+		d = max(d, r.km(sec))
+	}
+	// harvest leaders
+	leaders := make(map[string]bool)
+	for _, r := range rs {
+		if r.km(sec) == d {
+			leaders[r.Name] = true
+		}
+	}
+	return leaders
 }
