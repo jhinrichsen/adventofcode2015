@@ -92,7 +92,7 @@ func TestDay12Part1Sum2(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	const want = 111754
+	const want = 65402
 	got := sum2(string(buf))
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
