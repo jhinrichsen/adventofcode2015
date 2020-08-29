@@ -7,7 +7,7 @@
     only:
         changes:
             - .gitlab-ci.yml
-            - **/*.rs
+            - src/*.rs
 
 # Set any required environment variables here
 variables:
@@ -47,5 +47,5 @@ test-go:
     only:
         changes:
             - .gitlab-ci.yml
-            - **/*.go
+            - "*.go"
             - go.mod
