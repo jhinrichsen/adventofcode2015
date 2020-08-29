@@ -6,11 +6,6 @@ import (
 	"testing"
 )
 
-const (
-	examples = "testdata/day8_example.txt"
-	filename = "testdata/day8.txt"
-)
-
 func TestHexEscape(t *testing.T) {
 	// "\xa8br\x8bjr\""
 	buf := []byte{
@@ -32,11 +27,11 @@ func TestHexEscape(t *testing.T) {
 	}
 }
 func TestDay8Part1Example(t *testing.T) {
-	test(t, examples, 12)
+	test(t, exampleFilename(8), 12)
 }
 
 func TestDay8Part1(t *testing.T) {
-	test(t, filename, 1371)
+	test(t, filename(8), 1371)
 }
 
 func test(t *testing.T, filename string, want int) {
@@ -92,7 +87,7 @@ func TestDay8Part2Examples(t *testing.T) {
 }
 
 func TestDay8Part2(t *testing.T) {
-	f, err := os.Open(filename)
+	f, err := os.Open(filename(8))
 	if err != nil {
 		t.Fatal(err)
 	}
