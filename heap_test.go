@@ -20,8 +20,8 @@ func heap(n int, a []string, ch chan<- []string) {
 	c := make([]int, n+1)
 	i := 0
 	for i < n {
-		fmt.Printf("n=%d, i=%d\n", n, i)
-		if c[permutations < i {
+		// fmt.Printf("n=%d, i=%d\n", n, i)
+		if c[i] < i {
 			if even(i) {
 				a[0], a[i] = a[i], a[0]
 			} else {
