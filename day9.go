@@ -82,12 +82,13 @@ func newRoutes(filename string) (routes, error) {
 // generics.
 // There's basically three algorithms that fit: Fisher-Yates random shuffle,
 // Steinhaus–Johnson–Trotter, and Heap.
-func Day9(filename string) (uint, error) {
+func Day9(filename string) (uint, uint, error) {
 	min := uint(math.MaxUint32)
+	var max uint
 
 	r, err := newRoutes(filename)
 	if err != nil {
-		return min, err
+		return min, max, err
 	}
 	perms := make(chan []string)
 	cs := r.cities()
@@ -95,11 +96,13 @@ func Day9(filename string) (uint, error) {
 	for perm := range perms {
 		n, err := r.distance(perm)
 		if err != nil {
-			return min, err
+			return min, max, err
 		}
 		if n < min {
 			min = n
+		} else if n > max {
+			max = n
 		}
 	}
-	return min, nil
+	return min, max, nil
 }
