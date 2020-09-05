@@ -1,4 +1,4 @@
-package main
+package adventofcode2015
 
 import (
 	"fmt"
