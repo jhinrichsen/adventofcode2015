@@ -6,6 +6,12 @@ import (
 	"strings"
 )
 
+// TSP is the number of table spoon units for a combination of ingredients.
+const (
+	CALORIES = 500
+	TSP      = 100
+)
+
 // Ingredient are what cookies consist of.
 type Ingredient struct {
 	Name       string
@@ -21,6 +27,10 @@ func (a Ingredient) values() []int {
 		a.Properties["texture"],
 		// a.Properties["calories"],
 	}
+}
+
+func (a Ingredient) calories() int {
+	return a.Properties["calories"]
 }
 
 // NewIngredient parses a line in form "Butterscotch: capacity -1, durability
@@ -50,19 +60,28 @@ func NewIngredient(s string) (Ingredient, error) {
 	return Ingredient{parts[0], m}, nil
 }
 
-// tsp is the cooking unit one teaspoon.
-type tsp uint
+// Tsp is the cooking unit one teaspoon.
+type Tsp uint
 
+// Serving is one single ingredient of a cookie recipe.
 type Serving struct {
 	Ingredient
-	tsp tsp
+	tsp Tsp
+}
+
+func (a Serving) calories() uint {
+	c := a.Ingredient.calories() * int(a.tsp)
+	if c < 0 {
+		return 0
+	}
+	return uint(c)
 }
 
 // Cookie consists of ingredients in full-teaspoon units.
 type Cookie []Serving
 
-func (a Cookie) tsps() []tsp {
-	var tsps []tsp
+func (a Cookie) tsps() []Tsp {
+	var tsps []Tsp
 	for _, s := range a {
 		tsps = append(tsps, s.tsp)
 	}
@@ -95,4 +114,57 @@ func (a Cookie) score() uint {
 		product *= uint(propTotal)
 	}
 	return product
+}
+
+func (a Cookie) calories() uint {
+	var c uint
+	for _, i := range a {
+		c += i.calories()
+	}
+	return c
+}
+
+// Day15Part1 returns fittest cookie for all combinations of ingredients.
+// No hardcoded number of ingredients, otherwise five embedded loops will do the
+// combination trick.
+func Day15Part1(is []Ingredient) Cookie {
+	return day15(is, func(a Cookie) bool {
+		// do not filter anything
+		return false
+	})
+}
+
+// Day15Part2 returns fittest cookie for all combinations of ingredients that
+// does not exceed 500 calories. No hardcoded number of ingredients, otherwise
+// five embedded loops will do the combination trick.
+func Day15Part2(is []Ingredient) Cookie {
+	return day15(is, func(a Cookie) bool {
+		// this is a filter function, so we ignore any non-500
+		return a.calories() != CALORIES
+	})
+}
+
+func day15(is []Ingredient, cookieFilter func(Cookie) bool) Cookie {
+	// start combination generator
+	ch := make(chan ([]int))
+	go KCompositions(TSP, len(is), ch)
+
+	var combinations [][]int
+	for digits := range ch {
+		combinations = append(combinations, digits)
+	}
+	var champ Cookie
+	var highscore uint
+	for _, digits := range combinations {
+		var c Cookie
+		for i, digit := range digits {
+			c = append(c, Serving{is[i], Tsp(digit)})
+		}
+		sc := c.score()
+		if sc > highscore && !cookieFilter(c) {
+			highscore = sc
+			champ = c
+		}
+	}
+	return champ
 }

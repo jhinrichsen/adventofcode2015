@@ -1,6 +1,11 @@
 package adventofcode2015
 
-import "testing"
+import (
+	"testing"
+
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
+)
 
 func TestDay15NewIngredient(t *testing.T) {
 	const s = "Butterscotch: capacity -1, durability -2, flavor 6, " +
@@ -20,22 +25,30 @@ func TestDay15NewIngredient(t *testing.T) {
 	}
 }
 
-func TestDay15Example(t *testing.T) {
-	const want = 62842880
-	lines, err := linesFromFilename(exampleFilename(15))
+func ingredients(filename string) ([]Ingredient, error) {
+	lines, err := linesFromFilename(filename)
 	if err != nil {
-		t.Fatal(err)
-	}
-	if len(lines) != 2 {
-		t.Fatalf("want butterscotch and cinnamon but got %q", lines)
+		return nil, err
 	}
 	var is []Ingredient
 	for _, line := range lines {
 		i, err := NewIngredient(line)
 		if err != nil {
-			t.Fatal(err)
+			return nil, err
 		}
 		is = append(is, i)
+	}
+	return is, nil
+}
+
+func TestDay15Example(t *testing.T) {
+	const want = 62_842_880
+	is, err := ingredients(exampleFilename(15))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(is) != 2 {
+		t.Fatalf("want butterscotch and cinnamon but got %q", is)
 	}
 	// Butterscotch
 	var c Cookie
@@ -44,5 +57,49 @@ func TestDay15Example(t *testing.T) {
 	got := c.score()
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func TestDay15ProveExample(t *testing.T) {
+	const want = 62_842_880
+	is, err := ingredients(exampleFilename(15))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cookie := Day15Part1(is)
+	got := cookie.score()
+	die(want, got, cookie, t)
+}
+
+func TestDay15Part1(t *testing.T) {
+	const want = 13_882_464
+	is, err := ingredients(filename(15))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cookie := Day15Part1(is)
+	got := cookie.score()
+	die(want, got, cookie, t)
+}
+
+func TestDay15Part2(t *testing.T) {
+	const want = 11_171_160
+	is, err := ingredients(filename(15))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cookie := Day15Part2(is)
+	got := cookie.score()
+	die(want, got, cookie, t)
+}
+
+func die(want, got uint, cookie Cookie, t *testing.T) {
+	if want != got {
+		// long numbers, print using thousand separator which fmt does
+		// not support
+		p := message.NewPrinter(language.English)
+		s := p.Sprintf("want %d but got %d: champ: %+v",
+			want, got, cookie)
+		t.Fatalf(s)
 	}
 }
