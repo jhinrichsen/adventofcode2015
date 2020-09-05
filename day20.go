@@ -21,7 +21,7 @@ func presents(houseno uint) uint {
 // Day20 returns lowest house no that gets at least n presents.
 // Brute forcing without a hint takes 10 min on 2019 Macbook Pro 16".
 func Day20(n uint) uint {
-	hint := uint(500_000)
+	hint := uint(776_000)
 	houseno := hint
 	for {
 		houseno++
