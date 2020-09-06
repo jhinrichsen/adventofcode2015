@@ -72,8 +72,8 @@ func (as happinesses) change(atts attendees) int {
 	return n
 }
 
-// Day13 returns total change in happiness.
-func Day13(filename string) (int, error) {
+// Day13Part1 returns total change in happiness.
+func Day13Part1(filename string) (int, error) {
 	var max int
 	hs, err := newHappinesses(filename)
 	if err != nil {
@@ -118,4 +118,29 @@ func newHappinesses(filename string) (happinesses, error) {
 		})
 	}
 	return hs, nil
+}
+
+// Day13Part2 returns total change in happiness.
+func Day13Part2(filename string) (int, error) {
+	var max int
+	hs, err := newHappinesses(filename)
+	if err != nil {
+		return max, err
+	}
+	hs = append(hs, happiness{
+		"Me", hs[0].attendee, 0,
+	})
+	perms := make(chan []string)
+	atts := hs.attendees()
+	go heap(len(atts), atts, perms)
+	for perm := range perms {
+		n := hs.change(perm)
+		if err != nil {
+			return max, err
+		}
+		if n > max {
+			max = n
+		}
+	}
+	return max, nil
 }
