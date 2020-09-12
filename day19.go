@@ -40,7 +40,7 @@ func (a plant) addReplacement(k, v string) {
 	}
 }
 
-func (a plant) distinct() uint {
+func (a plant) distinct() map[string]bool {
 	m := make(map[string]bool)
 	for from, v := range a.replacements {
 		for _, into := range v {
@@ -50,5 +50,48 @@ func (a plant) distinct() uint {
 			}
 		}
 	}
-	return uint(len(m))
+	return m
+}
+
+// Day19Part1 returns number of possible medicine molecules.
+func Day19Part1(p plant) uint {
+	return uint(len(p.distinct()))
+}
+
+// Day19Part2 returns number of steps to convert 'e' to plant's molecule.
+func Day19Part2(p plant) (step uint) {
+	final := p.molecule
+	fmt.Printf("generating a %d molecule medicine\n", len(final))
+	p.molecule = "e"
+	return gen(p, p.distinct(), final, 1)
+}
+
+func gen(p plant, prospects map[string]bool, final string, step uint) uint {
+	if prospects[final] {
+		panic("found it")
+		// return step
+	}
+	maxLen := 0
+	all := make(map[string]bool)
+	for k := range prospects {
+		p.molecule = k
+
+		// add all gens to the list of this step
+		for d := range p.distinct() {
+			// all replacements are at least as long as the
+			// replacee, which means that for any d ∈ distinct()
+			// cannot match final if len(d) >= len(final)
+			if len(d) <= len(final) {
+				if len(d) > maxLen {
+					maxLen = len(d)
+				}
+				all[d] = true
+			} else {
+				fmt.Printf("too long: skipping %q\n", d)
+			}
+		}
+	}
+	fmt.Printf("harvested %d gens in step %d, longest: %d\n",
+		len(all), step, maxLen)
+	return gen(p, all, final, step+1)
 }
