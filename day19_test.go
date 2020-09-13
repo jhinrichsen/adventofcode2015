@@ -1,6 +1,10 @@
 package adventofcode2015
 
-import "testing"
+import (
+	"reflect"
+	"sort"
+	"testing"
+)
 
 func hhoPlant() plant {
 	p, _ := newPlant([]string{
@@ -79,7 +83,7 @@ func TestDay19Example1Part2(t *testing.T) {
 	const want = 3
 	p := part2ExamplePlant()
 	p.molecule = "HOH"
-	got := Day19Part2(p)
+	got := Day19Part2(p.molecule, p.reducers())
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
 	}
@@ -89,14 +93,14 @@ func TestDay19Example2Part2(t *testing.T) {
 	const want = 6
 	p := part2ExamplePlant()
 	p.molecule = "HOHOHO"
-	got := Day19Part2(p)
+	got := Day19Part2(p.molecule, p.reducers())
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
 
 func TestDay19Part2(t *testing.T) {
-	const want = 576
+	const want = 207
 	lines, err := linesFromFilename(filename(19))
 	if err != nil {
 		t.Fatal(err)
@@ -106,8 +110,22 @@ func TestDay19Part2(t *testing.T) {
 		t.Fatal(err)
 	}
 	p.molecule = lines[len(lines)-1]
-	got := Day19Part2(p)
+	got := Day19Part2(p.molecule, p.reducers())
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func TestSort(t *testing.T) {
+	want := []string{
+		"e", "bb", "aaa", "ccc", "aaaaa", "ddddddddd",
+	}
+	got := []string{
+		"aaa", "aaaaa", "bb", "ccc", "ddddddddd", "e",
+	}
+	// make sure _not_ to use sort.Strings(ByLen(got))
+	sort.Sort(ByLen(got))
+	if !reflect.DeepEqual(want, got) {
+		t.Fatalf("want %+v but got %+v", want, got)
 	}
 }
