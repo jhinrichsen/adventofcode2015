@@ -35,7 +35,7 @@ func TestDay20Examples(t *testing.T) {
 
 func TestDay20Part1(t *testing.T) {
 	const want = 776160
-	got := Day20()
+	got := Day20Part1()
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
 	}
@@ -47,7 +47,7 @@ func TestDay20Champ(t *testing.T) {
 		t.Skip()
 	}
 	const want = 776160
-	got := day20Champ(36_000_000)
+	got := day20Part1Champ(36_000_000)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
 	}
@@ -55,12 +55,20 @@ func TestDay20Champ(t *testing.T) {
 
 func BenchmarkDay20Champ(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		day20Champ(36_000_000)
+		day20Part1Champ(36_000_000)
 	}
 }
 
 func BenchmarkDay20MyChamp(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		day20MyChamp(36_000_000)
+	}
+}
+
+func TestDay20Part2(t *testing.T) {
+	const want = 786240
+	got := Day20Part2()
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
 	}
 }
