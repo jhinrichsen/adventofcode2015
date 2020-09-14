@@ -6,8 +6,8 @@ import (
 )
 
 var day20Samples = []struct {
-	houseno  uint
-	presents uint
+	in  uint
+	out uint
 }{
 	{1, 10},
 	{2, 30},
@@ -22,10 +22,10 @@ var day20Samples = []struct {
 
 func TestDay20Examples(t *testing.T) {
 	for _, tt := range day20Samples {
-		id := fmt.Sprintf("%d", tt.houseno)
+		id := fmt.Sprintf("%d", tt.in)
 		t.Run(id, func(t *testing.T) {
-			want := tt.presents
-			got := presents(tt.houseno)
+			want := tt.out
+			got := presents(tt.in)
 			if want != got {
 				t.Fatalf("want %d but got %d", want, got)
 			}
@@ -34,9 +34,39 @@ func TestDay20Examples(t *testing.T) {
 }
 
 func TestDay20Part1(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Day 20 Part #1 takes around a minute, skipping")
+	}
 	const want = 776160
-	got := Day20(Input)
+	var got uint
+	for got = 1; ; got++ {
+		s := SigmaMemoized(got)
+		if s*10 > InputDay20 {
+			break
+		}
+	}
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+// Highest ranking algorithm.
+func TestDay20Champ(t *testing.T) {
+	const want = 776160
+	got := day20Champ(36_000_000)
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay20Champ(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		day20Champ(36_000_000)
+	}
+}
+
+func BenchmarkDay20MyChamp(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		day20MyChamp(36_000_000)
 	}
 }
