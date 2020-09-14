@@ -22,16 +22,18 @@ func presents(houseno uint) uint {
 // Brute forcing without a hint takes 10 min on 2019 Macbook Pro 16".
 // A memoized version of Euler's recursive Sigma function brings the calculation
 // down to 48 seconds.
-func Day20(n uint) uint {
-	for houseno := uint(1); ; houseno++ {
-		s := SigmaMemoized(houseno)
-		if s*10 > InputDay20 {
-			return houseno
-		}
+// Generational Euler algorithm (instead of recursive) takes 5 seconds.
+func Day20() uint {
+	yield := SigmaGenerator()
+	// each elv delivers 10 packages
+	packages := uint(InputDay20 / 10)
+	var houseno uint
+	for houseno = 1; yield() < packages; houseno++ {
 	}
+	return houseno
 }
 
-// day20Champ is the highest ranking algo.
+// day20Champ was the highest ranking algo, read: the first to finish.
 func day20Champ(target int) int {
 	houses := make([]int, target/10+1)
 	for elf := 1; elf < len(houses); elf++ {

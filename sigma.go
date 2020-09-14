@@ -269,3 +269,38 @@ func SigmaMemoized(n uint) uint {
 	sigmas[n] = sigma
 	return sigma
 }
+
+// SigmaGenerator yields sum of divisors, one by one.
+func SigmaGenerator() func() uint {
+	sigmas := make([]uint, 1) // sigma(0), not used
+	var n uint
+	return func() uint {
+		n++
+		var sum uint
+		idx := yieldIndex()
+		sign := yieldSign()
+		for {
+			i := idx()
+			if i > n {
+				break
+			}
+			add := sign() > 0
+			j := n - i
+			if j == 0 {
+				if add {
+					sum += n
+				} else {
+					sum -= n
+				}
+			} else {
+				if add {
+					sum += sigmas[j]
+				} else {
+					sum -= sigmas[j]
+				}
+			}
+		}
+		sigmas = append(sigmas, sum)
+		return sum
+	}
+}

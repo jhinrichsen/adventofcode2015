@@ -1,7 +1,6 @@
 package adventofcode2015
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -11,15 +10,6 @@ func BenchmarkSigma(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		Sigma(sampleSigma)
 	}
-}
-
-func TestSigma(t *testing.T) {
-	testSigmaFunction(t, Sigma)
-}
-
-// TODO broke
-func testAnotherSigma(t *testing.T) {
-	testSigmaFunction(t, AnotherSigma)
 }
 
 func testA000203(t *testing.T) {
@@ -35,30 +25,13 @@ func testA000203(t *testing.T) {
 	}
 }
 
-// TODO broke
-func testSigmaGenerator(t *testing.T) {
-	yield := sigmaGenerator()
-	for i := 1; i <= 5; i++ {
-		fmt.Printf("Sigma(%d) = %d\n", i, yield())
-	}
-}
-
-// TODO broke
-func exampleSigmaGenerator() {
-	yield := sigmaGenerator()
-	yield()              // n = 1
-	yield()              // n = 2
-	fmt.Println(yield()) // n = 3
-	// Output: 4
-}
-
-// TODO broke
-func testSigmaFunction(t *testing.T, f func(uint) uint) {
+func TestSigmaGenerator(t *testing.T) {
+	yield := SigmaGenerator()
 	for i := 1; i < len(A000203Seq); i++ {
 		want := A000203Seq[i]
-		got := f(uint(i))
+		got := yield()
 		if want != got {
-			t.Fatalf("N=%d: want %d but got %d", i, want, got)
+			t.Fatalf("Sigma(%d) want %d but got %d", i, want, got)
 		}
 	}
 }
