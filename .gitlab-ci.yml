@@ -46,7 +46,7 @@ test-go:
         - go get -u golang.org/x/lint/golint
         - golint
         - go vet
-        - go test -cover
+        - go test -cover -short
     coverage: '/coverage: \d+\.\d+%/'
     only:
         changes:
