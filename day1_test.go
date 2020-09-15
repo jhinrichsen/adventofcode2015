@@ -37,25 +37,17 @@ func TestDay1Examples(t *testing.T) {
 	}
 }
 
-func BenchmarkDay1Part1B(b *testing.B) {
+func BenchmarkDay1Part1(b *testing.B) {
 	buf, err := day1Input()
 	if err != nil {
 		b.Fatal(err)
 	}
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		day1b(buf)
+		Day1Part1(buf)
 	}
 }
 
-func BenchmarkDay1Part1I(b *testing.B) {
-	buf, err := day1Input()
-	if err != nil {
-		b.Fatal(err)
-	}
-	for i := 0; i < b.N; i++ {
-		day1i(buf)
-	}
-}
 func TestDay1Part1(t *testing.T) {
 	const want = 232
 	buf, err := day1Input()
@@ -86,6 +78,17 @@ func TestDay1Part2Examples(t *testing.T) {
 				t.Fatalf("want %d but got %d", want, got)
 			}
 		})
+	}
+}
+
+func BenchmarkDay1Part2(b *testing.B) {
+	buf, err := day1Input()
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day1Part2(buf)
 	}
 }
 
