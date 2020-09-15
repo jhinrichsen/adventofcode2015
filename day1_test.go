@@ -1,0 +1,102 @@
+package adventofcode2015
+
+import (
+	"io/ioutil"
+	"testing"
+)
+
+var day1ExamplesPart1 = []struct {
+	in  string
+	out int
+}{
+	{"(())", 0},
+	{"()()", 0},
+	{"(((", 3},
+	{"(()(()(", 3},
+	{"))(((((", 3},
+	{"())", -1},
+	{"))(", -1},
+	{")))", -3},
+	{")())())", -3},
+}
+
+func day1Input() ([]byte, error) {
+	return ioutil.ReadFile(filename(1))
+}
+
+func TestDay1Examples(t *testing.T) {
+	for _, tt := range day1ExamplesPart1 {
+		id := tt.in
+		t.Run(id, func(t *testing.T) {
+			want := tt.out
+			got := Day1Part1([]byte(tt.in))
+			if want != got {
+				t.Fatalf("want %d but got %d", want, got)
+			}
+		})
+	}
+}
+
+func BenchmarkDay1Part1B(b *testing.B) {
+	buf, err := day1Input()
+	if err != nil {
+		b.Fatal(err)
+	}
+	for i := 0; i < b.N; i++ {
+		day1b(buf)
+	}
+}
+
+func BenchmarkDay1Part1I(b *testing.B) {
+	buf, err := day1Input()
+	if err != nil {
+		b.Fatal(err)
+	}
+	for i := 0; i < b.N; i++ {
+		day1i(buf)
+	}
+}
+func TestDay1Part1(t *testing.T) {
+	const want = 232
+	buf, err := day1Input()
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := Day1Part1(buf)
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+var day1ExamplesPart2 = []struct {
+	in  string
+	out uint
+}{
+	{")", 1},
+	{"()())", 5},
+}
+
+func TestDay1Part2Examples(t *testing.T) {
+	for _, tt := range day1ExamplesPart2 {
+		id := tt.in
+		t.Run(id, func(t *testing.T) {
+			want := tt.out
+			got := Day1Part2([]byte(tt.in))
+			if want != got {
+				t.Fatalf("want %d but got %d", want, got)
+			}
+		})
+	}
+}
+
+func TestDay1Part2(t *testing.T) {
+	const want = 1783
+	buf, err := day1Input()
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := Day1Part2(buf)
+	if want != got {
+		t.Fatalf("want %d but got %d", want, got)
+	}
+}
