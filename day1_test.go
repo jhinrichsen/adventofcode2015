@@ -48,6 +48,17 @@ func BenchmarkDay1Part1(b *testing.B) {
 	}
 }
 
+func BenchmarkDay1Part1Branchless(b *testing.B) {
+	buf, err := day1Input()
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day1Part1Branchless(buf)
+	}
+}
+
 func TestDay1Part1(t *testing.T) {
 	const want = 232
 	buf, err := day1Input()
@@ -62,7 +73,7 @@ func TestDay1Part1(t *testing.T) {
 
 var day1ExamplesPart2 = []struct {
 	in  string
-	out uint
+	out int
 }{
 	{")", 1},
 	{"()())", 5},
