@@ -5,25 +5,28 @@ import (
 )
 
 type player struct {
+	hitPoints int
+}
+type day21Player struct {
 	hitPoints int  // also known as life, score
 	items     item // all the gear he is carrying (one or more)
 }
 
-func (a player) alive() bool {
+func (a day21Player) alive() bool {
 	return a.hitPoints > 0
 }
 
-var boss = player{
+var day21Boss = day21Player{
 	hitPoints: 100,
 	items: item{
 		damage: 8,
 		armor:  2,
 	},
 }
-var nakedMe = player{100, item{0, 0, 0}}
+var nakedMe = day21Player{100, item{0, 0, 0}}
 
 // duel plays until one player dies.
-func duel(players *[2]player) {
+func duel(players *[2]day21Player) {
 	attack := 0 // player 1 begins
 	turn := func() {
 		attack = 1 - attack
@@ -122,9 +125,9 @@ func Day21Part1() int {
 		p := nakedMe
 		p.items.armor = c.armor
 		p.items.damage = c.damage
-		players := [...]player{
+		players := [...]day21Player{
 			p,
-			boss,
+			day21Boss,
 		}
 		duel(&players)
 		if players[0].alive() {
@@ -144,9 +147,9 @@ func Day21Part2() int {
 	for _, items := range cs {
 		p := nakedMe
 		p.items = items
-		players := [...]player{
+		players := [...]day21Player{
 			p,
-			boss,
+			day21Boss,
 		}
 		duel(&players)
 		if !players[0].alive() {

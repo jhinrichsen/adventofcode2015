@@ -6,9 +6,9 @@ import (
 
 func TestDay21Part1Naked(t *testing.T) {
 	const want = false // we will not survive without stuff
-	players := [...]player{
-		nakedMe, // Player #1
-		boss,    // Player #2
+	players := [...]day21Player{
+		nakedMe,   // Player #1
+		day21Boss, // Player #2
 	}
 	duel(&players)
 	got := players[0].alive()
