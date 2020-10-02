@@ -19,7 +19,7 @@ func (a *Base5) Inc() {
 inc:
 	if a.Buf[i] == 4 {
 		a.Buf[i] = 0
-		if i == len(a.Buf) {
+		if i == len(a.Buf)-1 {
 			a.Buf = append(a.Buf, 0)
 		}
 		i++
