@@ -92,7 +92,7 @@ func Day9(filename string) (uint, uint, error) {
 	}
 	perms := make(chan []string)
 	cs := r.cities()
-	go heap(len(cs), cs, perms)
+	go heapString(len(cs), cs, perms)
 	for perm := range perms {
 		n, err := r.distance(perm)
 		if err != nil {

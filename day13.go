@@ -81,7 +81,7 @@ func Day13Part1(filename string) (int, error) {
 	}
 	perms := make(chan []string)
 	atts := hs.attendees()
-	go heap(len(atts), atts, perms)
+	go heapString(len(atts), atts, perms)
 	for perm := range perms {
 		n := hs.change(perm)
 		if err != nil {
@@ -132,7 +132,7 @@ func Day13Part2(filename string) (int, error) {
 	})
 	perms := make(chan []string)
 	atts := hs.attendees()
-	go heap(len(atts), atts, perms)
+	go heapString(len(atts), atts, perms)
 	for perm := range perms {
 		n := hs.change(perm)
 		if err != nil {

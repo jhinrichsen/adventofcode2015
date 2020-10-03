@@ -7,7 +7,7 @@ import (
 func TestCities(t *testing.T) {
 	cities := []string{"london", "dublin", "edinburgh"}
 	ch := make(chan []string)
-	go heap(3, cities, ch)
+	go heapString(3, cities, ch)
 	var perms [][]string
 	for perm := range ch {
 		perms = append(perms, perm)
