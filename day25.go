@@ -32,3 +32,15 @@ func (a day25) y() uint {
 	t := uint(math.Floor(-1+math.Sqrt(float64(8*a.n-7)))) / 2
 	return (t*t+3*t+4)/2 - a.n
 }
+
+// Day25Part1 returns code at position (x/y).
+// Time complexity O(n), space complexity O(1). No space at all is allocated, to
+// be precise:
+// BenchmarkDay25Part1-16    39	  29009938 ns/op    0 B/op    0 allocs/op
+func Day25Part1(x, y uint) uint {
+	d := newDay25()
+	for !(d.x() == x && d.y() == y) {
+		d.next()
+	}
+	return d.code
+}
