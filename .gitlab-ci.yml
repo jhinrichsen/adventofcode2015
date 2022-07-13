@@ -2,5 +2,5 @@ test-go:
     stage: test
     image: golang
     script:
-        - make lint test
+        - make test
     coverage: '/coverage: \d+\.\d+%/'
