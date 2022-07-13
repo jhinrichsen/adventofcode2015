@@ -1,55 +1,6 @@
-# Define a yaml template for running a build and then running your tests
-.cargo_test_template: &cargo_test
-    script:
-        - rustc --version
-        - cargo --version
-        - cargo test --verbose
-    only:
-        changes:
-            - .gitlab-ci.yml
-            - src/*.rs
-
-# Set any required environment variables here
-variables:
-    RUST_BACKTRACE: 1
-
-# The following test: stages inherit from the test template above and
-# configure the image used for the various Rust release trains
-test-rust:stable:
-    image: "rustdocker/rust:stable"
-    <<: *cargo_test
-
-test-rust:beta:
-    image: "rustdocker/rust:beta"
-    <<: *cargo_test
-
-test_rust:nightly:
-    image: "rustdocker/rust:nightly"
-    <<: *cargo_test
-
-# Always want to run rustfmt and clippy against our tests, to ensure that
-# we aren't using any anti-patterns or failing to follow our style guide
-# benchmarks cannot be used on Rust stable, so we disable clippy for now
-# - cargo clippy --all-targets --all-features -- -D warnings
-verify-rust:
-    image: "guangie88/rustfmt-clippy"
-    script:
-        - cargo fmt -- --check
-    only:
-        changes:
-            - .gitlab-ci.yml
-            - src/*.rs
-
 test-go:
+    stage: test
     image: golang
     script:
-        - go get -u golang.org/x/lint/golint
-        - golint
-        - go vet
-        - go test -cover -short
+        - make lint test
     coverage: '/coverage: \d+\.\d+%/'
-    only:
-        changes:
-            - .gitlab-ci.yml
-            - "*.go"
-            - go.mod
