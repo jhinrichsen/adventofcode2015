@@ -1,7 +1,6 @@
 package adventofcode2015
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -24,8 +23,7 @@ var examplesDay5 = []struct {
 
 func TestDay5Example1(t *testing.T) {
 	for _, tt := range examplesDay5 {
-		id := fmt.Sprintf("%s", tt.in)
-		t.Run(id, func(t *testing.T) {
+		t.Run(tt.in, func(t *testing.T) {
 			want := tt.out
 			got := day5([]string{tt.in}, tt.f)
 			if want != got {
