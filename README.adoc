@@ -18,3 +18,28 @@ in Rust (from day 1 through 7) and Go.
 
 I reverted from Rust to Go because the instability of Rust made me lose all
 interest.
+
+== Benchmarks
+
+Go 1.16.6
+----
+go test -run NONE -bench . -benchmem -timeout=30m
+goos: darwin
+goarch: amd64
+pkg: gitlab.com/jhinrichsen/adventofcode2015
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkDay1Part1-16              	  318814	      3435 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1Branchless-16    	  269575	      3839 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part2-16              	 1447368	       797.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay20Champ-16             	       4	 321160662 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20MyChamp-16           	       4	 299910081 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay23Part1-16             	   11517	    100522 ns/op	   55696 B/op	    1486 allocs/op
+BenchmarkDay25Part1-16             	      12	  86477669 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay6Part1-16              	      24	  51590291 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part2-16              	      18	  58150744 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkSigma-16                  	 4421583	       269.5 ns/op	       0 B/op	       0 allocs/op
+BenchmarkYieldAlt-16               	396355009	         3.073 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigmaRecursive-16         	    4809	    251532 ns/op	  203425 B/op	   10758 allocs/op
+BenchmarkSigmaMemoized-16          	129887812	         9.233 ns/op	       0 B/op	       0 allocs/op
+PASS
+----

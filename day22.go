@@ -89,48 +89,23 @@ func (a *wizardSimulator) apply(s spellID) {
 	switch s {
 	case magicMissile:
 		a.players[1].hitPoints -= 4
-		fmt.Fprintf(a.progress,
-			"Player casts %s, dealing 4 damage.\n",
-			a.spells[s].name)
 	case drain:
 		a.players[0].hitPoints += 2
 		a.players[1].hitPoints -= 2
-		fmt.Fprintf(a.progress,
-			"Player casts Drain, dealing 2 damage, "+
-				"and healing 2 hit points.\n")
 
 	case shield:
 		a.decreaseTimer(s)
-		fmt.Fprintf(a.progress, "Shield's timer is now %d.\n",
-			a.spells[s].timer)
-		if a.spells[s].timer == 0 {
-			fmt.Fprintf(a.progress, "Shield wears off, "+
-				"decreasing armor by 7.\n")
-		}
 		a.resetTimer(s)
 	case poison:
 		a.players[1].hitPoints -= 3
 		if a.bossLost() {
-			fmt.Fprintf(a.progress,
-				"Poison deals 3 damage. "+
-					"This kills the boss, "+
-					"and the player wins.\n")
 		} else {
 			a.decreaseTimer(s)
-			fmt.Fprintf(a.progress,
-				"Poison deals 3 damage; its timer is now %d.\n",
-				a.spells[s].timer)
 			a.resetTimer(s)
 		}
 	case recharge:
 		a.players[0].mana += 101
 		a.decreaseTimer(s)
-		fmt.Fprintf(a.progress, "Recharge provides 101 mana; "+
-			"its timer is now %d.\n",
-			a.spells[s].timer)
-		if a.spells[s].timer == 0 {
-			fmt.Fprintf(a.progress, "Recharge wears off.\n")
-		}
 		a.resetTimer(s)
 	}
 }
@@ -193,28 +168,8 @@ func pointOrPoints(n int) string {
 	return "points"
 }
 
-func (a wizardSimulator) logTurn() {
-	var s string
-	if a.turnIdx == 0 {
-		s = "Player"
-	} else {
-		s = "Boss"
-	}
-	fmt.Fprintf(a.progress, "-- %s turn --\n", s)
-	fmt.Fprintf(a.progress, "- Player has %d hit %s, "+
-		"%d armor, %d mana\n",
-		a.players[0].hitPoints,
-		pointOrPoints(a.players[0].hitPoints),
-		a.totalArmor(),
-		a.players[0].mana)
-	fmt.Fprintf(a.progress, "- Boss has %d hit %s\n",
-		a.players[1].hitPoints,
-		pointOrPoints(a.players[1].hitPoints))
-}
-
 // step returns error if cannot afford spell, or if spell is active.
 func (a *wizardSimulator) step(hardMode bool) error {
-	a.logTurn()
 	if hardMode {
 		a.players[0].hitPoints--
 		if a.playerLost() {
@@ -236,13 +191,6 @@ func (a *wizardSimulator) step(hardMode bool) error {
 			return fmt.Errorf("cannot cast active spell %+v: %+v", spell, a.spells[spell])
 		}
 		if a.spells[spell].isEffect() {
-			if spell == shield {
-				fmt.Fprintf(a.progress, "Player casts Shield, "+
-					"increasing armor by 7.\n")
-			} else {
-				fmt.Fprintf(a.progress, "Player casts %s.\n",
-					a.spells[spell].name)
-			}
 			sp := a.spells[spell]
 			sp.active = true
 			a.spells[spell] = sp

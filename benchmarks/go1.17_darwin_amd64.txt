@@ -1,0 +1,19 @@
+goos: darwin
+goarch: amd64
+pkg: gitlab.com/jhinrichsen/adventofcode2015
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkDay1Part1-16              	  360223	      3308 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1Branchless-16    	  320911	      3713 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part2-16              	 1530344	       777.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay20Champ-16             	       3	 350422706 ns/op	28803104 B/op	       1 allocs/op
+BenchmarkDay20MyChamp-16           	       4	 298673109 ns/op	28803096 B/op	       1 allocs/op
+BenchmarkDay23Part1-16             	   11258	    104210 ns/op	   55696 B/op	    1486 allocs/op
+BenchmarkDay25Part1-16             	      10	 108213962 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay6Part1-16              	      32	  37533933 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part2-16              	      31	  40091649 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkSigma-16                  	 5691339	       211.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkYieldAlt-16               	464964886	         2.576 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigmaRecursive-16         	    7509	    167023 ns/op	  117360 B/op	    7824 allocs/op
+BenchmarkSigmaMemoized-16          	158728362	         7.674 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	gitlab.com/jhinrichsen/adventofcode2015	22.833s

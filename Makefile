@@ -1,4 +1,5 @@
-prof:
-	go test -bench=Day6 -benchmem -memprofile mprofile.out -cpuprofile cprofile.out
-	go tool pprof cpu.profile
-	# go tool pprof mem.profile
+bench:
+	go test -run NONE -bench . -benchmem -timeout=30m
+
+benchstat: benchmarks/go1.16.6_darwin_amd64.txt benchmarks/go1.17_darwin_amd64.txt 
+	benchstat $<
