@@ -43,22 +43,6 @@ var A000203Seq = [...]uint{
 	72, // 30
 }
 
-// sigmaGenerator generates sum of divisors, one at a time.
-// It is not exported yet, because the current algorithm needs a final N, and
-// cannot be used for generating the next from the previous.
-func sigmaGenerator() func() uint {
-	var n, sum uint
-	n = 1
-	return func() uint {
-		_, frac := math.Modf(float64(n) / float64(n))
-		f := math.Mod(Sgnf(frac)+1.0, 2)
-		p := n * uint(f)
-		sum += p
-		n++
-		return sum
-	}
-}
-
 // Sigma function, sum of divisors σ(n).
 // Divisors are also known as factors.
 // Sum of its divisors is also known as the Sigma function.
@@ -74,16 +58,6 @@ func Sigma(n uint) (sum uint) {
 		sum += p
 	}
 	return
-}
-
-// a000203 function, sum of divisors σ(n).
-// Generates the a000203 sequence into c, starting at a000203(1) = 1.
-// TODO work in progres, generator not prime yet.
-func a000203(c chan<- uint) {
-	yield := sigmaGenerator()
-	for {
-		c <- yield()
-	}
 }
 
 // Sgnf returns the signature of a float value.

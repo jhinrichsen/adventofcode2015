@@ -34,40 +34,6 @@ var (
 ......
 ......`,
 	}
-
-	exampleStepsPart2 = []string{
-		`##.#.#
-...##.
-#....#
-..#...
-#.#..#
-####.#`, `#.##.#
-####.#
-...##.
-......
-#...#.
-#.####`, `#..#.#
-#....#
-.#.##.
-...##.
-.#..##
-##.###`, `#...##
-####.#
-..##.#
-......
-##....
-####.#`, `#.####
-#....#
-...#..
-.##...
-#.....
-#.#..#`, `##.###
-.##..#
-.##...
-.##...
-#.#...
-##...#`,
-	}
 )
 
 func TestOff(t *testing.T) {
@@ -203,6 +169,9 @@ func TestDay18On(t *testing.T) {
 		t.Fatal(err)
 	}
 	g, err := gridFromFilename(filename(18))
+	if err != nil {
+		t.Fatal(err)
+	}
 	got := g.on()
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)

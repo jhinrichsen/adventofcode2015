@@ -4,9 +4,6 @@ import (
 	"sort"
 )
 
-type player struct {
-	hitPoints int
-}
 type day21Player struct {
 	hitPoints int  // also known as life, score
 	items     item // all the gear he is carrying (one or more)

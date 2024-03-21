@@ -12,19 +12,6 @@ func BenchmarkSigma(b *testing.B) {
 	}
 }
 
-func testA000203(t *testing.T) {
-	ch := make(chan uint, 2)
-	go a000203(ch)
-	// for i := 1; i < len(A000203Seq); i++ {
-	for i := 1; i < len(A000203Seq); i++ {
-		want := A000203Seq[i]
-		got := <-ch
-		if want != got {
-			t.Fatalf("N=%d: want %d but got %d", i, want, got)
-		}
-	}
-}
-
 func TestSigmaGenerator(t *testing.T) {
 	yield := SigmaGenerator()
 	for i := 1; i < len(A000203Seq); i++ {

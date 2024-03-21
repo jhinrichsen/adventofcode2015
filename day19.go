@@ -139,33 +139,3 @@ func (a ByLen) Less(i, j int) bool {
 func (a ByLen) Swap(i, j int) {
 	a[i], a[j] = a[j], a[i]
 }
-
-func gen(p plant, prospects map[string]bool, final string, step uint) uint {
-	if prospects[final] {
-		panic("found it")
-		// return step
-	}
-	maxLen := 0
-	all := make(map[string]bool)
-	for k := range prospects {
-		p.molecule = k
-
-		// add all gens to the list of this step
-		for d := range p.distinct() {
-			// all replacements are at least as long as the
-			// replacee, which means that for any d ∈ distinct()
-			// cannot match final if len(d) >= len(final)
-			if len(d) <= len(final) {
-				if len(d) > maxLen {
-					maxLen = len(d)
-				}
-				all[d] = true
-			} else {
-				fmt.Printf("too long: skipping %q\n", d)
-			}
-		}
-	}
-	fmt.Printf("harvested %d gens in step %d, longest: %d\n",
-		len(all), step, maxLen)
-	return gen(p, all, final, step+1)
-}
