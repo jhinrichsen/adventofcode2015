@@ -109,10 +109,8 @@ func reduce(prospects map[string]bool, rs []reducer, step uint) uint {
 	}
 	sort.Sort(ByLen(ss))
 
-	// copy back into cleared original map
-	for k := range reduced {
-		delete(reduced, k)
-	}
+	clear(reduced)
+
 	// consider shortest only
 	fittest := len(ss)
 	const heuristic = 100
