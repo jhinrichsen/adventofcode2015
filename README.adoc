@@ -1,14 +1,11 @@
-image:https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015?status.svg["godoc",
-link="https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015"]
-image:https://goreportcard.com/badge/gitlab.com/jhinrichsen/adventofcode2015["Go report
-card", link="https://goreportcard.com/report/gitlab.com/jhinrichsen/adventofcode2015"]
-image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/master/coverage.svg?style=flat["coverage",
-link="https://gitlab.com/jhinrichsen/adventofcode2015/-/jobs"]
-
+= Advent of Code 2015
 :doctype: book
 :toc:
 
-= Advent of Code 2015
+image:https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015?status.svg["godoc", link="https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015"]
+image:https://goreportcard.com/badge/gitlab.com/jhinrichsen/adventofcode2015["Go report card", link="https://goreportcard.com/report/gitlab.com/jhinrichsen/adventofcode2015"]
+image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/main/pipeline.svg[link="https://gitlab.com/jhinrichsen/adventofcode2015/-/commits/main",title="pipeline status"]
+image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/master/coverage.svg?style=flat["coverage", link="https://gitlab.com/jhinrichsen/adventofcode2015/-/jobs"]
 
 This is an implementation of https://adventofcode.com/2015[Advent of Code 2015] in Rust (from day 1 through 7) and Go.
 
