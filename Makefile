@@ -1,7 +1,7 @@
 GO ?= CGO_ENABLED=0 go
 
 .PHONY: all
-all: clean tidy test
+all: clean lint test
 
 .PHONY: clean
 clean:
@@ -19,8 +19,8 @@ clean:
 bench:
 	$(GO) test -run=^$ -bench=. -benchmem
 
-.PHONY: tidy
-tidy:
+.PHONY: lint
+lint:
 	test -z $(gofmt -l .)
 	$(GO) vet
 	$(GO) run honnef.co/go/tools/cmd/staticcheck@latest -version
