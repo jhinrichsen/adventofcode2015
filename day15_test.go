@@ -98,8 +98,7 @@ func die(want, got uint, cookie Cookie, t *testing.T) {
 		// long numbers, print using thousand separator which fmt does
 		// not support
 		p := message.NewPrinter(language.English)
-		s := p.Sprintf("want %d but got %d: champ: %+v",
-			want, got, cookie)
-		t.Fatalf(s)
+		s := p.Sprintf("want %d but got %d: champ: %+v", want, got, cookie)
+		t.Fatalf("%s", s)
 	}
 }

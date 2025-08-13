@@ -3,7 +3,6 @@ package adventofcode2015
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 )
 
@@ -160,15 +159,7 @@ func (a wizardSimulator) totalArmor() int {
 	return a.players[0].armor
 }
 
-// pointOrPoints returns "point" or "points", depending on n.
-func pointOrPoints(n int) string {
-	if n == 1 {
-		return "point"
-	}
-	return "points"
-}
-
-// step returns error if cannot afford spell, or if spell is active.
+// // step returns error if cannot afford spell, or if spell is active.
 func (a *wizardSimulator) step(hardMode bool) error {
 	if hardMode {
 		a.players[0].hitPoints--
@@ -255,7 +246,7 @@ func day22(hardMode bool) int {
 			i++
 			return spellID(digits.Buf[i])
 		}
-		g := newWizardSimulator(players, f, ioutil.Discard)
+		g := newWizardSimulator(players, f, io.Discard)
 		// g := newWizardSimulator(players, f, os.Stdout)
 		playerFailed := false
 		spentTooMuch := false

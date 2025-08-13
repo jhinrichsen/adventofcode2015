@@ -1,7 +1,7 @@
 package adventofcode2015
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -91,7 +91,7 @@ func TestDay18Example(t *testing.T) {
 // hashes returns occurences of '#' in a file.
 func hashes(filename string) (uint, error) {
 	var n uint
-	buf, err := ioutil.ReadFile(filename)
+	buf, err := os.ReadFile(filename)
 	if err != nil {
 		return n, err
 	}
@@ -130,7 +130,7 @@ func TestDay18Line0(t *testing.T) {
 
 // gridFromFilename is a helper to construct a grid from a file.
 func gridFromFilename(filename string) (grid, error) {
-	buf, err := ioutil.ReadFile(filename)
+	buf, err := os.ReadFile(filename)
 	if err != nil {
 		return grid{}, err
 	}

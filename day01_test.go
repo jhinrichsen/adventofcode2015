@@ -1,7 +1,7 @@
 package adventofcode2015
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -21,7 +21,7 @@ var day1ExamplesPart1 = []struct {
 }
 
 func day1Input() ([]byte, error) {
-	return ioutil.ReadFile(filename(1))
+	return os.ReadFile(filename(1))
 }
 
 func TestDay1Examples(t *testing.T) {

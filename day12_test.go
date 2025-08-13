@@ -3,8 +3,8 @@ package adventofcode2015
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -73,7 +73,7 @@ func TestDay12SamplesPart1(t *testing.T) {
 
 func TestDay12Part1Sum1(t *testing.T) {
 	filename := "testdata/day12.txt"
-	buf, err := ioutil.ReadFile(filename)
+	buf, err := os.ReadFile(filename)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -87,7 +87,7 @@ func TestDay12Part1Sum1(t *testing.T) {
 
 func TestDay12Part1Sum2(t *testing.T) {
 	filename := "testdata/day12.txt"
-	buf, err := ioutil.ReadFile(filename)
+	buf, err := os.ReadFile(filename)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +115,7 @@ func TestDay12SamplesPart2(t *testing.T) {
 // This is where we really need some parsing.
 func TestDay12Part2(t *testing.T) {
 	filename := "testdata/day12.txt"
-	buf, err := ioutil.ReadFile(filename)
+	buf, err := os.ReadFile(filename)
 	if err != nil {
 		t.Fatal(err)
 	}

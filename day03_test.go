@@ -1,7 +1,7 @@
 package adventofcode2015
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -28,7 +28,7 @@ func TestDay3ExamplesPart1(t *testing.T) {
 }
 
 func inputDay3() (string, error) {
-	buf, err := ioutil.ReadFile(filename(3))
+	buf, err := os.ReadFile(filename(3))
 	if err != nil {
 		return "", err
 	}
