@@ -96,7 +96,7 @@ func p4(s string) bool {
 	return naughty
 }
 
-// at least one letter whcih repeats with exactly one letter between them.
+// at least one letter which repeats with exactly one letter between them.
 // Only works for non-unicode strings, i.e. plain ASCII.
 func p5(s string) bool {
 	if len(s) < 4 {

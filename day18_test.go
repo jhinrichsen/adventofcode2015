@@ -88,7 +88,7 @@ func TestDay18Example(t *testing.T) {
 	}
 }
 
-// hashes returns occurences of '#' in a file.
+// hashes returns occurrences of '#' in a file.
 func hashes(filename string) (uint, error) {
 	var n uint
 	buf, err := os.ReadFile(filename)

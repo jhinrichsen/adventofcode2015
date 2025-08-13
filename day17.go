@@ -61,7 +61,7 @@ func Day17Part2(storage uint, capacities []uint) uint {
 		}
 	}
 
-	// find smallest existing index, return number of occurences
+	// find smallest existing index, return number of occurrences
 	for i := uint(1); i < storage; i++ {
 		if n, ok := m[i]; ok {
 			return n

@@ -37,6 +37,6 @@ func Day8Part2(buf []byte) int {
 			total++
 		}
 	}
-	// leading adn trailing "
+	// leading and trailing "
 	return total + 2
 }
