@@ -1,0 +1,71 @@
+goos: linux
+goarch: amd64
+pkg: gitlab.com/jhinrichsen/adventofcode2015
+cpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics     
+BenchmarkDay1Part1-16              	  385460	      3045 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1-16              	  850243	      1387 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1-16              	  852916	      1405 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1-16              	  814526	      1410 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1-16              	  850713	      1389 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1Branchless-16    	  809373	      1402 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1Branchless-16    	  852116	      1387 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1Branchless-16    	  840454	      1408 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1Branchless-16    	  857385	      1401 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1Branchless-16    	  860079	      1398 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part2-16              	 1634648	       742.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part2-16              	 1624822	       742.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part2-16              	 1612780	       732.0 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part2-16              	 1611621	       746.2 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part2-16              	 1613071	       732.3 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay20Champ-16             	       4	 303265117 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20Champ-16             	       7	 160880248 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20Champ-16             	       7	 161037914 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20Champ-16             	       7	 160611711 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20Champ-16             	       7	 161795715 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20MyChamp-16           	       7	 159221584 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20MyChamp-16           	       7	 156823437 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20MyChamp-16           	       7	 157568807 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20MyChamp-16           	       7	 161859243 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20MyChamp-16           	       7	 157498700 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay23Part1-16             	   23654	     50989 ns/op	   55680 B/op	    1484 allocs/op
+BenchmarkDay23Part1-16             	   23672	     51284 ns/op	   55680 B/op	    1484 allocs/op
+BenchmarkDay23Part1-16             	   23856	     51172 ns/op	   55680 B/op	    1484 allocs/op
+BenchmarkDay23Part1-16             	   23665	     51134 ns/op	   55680 B/op	    1484 allocs/op
+BenchmarkDay23Part1-16             	   23493	     51292 ns/op	   55680 B/op	    1484 allocs/op
+BenchmarkDay25Part1-16             	      12	  96267302 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay25Part1-16             	      12	  96250236 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay25Part1-16             	      12	  96168270 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay25Part1-16             	      12	  95274255 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay25Part1-16             	      12	  94507502 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay6Part1-16              	      33	  34245201 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part1-16              	      33	  35066784 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part1-16              	      34	  34380754 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part1-16              	      33	  34417769 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part1-16              	      34	  34841478 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part2-16              	      30	  39204826 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part2-16              	      33	  34771372 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part2-16              	      33	  34929938 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part2-16              	      33	  34944542 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part2-16              	      33	  34968807 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkSigma-16                  	 8280637	       144.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigma-16                  	 8428114	       144.2 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigma-16                  	 8274777	       144.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigma-16                  	 8288684	       144.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigma-16                  	 8406601	       142.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkYieldAlt-16               	563483342	         2.145 ns/op	       0 B/op	       0 allocs/op
+BenchmarkYieldAlt-16               	557814650	         2.139 ns/op	       0 B/op	       0 allocs/op
+BenchmarkYieldAlt-16               	566416774	         2.146 ns/op	       0 B/op	       0 allocs/op
+BenchmarkYieldAlt-16               	563259856	         2.152 ns/op	       0 B/op	       0 allocs/op
+BenchmarkYieldAlt-16               	568207575	         2.151 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigmaRecursive-16         	    8844	    116953 ns/op	  117360 B/op	    7824 allocs/op
+BenchmarkSigmaRecursive-16         	    8598	    117696 ns/op	  117360 B/op	    7824 allocs/op
+BenchmarkSigmaRecursive-16         	    8732	    118812 ns/op	  117360 B/op	    7824 allocs/op
+BenchmarkSigmaRecursive-16         	    8662	    117425 ns/op	  117360 B/op	    7824 allocs/op
+BenchmarkSigmaRecursive-16         	    8625	    118047 ns/op	  117360 B/op	    7824 allocs/op
+BenchmarkSigmaMemoized-16          	171021798	         6.912 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigmaMemoized-16          	172493782	         7.090 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigmaMemoized-16          	171836944	         6.845 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigmaMemoized-16          	172687467	         6.966 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigmaMemoized-16          	172734304	         6.902 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	gitlab.com/jhinrichsen/adventofcode2015	93.303s

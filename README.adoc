@@ -13,6 +13,8 @@ I reverted from Rust to Go because the instability of Rust made me lose all inte
 Which turned out to be a good decision.
 Even in 2023 people use Rust's nightly when doing AOC 2023, and a feature flag list that spans multiple pages.
 
+image::static/dashboard.png["AOC 2015 dashboard"]
+
 == Build from source
 
 ----
@@ -21,7 +23,7 @@ $ go get gitlab.com/jhinrichsen/adventofcode2015
 
 == Benchmarks
 
-Go 1.16.6
+Go 1.16.6, MacBook Pro 2019
 ----
 go test -run=^$ -bench=. -benchmem -timeout=30m
 goos: darwin
@@ -44,3 +46,26 @@ BenchmarkSigmaMemoized-16          	129887812	         9.233 ns/op	       0 B/op
 PASS
 ----
 
+Go 1.22.2, Framework Laptop 16"
+----
+$ go test -run=xxx -bench=. -benchmem
+goos: linux
+goarch: amd64
+pkg: gitlab.com/jhinrichsen/adventofcode2015
+cpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics
+BenchmarkDay1Part1-16              	  365810	      3174 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part1Branchless-16    	  855054	      1406 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay1Part2-16              	 1604402	       745.1 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay20Champ-16             	       4	 300328312 ns/op	28803072 B/op	       1 allocs/op
+BenchmarkDay20MyChamp-16           	       7	 158237253 ns/op	28803085 B/op	       1 allocs/op
+BenchmarkDay23Part1-16             	   23416	     50221 ns/op	   55680 B/op	    1484 allocs/op
+BenchmarkDay25Part1-16             	      12	  96354585 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay6Part1-16              	      30	  34820575 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkDay6Part2-16              	      30	  35163435 ns/op	   41376 B/op	     900 allocs/op
+BenchmarkSigma-16                  	 8152702	       145.2 ns/op	       0 B/op	       0 allocs/op
+BenchmarkYieldAlt-16               	560823036	         2.132 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSigmaRecursive-16         	    9974	    119114 ns/op	  117360 B/op	    7824 allocs/op
+BenchmarkSigmaMemoized-16          	194258068	         6.566 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	gitlab.com/jhinrichsen/adventofcode2015	22.969s
+----
