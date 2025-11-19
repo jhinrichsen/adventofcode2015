@@ -18,13 +18,10 @@ func numbered(ss []string) string {
 	return sb.String()
 }
 
-func testWizardSimulator(players [2]day22Player,
+func testWizardSimulator(t *testing.T, players [2]day22Player,
 	spells []spellID, example uint) error {
 	filename := fmt.Sprintf("testdata/day22_example%d.txt", example)
-	wantLines, err := linesFromFilename(filename)
-	if err != nil {
-		return err
-	}
+	wantLines := linesFromFilename(t, filename)
 
 	var w bytes.Buffer
 	i := -1
@@ -39,10 +36,7 @@ func testWizardSimulator(players [2]day22Player,
 			return err
 		}
 	}
-	gotLines, err := linesFromReader(&w)
-	if err != nil {
-		return err
-	}
+	gotLines := linesFromReader(t, &w)
 	for i := range wantLines {
 		if wantLines[i] != gotLines[i] {
 			s := numbered(gotLines)
@@ -62,7 +56,7 @@ func TestDay22Example1(t *testing.T) {
 		poison,
 		magicMissile,
 	}
-	err := testWizardSimulator(players, spells, 1)
+	err := testWizardSimulator(t, players, spells, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -80,7 +74,7 @@ func TestDay22Example2(t *testing.T) {
 		poison,
 		magicMissile,
 	}
-	err := testWizardSimulator(players, spells, 2)
+	err := testWizardSimulator(t, players, spells, 2)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -95,7 +89,7 @@ func TestDay22CastActiveSpell(t *testing.T) {
 		recharge,
 		recharge,
 	}
-	err := testWizardSimulator(players, spells, 2)
+	err := testWizardSimulator(t, players, spells, 2)
 	if err == nil {
 		t.Fatal("want error but got none")
 	}
@@ -120,5 +114,19 @@ func TestDay22Part2(t *testing.T) {
 	got := Day22Part2()
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay22Part1(b *testing.B) {
+	b.ResetTimer()
+	for range b.N {
+		_ = Day22Part1()
+	}
+}
+
+func BenchmarkDay22Part2(b *testing.B) {
+	b.ResetTimer()
+	for range b.N {
+		_ = Day22Part2()
 	}
 }

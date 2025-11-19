@@ -57,3 +57,19 @@ func TestDay24Part2(t *testing.T) {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
+
+func BenchmarkDay24Part1(b *testing.B) {
+	ws, _ := newWeights(filename(24))
+	b.ResetTimer()
+	for range b.N {
+		_ = Day24Part1(ws)
+	}
+}
+
+func BenchmarkDay24Part2(b *testing.B) {
+	ws, _ := newWeights(filename(24))
+	b.ResetTimer()
+	for range b.N {
+		_ = Day24Part2(ws)
+	}
+}

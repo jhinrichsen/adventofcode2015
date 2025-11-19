@@ -105,3 +105,25 @@ func TestDay08Part2(t *testing.T) {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
+
+func BenchmarkDay08Part1(b *testing.B) {
+	buf, err := inputFromFilename(filename(8))
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day08Part1(buf)
+	}
+}
+
+func BenchmarkDay08Part2(b *testing.B) {
+	buf, err := inputFromFilename(filename(8))
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day08Part2(buf)
+	}
+}

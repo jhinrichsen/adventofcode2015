@@ -7,10 +7,7 @@ import (
 
 func TestDay14ExampleParsing(t *testing.T) {
 	filename := exampleFilename(14)
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename)
 	if len(lines) != 2 {
 		t.Fatalf("want %d but got %d", 2, len(lines))
 	}
@@ -31,10 +28,7 @@ func TestDay14ExampleParsing(t *testing.T) {
 
 func TestDay14Example(t *testing.T) {
 	filename := exampleFilename(14)
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename)
 	var rs []Reindeer
 	for i, line := range lines {
 		r, err := newReindeer(line)
@@ -73,10 +67,7 @@ func TestDay14Example(t *testing.T) {
 }
 
 func TestDay14Part1(t *testing.T) {
-	lines, err := linesFromFilename(filename(14))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(14))
 	var rs []Reindeer
 	for i, line := range lines {
 		r, err := newReindeer(line)
@@ -95,10 +86,7 @@ func TestDay14Part1(t *testing.T) {
 
 func TestDay14Part2Example(t *testing.T) {
 	filename := exampleFilename(14)
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename)
 	var rs []Reindeer
 	for i, line := range lines {
 		r, err := newReindeer(line)
@@ -125,10 +113,7 @@ func TestDay14Part2Example(t *testing.T) {
 }
 
 func TestDay14Part2(t *testing.T) {
-	lines, err := linesFromFilename(filename(14))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(14))
 	var rs []Reindeer
 	for i, line := range lines {
 		r, err := newReindeer(line)
@@ -142,5 +127,31 @@ func TestDay14Part2(t *testing.T) {
 	got := Day14Part2(rs, 2503)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay14Part1(b *testing.B) {
+	lines := linesFromFilename(b, filename(14))
+	var rs []Reindeer
+	for _, line := range lines {
+		r, _ := newReindeer(line)
+		rs = append(rs, r)
+	}
+	b.ResetTimer()
+	for range b.N {
+		_ = Day14Part1(rs, 2503)
+	}
+}
+
+func BenchmarkDay14Part2(b *testing.B) {
+	lines := linesFromFilename(b, filename(14))
+	var rs []Reindeer
+	for _, line := range lines {
+		r, _ := newReindeer(line)
+		rs = append(rs, r)
+	}
+	b.ResetTimer()
+	for range b.N {
+		_ = Day14Part2(rs, 2503)
 	}
 }

@@ -52,10 +52,7 @@ func TestDay19Hohoho(t *testing.T) {
 
 func TestDay19Part1(t *testing.T) {
 	const want = 576
-	lines, err := linesFromFilename(filename(19))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(19))
 	p, err := newPlant(lines[:len(lines)-2])
 	if err != nil {
 		t.Fatal(err)
@@ -101,10 +98,7 @@ func TestDay19Example2Part2(t *testing.T) {
 
 func TestDay19Part2(t *testing.T) {
 	const want = 207
-	lines, err := linesFromFilename(filename(19))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(19))
 	p, err := newPlant(lines[:len(lines)-2])
 	if err != nil {
 		t.Fatal(err)
@@ -113,6 +107,27 @@ func TestDay19Part2(t *testing.T) {
 	got := Day19Part2(p.molecule, p.reducers())
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay19Part1(b *testing.B) {
+	lines := linesFromFilename(b, filename(19))
+	p, _ := newPlant(lines[:len(lines)-2])
+	p.molecule = lines[len(lines)-1]
+	b.ResetTimer()
+	for range b.N {
+		_ = Day19Part1(p)
+	}
+}
+
+func BenchmarkDay19Part2(b *testing.B) {
+	lines := linesFromFilename(b, filename(19))
+	p, _ := newPlant(lines[:len(lines)-2])
+	p.molecule = lines[len(lines)-1]
+	reducers := p.reducers()
+	b.ResetTimer()
+	for range b.N {
+		_ = Day19Part2(p.molecule, reducers)
 	}
 }
 

@@ -37,3 +37,19 @@ func TestDay04Part2(t *testing.T) {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
+
+func BenchmarkDay04Part1(b *testing.B) {
+	const input = "bgvyzdsv"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day04Part1(input)
+	}
+}
+
+func BenchmarkDay04Part2(b *testing.B) {
+	const input = "bgvyzdsv"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day04Part2(input)
+	}
+}

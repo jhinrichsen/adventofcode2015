@@ -98,7 +98,7 @@ func Day13Part1(filename string) (int, error) {
 // sitting next to Bob."
 func newHappinesses(filename string) (happinesses, error) {
 	var hs []happiness
-	lines, err := linesFromFilename(filename)
+	lines, err := readLinesFromFile(filename)
 	if err != nil {
 		return hs, err
 	}

@@ -20,28 +20,22 @@ func TestDay17Example(t *testing.T) {
 	}
 }
 
-func numbers(filename string) ([]uint, error) {
+func numbers(t testing.TB, filename string) []uint {
 	var ns []uint
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		return ns, err
-	}
+	lines := linesFromFilename(t, filename)
 	for _, line := range lines {
 		n, err := strconv.ParseUint(line, 10, 32)
 		if err != nil {
-			return ns, err
+			t.Fatal(err)
 		}
 		ns = append(ns, uint(n))
 	}
-	return ns, nil
+	return ns
 }
 
 func TestDay17Part1(t *testing.T) {
 	const want = 1304
-	ns, err := numbers(filename(17))
-	if err != nil {
-		t.Fatal(err)
-	}
+	ns := numbers(t, filename(17))
 	got := Day17Part1(storage, ns)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
@@ -58,12 +52,25 @@ func TestDay17Part2Example(t *testing.T) {
 
 func TestDay17Part2(t *testing.T) {
 	const want = 18
-	ns, err := numbers(filename(17))
-	if err != nil {
-		t.Fatal(err)
-	}
+	ns := numbers(t, filename(17))
 	got := Day17Part2(storage, ns)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay17Part1(b *testing.B) {
+	ns := numbers(b, filename(17))
+	b.ResetTimer()
+	for range b.N {
+		_ = Day17Part1(storage, ns)
+	}
+}
+
+func BenchmarkDay17Part2(b *testing.B) {
+	ns := numbers(b, filename(17))
+	b.ResetTimer()
+	for range b.N {
+		_ = Day17Part2(storage, ns)
 	}
 }

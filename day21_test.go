@@ -32,3 +32,17 @@ func TestDay21Part2(t *testing.T) {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
+
+func BenchmarkDay21Part1(b *testing.B) {
+	b.ResetTimer()
+	for range b.N {
+		_ = Day21Part1()
+	}
+}
+
+func BenchmarkDay21Part2(b *testing.B) {
+	b.ResetTimer()
+	for range b.N {
+		_ = Day21Part2()
+	}
+}

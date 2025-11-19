@@ -130,3 +130,23 @@ func TestDay12Part2(t *testing.T) {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
+
+func BenchmarkDay12Part1(b *testing.B) {
+	filename := "testdata/day12.txt"
+	buf, _ := os.ReadFile(filename)
+	s := string(buf)
+	b.ResetTimer()
+	for range b.N {
+		_ = sum(s)
+	}
+}
+
+func BenchmarkDay12Part2(b *testing.B) {
+	filename := "testdata/day12.txt"
+	buf, _ := os.ReadFile(filename)
+	s := string(buf)
+	b.ResetTimer()
+	for range b.N {
+		_ = sum2(s)
+	}
+}

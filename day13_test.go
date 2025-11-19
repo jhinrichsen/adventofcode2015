@@ -34,3 +34,19 @@ func TestDay13Part2(t *testing.T) {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
+
+func BenchmarkDay13Part1(b *testing.B) {
+	fname := filename(13)
+	b.ResetTimer()
+	for range b.N {
+		_, _ = Day13Part1(fname)
+	}
+}
+
+func BenchmarkDay13Part2(b *testing.B) {
+	fname := filename(13)
+	b.ResetTimer()
+	for range b.N {
+		_, _ = Day13Part2(fname)
+	}
+}

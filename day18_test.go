@@ -117,10 +117,7 @@ func TestDay18ExampleOn(t *testing.T) {
 
 func TestDay18Line0(t *testing.T) {
 	const want = "#..####.##..#...#..#...#...###.#.#.#..#....#.##..#...##...#..#.....##..#####....#.##..##....##.#...."
-	lines, err := linesFromFilename(filename(18))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(18))
 	got := lines[0]
 	if want != got {
 		t.Fatalf("want %q but got %q", want, got)
@@ -218,5 +215,23 @@ func TestDay18Part2(t *testing.T) {
 	got := Day18Part2(g, 100)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay18Part1(b *testing.B) {
+	g, _ := gridFromFilename(filename(18))
+	b.ResetTimer()
+	for range b.N {
+		gCopy := g
+		_ = Day18Part1(gCopy, 100)
+	}
+}
+
+func BenchmarkDay18Part2(b *testing.B) {
+	g, _ := gridFromFilename(filename(18))
+	b.ResetTimer()
+	for range b.N {
+		gCopy := g
+		_ = Day18Part2(gCopy, 100)
 	}
 }

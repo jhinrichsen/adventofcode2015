@@ -35,10 +35,7 @@ func TestDay05Example1(t *testing.T) {
 
 func TestDay05Part1(t *testing.T) {
 	const want = 238
-	lines, err := linesFromFilename(filename(5))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(5))
 	got := day5(lines, nicePart1)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
@@ -47,12 +44,25 @@ func TestDay05Part1(t *testing.T) {
 
 func TestDay05Part2(t *testing.T) {
 	const want = 69
-	lines, err := linesFromFilename(filename(5))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(5))
 	got := day5(lines, nicePart2)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay05Part1(b *testing.B) {
+	lines := linesFromFilename(b, filename(5))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day05Part1(lines)
+	}
+}
+
+func BenchmarkDay05Part2(b *testing.B) {
+	lines := linesFromFilename(b, filename(5))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day05Part2(lines)
 	}
 }

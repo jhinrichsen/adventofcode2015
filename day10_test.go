@@ -55,3 +55,25 @@ func TestDay10Part2(t *testing.T) {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
+
+func BenchmarkDay10Part1(b *testing.B) {
+	b.ResetTimer()
+	for range b.N {
+		s := inputDay10
+		for range 40 {
+			s = lookAndSay(s)
+		}
+		_ = len(s)
+	}
+}
+
+func BenchmarkDay10Part2(b *testing.B) {
+	b.ResetTimer()
+	for range b.N {
+		s := inputDay10
+		for range 50 {
+			s = lookAndSay(s)
+		}
+		_ = len(s)
+	}
+}

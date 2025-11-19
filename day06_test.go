@@ -3,10 +3,7 @@ package adventofcode2015
 import "testing"
 
 func BenchmarkDay06Part1(b *testing.B) {
-	lines, err := linesFromFilename(filename(6))
-	if err != nil {
-		b.Fatal(err)
-	}
+	lines := linesFromFilename(b, filename(6))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_, err := Day06Part1(lines)
@@ -17,10 +14,7 @@ func BenchmarkDay06Part1(b *testing.B) {
 }
 
 func BenchmarkDay06Part2(b *testing.B) {
-	lines, err := linesFromFilename(filename(6))
-	if err != nil {
-		b.Fatal(err)
-	}
+	lines := linesFromFilename(b, filename(6))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_, err := Day06Part2(lines)
@@ -32,10 +26,7 @@ func BenchmarkDay06Part2(b *testing.B) {
 
 func TestDay06Part1(t *testing.T) {
 	const want = 400_410
-	lines, err := linesFromFilename(filename(6))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(6))
 	got, err := Day06Part1(lines)
 	if err != nil {
 		t.Fatal(err)
@@ -47,10 +38,7 @@ func TestDay06Part1(t *testing.T) {
 
 func TestDay06Part2(t *testing.T) {
 	const want = 15_343_601
-	lines, err := linesFromFilename(filename(6))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(6))
 	got, err := Day06Part2(lines)
 	if err != nil {
 		t.Fatal(err)

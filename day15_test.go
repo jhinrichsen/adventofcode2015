@@ -25,28 +25,22 @@ func TestDay15NewIngredient(t *testing.T) {
 	}
 }
 
-func ingredients(filename string) ([]Ingredient, error) {
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		return nil, err
-	}
+func ingredients(t testing.TB, filename string) []Ingredient {
+	lines := linesFromFilename(t, filename)
 	var is []Ingredient
 	for _, line := range lines {
 		i, err := NewIngredient(line)
 		if err != nil {
-			return nil, err
+			t.Fatal(err)
 		}
 		is = append(is, i)
 	}
-	return is, nil
+	return is
 }
 
 func TestDay15Example(t *testing.T) {
 	const want = 62_842_880
-	is, err := ingredients(exampleFilename(15))
-	if err != nil {
-		t.Fatal(err)
-	}
+	is := ingredients(t, exampleFilename(15))
 	if len(is) != 2 {
 		t.Fatalf("want butterscotch and cinnamon but got %q", is)
 	}
@@ -62,10 +56,7 @@ func TestDay15Example(t *testing.T) {
 
 func TestDay15ProveExample(t *testing.T) {
 	const want = 62_842_880
-	is, err := ingredients(exampleFilename(15))
-	if err != nil {
-		t.Fatal(err)
-	}
+	is := ingredients(t, exampleFilename(15))
 	cookie := Day15Part1(is)
 	got := cookie.score()
 	die(want, got, cookie, t)
@@ -73,10 +64,7 @@ func TestDay15ProveExample(t *testing.T) {
 
 func TestDay15Part1(t *testing.T) {
 	const want = 13_882_464
-	is, err := ingredients(filename(15))
-	if err != nil {
-		t.Fatal(err)
-	}
+	is := ingredients(t, filename(15))
 	cookie := Day15Part1(is)
 	got := cookie.score()
 	die(want, got, cookie, t)
@@ -84,10 +72,7 @@ func TestDay15Part1(t *testing.T) {
 
 func TestDay15Part2(t *testing.T) {
 	const want = 11_171_160
-	is, err := ingredients(filename(15))
-	if err != nil {
-		t.Fatal(err)
-	}
+	is := ingredients(t, filename(15))
 	cookie := Day15Part2(is)
 	got := cookie.score()
 	die(want, got, cookie, t)
@@ -100,5 +85,23 @@ func die(want, got uint, cookie Cookie, t *testing.T) {
 		p := message.NewPrinter(language.English)
 		s := p.Sprintf("want %d but got %d: champ: %+v", want, got, cookie)
 		t.Fatalf("%s", s)
+	}
+}
+
+func BenchmarkDay15Part1(b *testing.B) {
+	is := ingredients(b, filename(15))
+	b.ResetTimer()
+	for range b.N {
+		cookie := Day15Part1(is)
+		_ = cookie.score()
+	}
+}
+
+func BenchmarkDay15Part2(b *testing.B) {
+	is := ingredients(b, filename(15))
+	b.ResetTimer()
+	for range b.N {
+		cookie := Day15Part2(is)
+		_ = cookie.score()
 	}
 }

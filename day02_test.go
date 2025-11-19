@@ -31,10 +31,7 @@ func TestDay02ExamplesPart1(t *testing.T) {
 
 func TestDay02Part1(t *testing.T) {
 	const want = 1_598_415
-	lines, err := linesFromFilename(filename(2))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(2))
 	got, err := Day02Part1(lines)
 	if err != nil {
 		t.Fatal(err)
@@ -70,15 +67,28 @@ func TestDay02ExamplesPart2(t *testing.T) {
 
 func TestDay02Part2(t *testing.T) {
 	const want = 3_812_909
-	lines, err := linesFromFilename(filename(2))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(2))
 	got, err := Day02Part2(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay02Part1(b *testing.B) {
+	lines := linesFromFilename(b, filename(2))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day02Part1(lines)
+	}
+}
+
+func BenchmarkDay02Part2(b *testing.B) {
+	lines := linesFromFilename(b, filename(2))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Day02Part2(lines)
 	}
 }

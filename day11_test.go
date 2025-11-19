@@ -74,3 +74,17 @@ func TestDay11Part2(t *testing.T) {
 		t.Fatalf("want %q but got %q", want, got)
 	}
 }
+
+func BenchmarkDay11Part1(b *testing.B) {
+	b.ResetTimer()
+	for range b.N {
+		_ = next("hepxcrrq")
+	}
+}
+
+func BenchmarkDay11Part2(b *testing.B) {
+	b.ResetTimer()
+	for range b.N {
+		_ = next(next("hepxcrrq"))
+	}
+}

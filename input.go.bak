@@ -19,12 +19,21 @@ func ReadLines[R io.Reader](r R) ([]string, error) {
 	return lines, nil
 }
 
-// readLinesFromFile reads lines from a file (unexported for internal use only)
-func readLinesFromFile(filename string) ([]string, error) {
+// linesFromFilename reads lines from a file
+func linesFromFilename(filename string) ([]string, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return []string{}, err
 	}
 	defer f.Close()
 	return ReadLines(f)
+}
+
+// linesFromReader reads lines from a reader
+func linesFromReader(r io.Reader) ([]string, error) {
+	lines, err := ReadLines(r)
+	if err != nil {
+		return nil, err
+	}
+	return lines, nil
 }

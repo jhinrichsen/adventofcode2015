@@ -56,7 +56,7 @@ func (a routes) distance(cities []string) (uint, error) {
 
 func newRoutes(filename string) (routes, error) {
 	var rs routes
-	lines, err := linesFromFilename(filename)
+	lines, err := readLinesFromFile(filename)
 	if err != nil {
 		return rs, err
 	}

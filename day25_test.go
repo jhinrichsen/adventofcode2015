@@ -77,3 +77,4 @@ func BenchmarkDay25Part1(b *testing.B) {
 		}
 	}
 }
+

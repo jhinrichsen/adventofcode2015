@@ -24,7 +24,7 @@ func quantumEntanglement(a []uint) uint {
 
 func newWeights(filename string) (weights, error) {
 	var ws weights
-	lines, err := linesFromFilename(filename)
+	lines, err := readLinesFromFile(filename)
 	if err != nil {
 		return ws, err
 	}

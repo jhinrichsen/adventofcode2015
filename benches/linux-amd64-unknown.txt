@@ -1,12 +1,56 @@
+--- FAIL: BenchmarkDay01Part1
+    day01_test.go:43: open testdata/day01.txt: no such file or directory
+--- FAIL: BenchmarkDay01Part2
+    day01_test.go:98: open testdata/day01.txt: no such file or directory
+--- FAIL: BenchmarkDay02Part1
+    day02_test.go:81: open testdata/day02.txt: no such file or directory
+--- FAIL: BenchmarkDay02Part2
+    day02_test.go:89: open testdata/day02.txt: no such file or directory
+--- FAIL: BenchmarkDay03Part1
+    day03_test.go:87: open testdata/day03.txt: no such file or directory
+--- FAIL: BenchmarkDay03Part2
+    day03_test.go:98: open testdata/day03.txt: no such file or directory
 goos: linux
 goarch: amd64
 pkg: gitlab.com/jhinrichsen/adventofcode2015
 cpu: Intel(R) Xeon(R) CPU @ 2.60GHz
-BenchmarkDay01Part1-16    	  548019	      2256 ns/op	       0 B/op	       0 allocs/op
-BenchmarkDay01Part2-16    	  934188	      1322 ns/op	       0 B/op	       0 allocs/op
-BenchmarkDay06Part1-16    	      22	  56228538 ns/op	 4071840 B/op	     904 allocs/op
-BenchmarkDay06Part2-16    	      22	  52246007 ns/op	 4071840 B/op	     904 allocs/op
-BenchmarkDay23Part1-16    	   10000	    102424 ns/op	   55680 B/op	    1484 allocs/op
-BenchmarkDay25Part1-16    	       7	 146226629 ns/op	       0 B/op	       0 allocs/op
-PASS
-ok  	gitlab.com/jhinrichsen/adventofcode2015	7.264s
+BenchmarkDay04Part1-16    	       7	 153774264 ns/op	26474289 B/op	 1527201 allocs/op
+BenchmarkDay04Part2-16    	       2	 611762522 ns/op	108028124 B/op	 6232172 allocs/op
+--- FAIL: BenchmarkDay05Part1
+    day05_test.go:55: open testdata/day05.txt: no such file or directory
+--- FAIL: BenchmarkDay05Part2
+    day05_test.go:63: open testdata/day05.txt: no such file or directory
+--- FAIL: BenchmarkDay06Part1
+    day06_test.go:6: open testdata/day06.txt: no such file or directory
+--- FAIL: BenchmarkDay06Part2
+    day06_test.go:17: open testdata/day06.txt: no such file or directory
+--- FAIL: BenchmarkDay08Part1
+    day08_test.go:112: open testdata/day08.txt: no such file or directory
+--- FAIL: BenchmarkDay08Part2
+    day08_test.go:123: open testdata/day08.txt: no such file or directory
+BenchmarkDay09Part1-16    	   35875	     28387 ns/op	      96 B/op	       3 allocs/op
+BenchmarkDay09Part2-16    	   44920	     25638 ns/op	      96 B/op	       3 allocs/op
+BenchmarkDay10Part1-16    	     100	  11373803 ns/op	 6959808 B/op	     498 allocs/op
+BenchmarkDay10Part2-16    	       8	 152132925 ns/op	117096564 B/op	     848 allocs/op
+BenchmarkDay11Part1-16    	     126	   9488510 ns/op	 2992360 B/op	  374045 allocs/op
+BenchmarkDay11Part2-16    	      36	  33819863 ns/op	10596448 B/op	 1324556 allocs/op
+BenchmarkDay12Part1-16    	    4634	    305559 ns/op	  137976 B/op	      20 allocs/op
+BenchmarkDay12Part2-16    	    1124	   1082870 ns/op	  324121 B/op	    8399 allocs/op
+BenchmarkDay13Part1-16    	      14	  87935363 ns/op	 5187557 B/op	   40460 allocs/op
+BenchmarkDay13Part2-16    	       2	 743643324 ns/op	52281528 B/op	  363021 allocs/op
+BenchmarkDay14Part1-16    	39303488	        31.10 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay14Part2-16    	    1070	   1097589 ns/op	  642384 B/op	    5011 allocs/op
+BenchmarkDay15Part1-16    	       7	 180517319 ns/op	104774918 B/op	 1882230 allocs/op
+BenchmarkDay15Part2-16    	       8	 171610959 ns/op	104774722 B/op	 1882229 allocs/op
+BenchmarkDay16Part1-16    	    5217	    289505 ns/op	  173072 B/op	    2984 allocs/op
+BenchmarkDay16Part2-16    	    7029	    203909 ns/op	  120640 B/op	    2080 allocs/op
+BenchmarkDay17Part1-16    	       4	 304149598 ns/op	251369292 B/op	 4973853 allocs/op
+BenchmarkDay17Part2-16    	       4	 277182262 ns/op	251369292 B/op	 4973853 allocs/op
+BenchmarkDay18Part1-16    	      63	  19066435 ns/op	 1388800 B/op	   10100 allocs/op
+BenchmarkDay18Part2-16    	      63	  18666061 ns/op	 1388800 B/op	   10100 allocs/op
+BenchmarkDay19Part1-16    	    3495	    503830 ns/op	  415304 B/op	     714 allocs/op
+BenchmarkDay19Part2-16    	       2	 958694304 ns/op	612460188 B/op	 1634274 allocs/op
+BenchmarkDay20Part1-16    	       1	5727341540 ns/op	126371328 B/op	 6209316 allocs/op
+BenchmarkDay20Part2-16    	       1	1446057729 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay21Part1-16    	    8857	    130107 ns/op	   86128 B/op	      17 allocs/op
+BenchmarkDay21Part2-16    	    8397	    148018 ns/op	   86128 B/op	      17 allocs/op
