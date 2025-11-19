@@ -1,0 +1,12 @@
+goos: linux
+goarch: amd64
+pkg: gitlab.com/jhinrichsen/adventofcode2015
+cpu: Intel(R) Xeon(R) CPU @ 2.60GHz
+BenchmarkDay01Part1-16    	  548019	      2256 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay01Part2-16    	  934188	      1322 ns/op	       0 B/op	       0 allocs/op
+BenchmarkDay06Part1-16    	      22	  56228538 ns/op	 4071840 B/op	     904 allocs/op
+BenchmarkDay06Part2-16    	      22	  52246007 ns/op	 4071840 B/op	     904 allocs/op
+BenchmarkDay23Part1-16    	   10000	    102424 ns/op	   55680 B/op	    1484 allocs/op
+BenchmarkDay25Part1-16    	       7	 146226629 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	gitlab.com/jhinrichsen/adventofcode2015	7.264s

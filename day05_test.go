@@ -21,7 +21,7 @@ var examplesDay5 = []struct {
 	{"ieodomkazucvgmuy", nicePart2, 0},
 }
 
-func TestDay5Example1(t *testing.T) {
+func TestDay05Example1(t *testing.T) {
 	for _, tt := range examplesDay5 {
 		t.Run(tt.in, func(t *testing.T) {
 			want := tt.out
@@ -33,7 +33,7 @@ func TestDay5Example1(t *testing.T) {
 	}
 }
 
-func TestDay5Part1(t *testing.T) {
+func TestDay05Part1(t *testing.T) {
 	const want = 238
 	lines, err := linesFromFilename(filename(5))
 	if err != nil {
@@ -45,7 +45,7 @@ func TestDay5Part1(t *testing.T) {
 	}
 }
 
-func TestDay5Part2(t *testing.T) {
+func TestDay05Part2(t *testing.T) {
 	const want = 69
 	lines, err := linesFromFilename(filename(5))
 	if err != nil {

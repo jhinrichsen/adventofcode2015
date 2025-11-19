@@ -1,8 +1,8 @@
 package adventofcode2015
 
-// Day8Part1 returns logical number of characters for given buffer.
+// Day08Part1 returns logical number of characters for given buffer.
 // Physical number of characters can easily be computed via len(buf).
-func Day8Part1(buf []byte) int {
+func Day08Part1(buf []byte) int {
 	n := 0
 	for i := 0; i < len(buf); i++ {
 		switch buf[i] {
@@ -23,11 +23,11 @@ func Day8Part1(buf []byte) int {
 	return n
 }
 
-// Day8Part2 escapes a buffer and returns the number of escaped bytes, including
+// Day08Part2 escapes a buffer and returns the number of escaped bytes, including
 // a starting and leading ".
 // " -> \"
 // \ -> \\
-func Day8Part2(buf []byte) int {
+func Day08Part2(buf []byte) int {
 	total := len(buf)
 	for _, b := range buf {
 		if b == '\\' {

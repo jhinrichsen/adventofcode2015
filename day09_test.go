@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestDay9Part1Example(t *testing.T) {
+func TestDay09Part1Example(t *testing.T) {
 	const want = 605
 	got, _, err := Day9(exampleFilename(9))
 	if err != nil {
@@ -15,7 +15,7 @@ func TestDay9Part1Example(t *testing.T) {
 	}
 }
 
-func TestDay9Part1(t *testing.T) {
+func TestDay09Part1(t *testing.T) {
 	const want = 117
 	got, _, err := Day9(filename(9))
 	if err != nil {
@@ -26,7 +26,7 @@ func TestDay9Part1(t *testing.T) {
 	}
 }
 
-func TestDay9Part2Example(t *testing.T) {
+func TestDay09Part2Example(t *testing.T) {
 	const want = 982
 	_, got, err := Day9(exampleFilename(9))
 	if err != nil {
@@ -37,7 +37,7 @@ func TestDay9Part2Example(t *testing.T) {
 	}
 }
 
-func TestDay9Part2(t *testing.T) {
+func TestDay09Part2(t *testing.T) {
 	const want = 909
 	_, got, err := Day9(filename(9))
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-var day2ExamplesPart1 = []struct {
+var day02ExamplesPart1 = []struct {
 	in  string
 	out uint
 }{
@@ -13,12 +13,12 @@ var day2ExamplesPart1 = []struct {
 	{"1x1x10", 43},
 }
 
-func TestDay2ExamplesPart1(t *testing.T) {
-	for _, tt := range day2ExamplesPart1 {
+func TestDay02ExamplesPart1(t *testing.T) {
+	for _, tt := range day02ExamplesPart1 {
 		id := fmt.Sprintf("%+v", tt.in)
 		t.Run(id, func(t *testing.T) {
 			want := tt.out
-			got, err := Day2Part1([]string{tt.in})
+			got, err := Day02Part1([]string{tt.in})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -29,13 +29,13 @@ func TestDay2ExamplesPart1(t *testing.T) {
 	}
 }
 
-func TestDay2Part1(t *testing.T) {
+func TestDay02Part1(t *testing.T) {
 	const want = 1_598_415
 	lines, err := linesFromFilename(filename(2))
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := Day2Part1(lines)
+	got, err := Day02Part1(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,7 +44,7 @@ func TestDay2Part1(t *testing.T) {
 	}
 }
 
-var day2ExamplesPart2 = []struct {
+var day02ExamplesPart2 = []struct {
 	in  string
 	out uint
 }{
@@ -52,12 +52,12 @@ var day2ExamplesPart2 = []struct {
 	{"1x1x10", 14},
 }
 
-func TestDay2ExamplesPart2(t *testing.T) {
-	for _, tt := range day2ExamplesPart2 {
+func TestDay02ExamplesPart2(t *testing.T) {
+	for _, tt := range day02ExamplesPart2 {
 		id := fmt.Sprintf("%+v", tt.in)
 		t.Run(id, func(t *testing.T) {
 			want := tt.out
-			got, err := Day2Part2([]string{tt.in})
+			got, err := Day02Part2([]string{tt.in})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -68,13 +68,13 @@ func TestDay2ExamplesPart2(t *testing.T) {
 	}
 }
 
-func TestDay2Part2(t *testing.T) {
+func TestDay02Part2(t *testing.T) {
 	const want = 3_812_909
 	lines, err := linesFromFilename(filename(2))
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := Day2Part2(lines)
+	got, err := Day02Part2(lines)
 	if err != nil {
 		t.Fatal(err)
 	}

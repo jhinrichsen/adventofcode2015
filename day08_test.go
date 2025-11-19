@@ -21,16 +21,16 @@ func TestHexEscape(t *testing.T) {
 	}
 
 	want := 7
-	got := Day8Part1(buf)
+	got := Day08Part1(buf)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
-func TestDay8Part1Example(t *testing.T) {
+func TestDay08Part1Example(t *testing.T) {
 	test(t, exampleFilename(8), 12)
 }
 
-func TestDay8Part1(t *testing.T) {
+func TestDay08Part1(t *testing.T) {
 	test(t, filename(8), 1371)
 }
 
@@ -46,7 +46,7 @@ func test(t *testing.T, filename string, want int) {
 	for sc.Scan() {
 		line := sc.Bytes()
 		mm += len(line)
-		nn += Day8Part1(line)
+		nn += Day08Part1(line)
 	}
 	got := mm - nn
 	if want != got {
@@ -64,11 +64,11 @@ var part2Tests = []struct {
 	{[]byte{'"', '\\', 'x', '2', '7', '"'}, 11},
 }
 
-func TestDay8Part2Examples(t *testing.T) {
+func TestDay08Part2Examples(t *testing.T) {
 	for _, tt := range part2Tests {
 		t.Run(string(tt.in), func(t *testing.T) {
 			want := tt.out
-			got := Day8Part2(tt.in)
+			got := Day08Part2(tt.in)
 			if want != got {
 				t.Fatalf("%q: want %d but got %d", string(tt.in),
 					want, got)
@@ -80,13 +80,13 @@ func TestDay8Part2Examples(t *testing.T) {
 		'"',
 		'"',
 	}
-	got := Day8Part2(buf)
+	got := Day08Part2(buf)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
 	}
 }
 
-func TestDay8Part2(t *testing.T) {
+func TestDay08Part2(t *testing.T) {
 	f, err := os.Open(filename(8))
 	if err != nil {
 		t.Fatal(err)
@@ -97,7 +97,7 @@ func TestDay8Part2(t *testing.T) {
 	for sc.Scan() {
 		line := sc.Bytes()
 		mm += len(line)
-		nn += Day8Part2(line)
+		nn += Day08Part2(line)
 	}
 	want := 2117
 	got := nn - mm

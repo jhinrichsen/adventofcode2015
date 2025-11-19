@@ -24,8 +24,8 @@ func newSizes(s string) (sizes, error) {
 	return ss, nil
 }
 
-// Day2Part1 returns sum of sizes.
-func Day2Part1(lines []string) (uint, error) {
+// Day02Part1 returns sum of sizes.
+func Day02Part1(lines []string) (uint, error) {
 	var sum uint
 	for _, line := range lines {
 		s, err := newSizes(line)
@@ -44,8 +44,8 @@ func (a sizes) size() uint {
 	return 2*(s1+s2+s3) + min(s1, min(s2, s3))
 }
 
-// Day2Part2 returns the length of the ribbon band.
-func Day2Part2(lines []string) (uint, error) {
+// Day02Part2 returns the length of the ribbon band.
+func Day02Part2(lines []string) (uint, error) {
 	var sum uint
 	for _, line := range lines {
 		s, err := newSizes(line)

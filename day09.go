@@ -82,7 +82,7 @@ func newRoutes(filename string) (routes, error) {
 // generics.
 // There's basically three algorithms that fit: Fisher-Yates random shuffle,
 // Steinhaus–Johnson–Trotter, and Heap.
-func Day9(filename string) (uint, uint, error) {
+func Day09(filename string) (uint, uint, error) {
 	min := uint(math.MaxUint32)
 	var max uint
 

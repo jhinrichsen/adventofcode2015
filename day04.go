@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-// Day4Part1 returns lowest positive number whose MD5 starts with 5 zeroes.
-func Day4Part1(s string) uint {
+// Day04Part1 returns lowest positive number whose MD5 starts with 5 zeroes.
+func Day04Part1(s string) uint {
 	return mine(s, 5)
 }
 
-// Day4Part2 returns lowest positive number whose MD5 starts with 6 zeroes.
-func Day4Part2(s string) uint {
+// Day04Part2 returns lowest positive number whose MD5 starts with 6 zeroes.
+func Day04Part2(s string) uint {
 	return mine(s, 6)
 }
 

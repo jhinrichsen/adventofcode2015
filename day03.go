@@ -2,8 +2,8 @@ package adventofcode2015
 
 type position [2]int
 
-// Day3Part1 returns number of fields visited.
-func Day3Part1(buf []byte) uint {
+// Day03Part1 returns number of fields visited.
+func Day03Part1(buf []byte) uint {
 	houses := make(map[position]bool)
 	pos := position{0, 0}
 	houses[pos] = true
@@ -28,8 +28,8 @@ func move(pos position, b byte) position {
 	return pos
 }
 
-// Day3Part2 TODO.
-func Day3Part2(buf []byte) uint {
+// Day03Part2 TODO.
+func Day03Part2(buf []byte) uint {
 	houses := make(map[position]bool)
 	// index santa = 0, robo santa = 1
 	poss := []position{

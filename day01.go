@@ -5,8 +5,8 @@ const (
 	closePar = ')'
 )
 
-// Day1Part1 returns number of opening braces minus number of closing braces.
-func Day1Part1(buf []byte) int {
+// Day01Part1 returns number of opening braces minus number of closing braces.
+func Day01Part1(buf []byte) int {
 	floor := 0
 	for _, b := range buf {
 		if b == openPar {
@@ -18,9 +18,9 @@ func Day1Part1(buf []byte) int {
 	return floor
 }
 
-// Day1Part1Branchless returns number of opening braces minus number of closing
+// Day01Part1Branchless returns number of opening braces minus number of closing
 // braces.
-func Day1Part1Branchless(buf []byte) (floor int) {
+func Day01Part1Branchless(buf []byte) (floor int) {
 	for _, b := range buf {
 		/*
 			floor += int(closePar - b) // 40 -> 1, 41 -> 0
@@ -36,8 +36,8 @@ func Day1Part1Branchless(buf []byte) (floor int) {
 	return
 }
 
-// Day1Part2 returns position where floor gets negative.
-func Day1Part2(buf []byte) int {
+// Day01Part2 returns position where floor gets negative.
+func Day01Part2(buf []byte) int {
 	var floor int
 	for i, b := range buf {
 		if b == openPar {

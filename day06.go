@@ -57,8 +57,8 @@ func atot(s string) (uint, uint, error) {
 	return uint(x), uint(y), nil
 }
 
-// Day6Part1 returns number of lights in state 'on'.
-func Day6Part1(lines []string) (uint, error) {
+// Day06Part1 returns number of lights in state 'on'.
+func Day06Part1(lines []string) (uint, error) {
 	return day6(lines, [...]lightMutator{
 		// On
 		func(b light) light {
@@ -73,8 +73,8 @@ func Day6Part1(lines []string) (uint, error) {
 		}})
 }
 
-// Day6Part2 returns number of lights in state 'on'.
-func Day6Part2(lines []string) (uint, error) {
+// Day06Part2 returns number of lights in state 'on'.
+func Day06Part2(lines []string) (uint, error) {
 	return day6(lines, [...]lightMutator{
 		// On
 		func(b light) light {

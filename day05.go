@@ -10,13 +10,13 @@ const (
 	naughty = false
 )
 
-// Day5Part1 returns number of nice strings.
-func Day5Part1(input []string) (n uint) {
+// Day05Part1 returns number of nice strings.
+func Day05Part1(input []string) (n uint) {
 	return day5(input, nicePart1)
 }
 
-// Day5Part2 returns number of nice strings.
-func Day5Part2(input []string) (n uint) {
+// Day05Part2 returns number of nice strings.
+func Day05Part2(input []string) (n uint) {
 	return day5(input, nicePart2)
 }
 
