@@ -35,7 +35,9 @@ func testWizardSimulator(players [2]day22Player,
 	for !g.gameOver() {
 		err := g.step(false)
 		if err != nil {
-			io.Copy(os.Stdout, &w)
+			if _, copyErr := io.Copy(os.Stdout, &w); copyErr != nil {
+				return fmt.Errorf("step error: %w, copy error: %w", err, copyErr)
+			}
 			return err
 		}
 	}

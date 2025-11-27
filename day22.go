@@ -234,9 +234,8 @@ func day22(hardMode bool) int {
 		maxRates  = 13
 	)
 	minSpent := math.MaxInt16
-	digits := NewBase5(maxRates)
 
-	for digits = NewBase5(maxRates); len(digits.Buf) <= maxRates; digits.Inc() {
+	for digits := NewBase5(maxRates); len(digits.Buf) <= maxRates; digits.Inc() {
 		players := [...]day22Player{
 			{hitPoints: 50, armor: 0, mana: startMana},
 			{hitPoints: 58, damage: 9},
