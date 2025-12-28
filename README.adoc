@@ -69,6 +69,20 @@ BenchmarkSigmaMemoized-16          	194258068	         6.566 ns/op	       0 B/op
 PASS
 ok  	gitlab.com/jhinrichsen/adventofcode2015	22.969s
 ----
+
+== Day 18: Like a GIF For Your Yard
+
+Refactored to use iter.Seq-based C8Indices iterator for 8-connectivity neighbor iteration.
+
+Converted from 2D `[][]byte` grid with bounds-checking closure to flat 1D `[]byte` array with pre-computed neighbor indices. The C8Indices iterator eliminates runtime bounds checking by handling corners, edges, and interior cells separately.
+
+----
+BenchmarkDay18Part1-16    	     250	   4756766 ns/op	 1118784 B/op	     126 allocs/op
+BenchmarkDay18Part2-16    	     250	   4795209 ns/op	 1118786 B/op	     126 allocs/op
+----
+
+This is the same pattern used for Game of Life style puzzles in 2018 (Day 18) and 2020 (Day 11, Day 24).
+
 == SAST (Static Application Security Testing)
 
 This project uses custom SAST tooling in GitLab CI, optimized for the free tier.
