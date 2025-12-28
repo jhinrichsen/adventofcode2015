@@ -11,35 +11,36 @@ const (
 )
 
 type grid struct {
-	buf [][]byte
+	buf    []byte
+	width  int
+	height int
 }
 
 // newGrid parses lines of #. combinations, separated by newline.
 func newGrid(s string) (grid, error) {
 	var g grid
-	g.buf = make([][]byte, 0)
 	sc := bufio.NewScanner(strings.NewReader(s))
 	for sc.Scan() {
-		bs := sc.Bytes()
-		buf := make([]byte, len(bs))
-		copy(buf, bs)
-		g.buf = append(g.buf, buf)
+		line := sc.Bytes()
+		if g.width == 0 {
+			g.width = len(line)
+		}
+		g.buf = append(g.buf, line...)
+		g.height++
 	}
 	return g, nil
 }
 
 func (a grid) dim() (uint, uint) {
-	return uint(len(a.buf[0])), uint(len(a.buf))
+	return uint(a.width), uint(a.height)
 }
 
 // on returns number of lights in grid that are "on".
 func (a grid) on() uint {
 	var n uint
-	for y := range a.buf {
-		for x := range a.buf[0] {
-			if a.buf[y][x] == lightOn {
-				n++
-			}
+	for _, b := range a.buf {
+		if b == lightOn {
+			n++
 		}
 	}
 	return n
@@ -52,53 +53,37 @@ func (a *grid) setCorners(t bool) {
 	} else {
 		b = lightOff
 	}
-	a.buf[0][0] = b
-	a.buf[0][len(a.buf[0])-1] = b
-	a.buf[len(a.buf)-1][0] = b
-	a.buf[len(a.buf)-1][len(a.buf[0])-1] = b
+	w, h := a.width, a.height
+	a.buf[0] = b                 // top-left
+	a.buf[w-1] = b               // top-right
+	a.buf[(h-1)*w] = b           // bottom-left
+	a.buf[(h-1)*w+(w-1)] = b     // bottom-right
 }
 
 func (a *grid) step() {
-	// render into offline frame
-	dimy := len(a.buf)
-	dimx := len(a.buf[0])
-	buf := make([][]byte, dimy)
-	var n uint
-	check := func(x, y int) {
-		if 0 <= y &&
-			y < dimy &&
-			0 <= x &&
-			x < dimx &&
-			a.buf[y][x] == lightOn {
+	next := make([]byte, len(a.buf))
+	g := Grid{W: a.width, H: a.height}
 
-			n++
-		}
-	}
-	for y := range a.buf {
-		buf[y] = make([]byte, dimx)
-		for x := range a.buf[0] {
-			n = 0
-			check(x, y-1)   // N
-			check(x+1, y-1) // NE
-			check(x+1, y)   // E
-			check(x+1, y+1) // SE
-			check(x, y+1)   // S
-			check(x-1, y+1) // SW
-			check(x-1, y)   // W
-			check(x-1, y-1) // NW
+	for idx, nbrs := range g.C8Indices() {
+		current := a.buf[idx]
 
-			buf[y][x] = nextStatus(a.buf[y][x] == lightOn, n)
+		var count uint
+		for nidx := range nbrs {
+			if a.buf[nidx] == lightOn {
+				count++
+			}
 		}
+
+		next[idx] = nextStatus(current == lightOn, count)
 	}
-	a.buf = buf
+	a.buf = next
 }
 
 func (a grid) String() string {
 	var sb strings.Builder
-	for y := 0; y < len(a.buf); y++ {
-		sb.Write(a.buf[y])
-		// No newline for last element
-		if y < len(a.buf)-1 {
+	for y := 0; y < a.height; y++ {
+		sb.Write(a.buf[y*a.width : (y+1)*a.width])
+		if y < a.height-1 {
 			sb.WriteRune('\n')
 		}
 	}

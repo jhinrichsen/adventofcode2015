@@ -144,7 +144,8 @@ func TestDay18Line0On(t *testing.T) {
 		t.Fatal(err)
 	}
 	var on, off uint
-	for _, b := range g.buf[0] {
+	w, _ := g.dim()
+	for _, b := range g.buf[:w] {
 		if b == lightOn {
 			on++
 		} else if b == lightOff {
@@ -218,5 +219,29 @@ func TestDay18Part2(t *testing.T) {
 	got := Day18Part2(g, 100)
 	if want != got {
 		t.Fatalf("want %d but got %d", want, got)
+	}
+}
+
+func BenchmarkDay18Part1(b *testing.B) {
+	g, err := gridFromFilename(filename(18))
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for range b.N {
+		gCopy, _ := newGrid(g.String())
+		Day18Part1(gCopy, 100)
+	}
+}
+
+func BenchmarkDay18Part2(b *testing.B) {
+	g, err := gridFromFilename(filename(18))
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ResetTimer()
+	for range b.N {
+		gCopy, _ := newGrid(g.String())
+		Day18Part2(gCopy, 100)
 	}
 }
