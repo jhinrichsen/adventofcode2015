@@ -20,7 +20,11 @@ func TestDay07Example(t *testing.T) {
 		"y": 456,
 	}
 	for wire, signal := range want {
-		got, err := puzzle.signal(wire, nil)
+		id, err := day07WireID(wire)
+		if err != nil {
+			t.Fatal(err)
+		}
+		got, err := puzzle.signal(id, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -31,43 +35,17 @@ func TestDay07Example(t *testing.T) {
 }
 
 func BenchmarkDay07Part1(b *testing.B) {
-	benchLinesErr(b, 7, true, func(lines []string, part1 bool) (uint16, error) {
-		if part1 {
-			return Day07Part1(lines)
-		}
-		return Day07Part2(lines)
-	})
+	benchWithParser(b, 7, true, NewDay07, Day07)
 }
 
 func BenchmarkDay07Part2(b *testing.B) {
-	benchLinesErr(b, 7, false, func(lines []string, part1 bool) (uint16, error) {
-		if part1 {
-			return Day07Part1(lines)
-		}
-		return Day07Part2(lines)
-	})
+	benchWithParser(b, 7, false, NewDay07, Day07)
 }
 
 func TestDay07Part1(t *testing.T) {
-	const want = 16076
-	lines := linesFromFilename(t, filename(7))
-	got, err := Day07Part1(lines)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 7, filename, true, NewDay07, Day07, uint(16_076))
 }
 
 func TestDay07Part2(t *testing.T) {
-	const want = 2797
-	lines := linesFromFilename(t, filename(7))
-	got, err := Day07Part2(lines)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 7, filename, false, NewDay07, Day07, uint(2_797))
 }

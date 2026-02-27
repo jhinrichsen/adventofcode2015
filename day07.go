@@ -229,13 +229,9 @@ func day07EvalExpr(expr day07Expr, vals *[day07MaxWires]uint16) uint16 {
 	}
 }
 
-func (a Day07Puzzle) signal(wire string, overrideB *uint16) (uint16, error) {
-	targetID, err := day07WireID(wire)
-	if err != nil {
-		return 0, err
-	}
+func (a Day07Puzzle) signal(targetID int, overrideB *uint16) (uint16, error) {
 	if !a.defined[targetID] {
-		return 0, fmt.Errorf("unknown wire %q", wire)
+		return 0, fmt.Errorf("unknown wire id %d", targetID)
 	}
 
 	var state [day07MaxWires]byte // 0=new, 1=visiting, 2=done
@@ -258,7 +254,7 @@ func (a Day07Puzzle) signal(wire string, overrideB *uint16) (uint16, error) {
 			continue
 		}
 		if !a.defined[id] {
-			return 0, fmt.Errorf("unknown wire %q", wire)
+			return 0, fmt.Errorf("unknown wire id %d", id)
 		}
 		if state[id] == 0 {
 			state[id] = 1
@@ -277,7 +273,7 @@ func (a Day07Puzzle) signal(wire string, overrideB *uint16) (uint16, error) {
 				sp++
 				needDep = true
 			case 1:
-				return 0, fmt.Errorf("circular dependency for wire %q", wire)
+				return 0, fmt.Errorf("circular dependency for wire id %d", id)
 			}
 		}
 		if needDep {
@@ -291,33 +287,24 @@ func (a Day07Puzzle) signal(wire string, overrideB *uint16) (uint16, error) {
 	return vals[targetID], nil
 }
 
-// Day07Part1 returns the signal provided to wire "a".
-func Day07Part1(lines []string) (uint16, error) {
-	puzzle, err := NewDay07(lines)
-	if err != nil {
-		return 0, err
-	}
+// Day07 solves day 7 for the selected part.
+func Day07(puzzle Day07Puzzle, part1 bool) uint {
 	if puzzle.aID < 0 {
-		return 0, fmt.Errorf("wire %q not found", "a")
+		return 0
 	}
-	return puzzle.signal("a", nil)
-}
-
-// Day07Part2 overrides wire "b" with the Part 1 result and recomputes wire "a".
-func Day07Part2(lines []string) (uint16, error) {
-	puzzle, err := NewDay07(lines)
+	aSignal, err := puzzle.signal(puzzle.aID, nil)
 	if err != nil {
-		return 0, err
+		return 0
 	}
-	if puzzle.aID < 0 {
-		return 0, fmt.Errorf("wire %q not found", "a")
+	if part1 {
+		return uint(aSignal)
 	}
 	if puzzle.bID < 0 {
-		return 0, fmt.Errorf("wire %q not found", "b")
+		return 0
 	}
-	aSignal, err := puzzle.signal("a", nil)
+	finalSignal, err := puzzle.signal(puzzle.aID, &aSignal)
 	if err != nil {
-		return 0, err
+		return 0
 	}
-	return puzzle.signal("a", &aSignal)
+	return uint(finalSignal)
 }
