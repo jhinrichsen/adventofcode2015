@@ -1,91 +1,74 @@
 package adventofcode2015
 
-import "math"
+import (
+	"fmt"
+	"strconv"
+)
 
-// InputDay20 for part 1.
-const InputDay20 = 33_100_000
-
-// presents returns the number of presents all elfs visiting a house have left.
-func presents(houseno uint) uint {
-	if houseno == 0 {
-		return 0
-	}
-	var presents uint
-	for elf := uint(1); elf <= houseno; elf++ {
-		if houseno%elf == 0 {
-			// yes, elf visits this house
-			presents += elf * 10
-		}
-	}
-	return presents
+type Day20Puzzle struct {
+	target uint
 }
 
-// Day20Part1 returns lowest house no that gets at least n presents.
-// Brute forcing without a hint takes 10 min on 2019 Macbook Pro 16".
-// A memoized version of Euler's recursive Sigma function brings the calculation
-// down to 48 seconds.
-// Generational Euler algorithm (instead of recursive) takes 5 seconds.
-func Day20Part1() uint {
-	yield := SigmaGenerator()
-	// each elv delivers 10 packages
-	packages := uint(InputDay20 / 10)
-	var houseno uint
-	for houseno = 1; yield() < packages; houseno++ {
+func NewDay20(lines []string) (Day20Puzzle, error) {
+	if len(lines) != 1 {
+		return Day20Puzzle{}, fmt.Errorf("invalid input")
 	}
-	return houseno
+	n, err := strconv.ParseUint(lines[0], 10, 64)
+	if err != nil {
+		return Day20Puzzle{}, err
+	}
+	return Day20Puzzle{target: uint(n)}, nil
 }
 
-// day20Part1Champ was the highest ranking algo, read: the first to finish.
-func day20Part1Champ(target int) int {
-	houses := make([]int, target/10+1)
-	for elf := 1; elf < len(houses); elf++ {
-		for house := elf; house < len(houses); house += elf {
-			houses[house] += elf * 11
+// Day20 solves day 20 for the selected part.
+func Day20(puzzle Day20Puzzle, part1 bool) uint {
+	if part1 {
+		return day20Part1(puzzle.target)
+	}
+	return day20Part2(puzzle.target)
+}
+
+func day20Part1(target uint) uint {
+	houses := make([]uint, target/10+1)
+	for elf := uint(1); elf < uint(len(houses)); elf++ {
+		for house := elf; house < uint(len(houses)); house += elf {
+			houses[house] += elf * 10
 		}
 	}
-	for house := 1; house < len(houses); house++ {
-		if houses[house] > target {
+	for house := uint(1); house < uint(len(houses)); house++ {
+		if houses[house] >= target {
 			return house
 		}
 	}
-	return -1
+	return 0
 }
 
-// day20MyChamp is the highest ranking algo.
-func day20MyChamp(target int) int {
-	houses := make([]int, target/10+1)
-	for elf := 1; elf < len(houses); elf++ {
-		for house := elf; house < len(houses); house += elf {
+func day20Part2(target uint) uint {
+	houses := make([]uint, target/11+1)
+	for elf := uint(1); elf < uint(len(houses)); elf++ {
+		limit := min(uint(len(houses)-1), elf*50)
+		for house := elf; house <= limit; house += elf {
 			houses[house] += elf * 11
-			if houses[house] > target {
-				return house
-			}
 		}
 	}
-	return -1
-}
-
-// Day20Part2 calculates the sum of elves over houses.
-func Day20Part2() (n uint) {
-	n = 1
-	for presents2(n) < InputDay20 {
-		n++
-	}
-	return n
-}
-
-func presents2(n uint) (sum uint) {
-	d := uint(math.Sqrt(float64(n))) + 1
-	for i := uint(1); i <= d; i++ {
-		if n%i == 0 {
-			if i <= 50 {
-				sum += n / i
-			}
-			if n/i <= 50 {
-				sum += i
-			}
+	for house := uint(1); house < uint(len(houses)); house++ {
+		if houses[house] >= target {
+			return house
 		}
 	}
-	sum *= 11
-	return
+	return 0
 }
+
+func day20PresentsPart1(house uint) uint {
+	if house == 0 {
+		return 0
+	}
+	sum := uint(0)
+	for elf := uint(1); elf <= house; elf++ {
+		if house%elf == 0 {
+			sum += elf * 10
+		}
+	}
+	return sum
+}
+

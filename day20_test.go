@@ -1,14 +1,19 @@
 package adventofcode2015
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
+
+func BenchmarkDay20Part1(b *testing.B) {
+	benchWithParser(b, 20, true, NewDay20, Day20)
+}
+
+func BenchmarkDay20Part2(b *testing.B) {
+	benchWithParser(b, 20, false, NewDay20, Day20)
+}
 
 func TestDay20Examples(t *testing.T) {
-	day20Samples := []struct {
-		in  uint
-		out uint
+	tests := []struct {
+		in   uint
+		want uint
 	}{
 		{1, 10},
 		{2, 30},
@@ -20,54 +25,18 @@ func TestDay20Examples(t *testing.T) {
 		{8, 150},
 		{9, 130},
 	}
-	for _, tt := range day20Samples {
-		id := fmt.Sprintf("%d", tt.in)
-		t.Run(id, func(t *testing.T) {
-			want := tt.out
-			got := presents(tt.in)
-			if want != got {
-				t.Fatalf("want %d but got %d", want, got)
-			}
-		})
+	for _, tt := range tests {
+		if got := day20PresentsPart1(tt.in); got != tt.want {
+			t.Fatalf("house %d: want %d but got %d", tt.in, tt.want, got)
+		}
 	}
 }
 
 func TestDay20Part1(t *testing.T) {
-	const want = 776160
-	got := Day20Part1()
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
-}
-
-// Highest ranking algorithm.
-func TestDay20Champ(t *testing.T) {
-	if testing.Short() {
-		t.Skip()
-	}
-	const want = 776160
-	got := day20Part1Champ(36_000_000)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
-}
-
-func BenchmarkDay20Champ(b *testing.B) {
-	for b.Loop() {
-		day20Part1Champ(36_000_000)
-	}
-}
-
-func BenchmarkDay20MyChamp(b *testing.B) {
-	for b.Loop() {
-		day20MyChamp(36_000_000)
-	}
+	testWithParser(t, 20, filename, true, NewDay20, Day20, uint(776_160))
 }
 
 func TestDay20Part2(t *testing.T) {
-	const want = 786240
-	got := Day20Part2()
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 20, filename, false, NewDay20, Day20, uint(786_240))
 }
+
