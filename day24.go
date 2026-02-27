@@ -22,12 +22,8 @@ func quantumEntanglement(a []uint) uint {
 	return qe
 }
 
-func newWeights(filename string) (weights, error) {
+func newWeights(lines []string) (weights, error) {
 	var ws weights
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		return ws, err
-	}
 	for _, line := range lines {
 		x, err := strconv.Atoi(line)
 		if err != nil {

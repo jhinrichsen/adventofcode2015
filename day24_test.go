@@ -1,12 +1,11 @@
 package adventofcode2015
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestDay24ExamplePart1(t *testing.T) {
 	const want = 99
-	ws, err := newWeights(exampleFilename(24))
+	lines := linesFromFilename(t, exampleFilename(24))
+	ws, err := newWeights(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -21,7 +20,8 @@ func TestDay24Part1(t *testing.T) {
 		t.Skip("billions of permutations, will eventually finish")
 	}
 	const want = 11266889531
-	ws, err := newWeights(filename(24))
+	lines := linesFromFilename(t, filename(24))
+	ws, err := newWeights(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -33,7 +33,8 @@ func TestDay24Part1(t *testing.T) {
 
 func TestDay24ExamplePart2(t *testing.T) {
 	const want = 44
-	ws, err := newWeights(exampleFilename(24))
+	lines := linesFromFilename(t, exampleFilename(24))
+	ws, err := newWeights(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +49,8 @@ func TestDay24Part2(t *testing.T) {
 		t.Skip("billions of permutations, will eventually finish")
 	}
 	const want = 77387711
-	ws, err := newWeights(filename(24))
+	lines := linesFromFilename(t, filename(24))
+	ws, err := newWeights(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
