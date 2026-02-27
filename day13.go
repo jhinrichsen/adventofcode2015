@@ -73,9 +73,9 @@ func (as happinesses) change(atts attendees) int {
 }
 
 // Day13Part1 returns total change in happiness.
-func Day13Part1(filename string) (int, error) {
+func Day13Part1(lines []string) (int, error) {
 	var max int
-	hs, err := newHappinesses(filename)
+	hs, err := newHappinesses(lines)
 	if err != nil {
 		return max, err
 	}
@@ -96,12 +96,8 @@ func Day13Part1(filename string) (int, error) {
 
 // newHappinesses parses lines in the form "Alice would gain 54 happiness units by
 // sitting next to Bob."
-func newHappinesses(filename string) (happinesses, error) {
+func newHappinesses(lines []string) (happinesses, error) {
 	var hs []happiness
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		return hs, err
-	}
 	for i, line := range lines {
 		parts := strings.Fields(strings.TrimSuffix(line, "."))
 		n, err := strconv.Atoi(parts[3])
@@ -121,9 +117,9 @@ func newHappinesses(filename string) (happinesses, error) {
 }
 
 // Day13Part2 returns total change in happiness.
-func Day13Part2(filename string) (int, error) {
+func Day13Part2(lines []string) (int, error) {
 	var max int
-	hs, err := newHappinesses(filename)
+	hs, err := newHappinesses(lines)
 	if err != nil {
 		return max, err
 	}

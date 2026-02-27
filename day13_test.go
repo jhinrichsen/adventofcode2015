@@ -4,7 +4,8 @@ import "testing"
 
 func TestDay13Example(t *testing.T) {
 	const want = 330
-	got, err := Day13Part1(exampleFilename(13))
+	lines := linesFromFilename(t, exampleFilename(13))
+	got, err := Day13Part1(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -15,7 +16,8 @@ func TestDay13Example(t *testing.T) {
 
 func TestDay13Part1(t *testing.T) {
 	const want = 709
-	got, err := Day13Part1(filename(13))
+	lines := linesFromFilename(t, filename(13))
+	got, err := Day13Part1(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,7 +28,8 @@ func TestDay13Part1(t *testing.T) {
 
 func TestDay13Part2(t *testing.T) {
 	const want = 668
-	got, err := Day13Part2(filename(13))
+	lines := linesFromFilename(t, filename(13))
+	got, err := Day13Part2(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
