@@ -73,7 +73,7 @@ ok  	gitlab.com/jhinrichsen/adventofcode2015	22.969s
 
 
 
-== Day 02: I Was Told There Would Be No Math
+== Day 2: I Was Told There Would Be No Math
 
 Performance tuning focused on parser overhead in `NewDay02`.
 
@@ -106,7 +106,7 @@ B/op:        70.88 KiB  -> 24.00 KiB (-66.14%)
 allocs/op:   1001       -> 1         (-99.90%)
 ----
 
-== Day 03: Perfectly Spherical Houses in a Vacuum
+== Day 3: Perfectly Spherical Houses in a Vacuum
 
 Performance tuning focused on the visited-house set representation in `Day03`.
 
@@ -139,7 +139,7 @@ B/op:        212.6 KiB  -> 288.6 KiB (+35.75%)
 allocs/op:   29         -> 33        (+13.79%)
 ----
 
-== Day 04: The Ideal Stocking Stuffer
+== Day 4: The Ideal Stocking Stuffer
 
 Performance tuning focused on removing string formatting and prefix string checks from the hot mining loop.
 
@@ -194,7 +194,7 @@ geomean                  3.085M                     ?                      ¹ ²
 ² ratios must be >0 to compute geomean
 ----
 
-== Day 05: Doesn't He Have Intern-Elves For This?
+== Day 5: Doesn't He Have Intern-Elves For This?
 
 Performance tuning focused on the Part 2 pair-matching check (`p4`).
 
@@ -227,7 +227,7 @@ B/op:        0          -> 0          (~)
 allocs/op:   0          -> 0          (~)
 ----
 
-== Day 06: Probably a Fire Hazard
+== Day 6: Probably a Fire Hazard
 
 Performance tuning focused on parser allocation elimination after the earlier solver-loop optimization.
 
@@ -258,7 +258,7 @@ Raw benchstat (`benchstat benches/day06-b0.txt benches/day06-b2.txt`):
 $(cat benches/day06-benchstat-b0-b2.txt)
 ----
 
-== Day 07: Some Assembly Required
+== Day 7: Some Assembly Required
 
 Performance tuning focused on solver loop overhead in `signal`.
 
@@ -291,7 +291,7 @@ B/op:        0          -> 0          (~)
 allocs/op:   0          -> 0          (~)
 ----
 
-== Day 08: Matchsticks
+== Day 8: Matchsticks
 
 Performance tuning focused on reducing arithmetic and branch work in encoded-length calculation.
 
@@ -340,7 +340,7 @@ Day08Part2-16           0.000 +- 0%     0.000 +- 0%       ~ (p=1.000 n=8)
 geomean                            ^2               +0.00%               ^2
 ----
 
-== Day 09: All in a Single Night
+== Day 9: All in a Single Night
 
 Performance tuning focused on permutation traversal overhead in `Day09`.
 
