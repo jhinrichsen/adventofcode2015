@@ -1,5 +1,8 @@
 # Claude Code Guidelines for Advent of Code 2022
 
+## Startup
+- **MUST** run `beans prime` before starting work in this repository.
+
 ## 🚨 CRITICAL: Solution Confidentiality
 
 **Solutions MUST NOT appear anywhere except in unit test `want` values.**
