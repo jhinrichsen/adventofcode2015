@@ -7,9 +7,6 @@ func TestDay24Part1Example(t *testing.T) {
 }
 
 func TestDay24Part1(t *testing.T) {
-	if testing.Short() {
-		t.Skip("billions of permutations, will eventually finish")
-	}
 	testWithParser(t, 24, filename, true, NewDay24, Day24, uint(11_266_889_531))
 }
 
@@ -18,8 +15,5 @@ func TestDay24Part2Example(t *testing.T) {
 }
 
 func TestDay24Part2(t *testing.T) {
-	if testing.Short() {
-		t.Skip("billions of permutations, will eventually finish")
-	}
 	testWithParser(t, 24, filename, false, NewDay24, Day24, uint(77_387_711))
 }

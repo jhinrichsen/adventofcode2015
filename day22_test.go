@@ -98,15 +98,9 @@ func TestDay22CastActiveSpell(t *testing.T) {
 }
 
 func TestDay22Part1(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping long running testcase for day 22")
-	}
 	testWithParser(t, 22, filename, true, NewDay22, Day22, uint(1_269))
 }
 
 func TestDay22Part2(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping long running testcase for day 22")
-	}
 	testWithParser(t, 22, filename, false, NewDay22, Day22, uint(1_309))
 }
