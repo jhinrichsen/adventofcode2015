@@ -5,22 +5,14 @@ import (
 	"strings"
 )
 
-const (
-	nice    = true
-	naughty = false
-)
-
 // Day05 solves day 5 for the selected part.
 func Day05(input []string, part1 bool) (n uint) {
+	rule := nicePart2
 	if part1 {
-		return day5(input, nicePart1)
+		rule = nicePart1
 	}
-	return day5(input, nicePart2)
-}
-
-func day5(input []string, f func(string) bool) (n uint) {
 	for _, s := range input {
-		if f(s) {
+		if rule(s) {
 			n++
 		}
 	}
@@ -70,10 +62,10 @@ func p3(s string) bool {
 	buf := []byte(s)
 	for i := 1; i < len(buf); i++ {
 		if buf[i-1] == buf[i] {
-			return nice
+			return true
 		}
 	}
-	return naughty
+	return false
 }
 
 // a pair of any two letters that appears at least twice in the string without
@@ -81,17 +73,17 @@ func p3(s string) bool {
 // Only works for non-unicode strings, i.e. plain ASCII.
 func p4(s string) bool {
 	if len(s) < 4 {
-		return naughty
+		return false
 	}
 	buf := []byte(s)
 	for i := 0; i < len(buf)-3; i++ {
 		pair := buf[i : i+2]
 		right := buf[i+2 : len(s)]
 		if bytes.Contains(right, pair) {
-			return nice
+			return true
 		}
 	}
-	return naughty
+	return false
 }
 
 // at least one letter which repeats with exactly one letter between them.
@@ -103,8 +95,8 @@ func p5(s string) bool {
 	buf := []byte(s)
 	for i := 1; i < len(buf)-1; i++ {
 		if buf[i-1] == buf[i+1] {
-			return nice
+			return true
 		}
 	}
-	return naughty
+	return false
 }
