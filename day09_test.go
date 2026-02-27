@@ -2,50 +2,26 @@ package adventofcode2015
 
 import "testing"
 
-func TestDay9Part1Example(t *testing.T) {
-	const want = 605
-	lines := linesFromFilename(t, exampleFilename(9))
-	got, _, err := Day9(lines)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+func BenchmarkDay09Part1(b *testing.B) {
+	benchWithParser(b, 9, true, NewDay09, Day09)
 }
 
-func TestDay9Part1(t *testing.T) {
-	const want = 117
-	lines := linesFromFilename(t, filename(9))
-	got, _, err := Day9(lines)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+func BenchmarkDay09Part2(b *testing.B) {
+	benchWithParser(b, 9, false, NewDay09, Day09)
 }
 
-func TestDay9Part2Example(t *testing.T) {
-	const want = 982
-	lines := linesFromFilename(t, exampleFilename(9))
-	_, got, err := Day9(lines)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+func TestDay09Part1Example(t *testing.T) {
+	testWithParser(t, 9, exampleFilename, true, NewDay09, Day09, uint(605))
 }
 
-func TestDay9Part2(t *testing.T) {
-	const want = 909
-	lines := linesFromFilename(t, filename(9))
-	_, got, err := Day9(lines)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+func TestDay09Part1(t *testing.T) {
+	testWithParser(t, 9, filename, true, NewDay09, Day09, uint(117))
+}
+
+func TestDay09Part2Example(t *testing.T) {
+	testWithParser(t, 9, exampleFilename, false, NewDay09, Day09, uint(982))
+}
+
+func TestDay09Part2(t *testing.T) {
+	testWithParser(t, 9, filename, false, NewDay09, Day09, uint(909))
 }
