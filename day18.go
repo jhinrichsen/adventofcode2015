@@ -54,10 +54,10 @@ func (a *grid) setCorners(t bool) {
 		b = lightOff
 	}
 	w, h := a.width, a.height
-	a.buf[0] = b                 // top-left
-	a.buf[w-1] = b               // top-right
-	a.buf[(h-1)*w] = b           // bottom-left
-	a.buf[(h-1)*w+(w-1)] = b     // bottom-right
+	a.buf[0] = b             // top-left
+	a.buf[w-1] = b           // top-right
+	a.buf[(h-1)*w] = b       // bottom-left
+	a.buf[(h-1)*w+(w-1)] = b // bottom-right
 }
 
 func (a *grid) step() {
