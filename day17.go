@@ -1,72 +1,66 @@
 package adventofcode2015
 
-// Day17Part1 returns number of combinations that storage can be fit into
-// capacities.
-func Day17Part1(storage uint, capacities []uint) uint {
-	var n uint
-	sum := func(ns []uint) uint {
-		var m uint
-		for _, n := range ns {
-			m += n
-		}
-		return m
-	}
+import "strconv"
 
-	for _, perm := range PowerSet(capacities) {
-		if sum(perm) == storage {
-			n++
+const day17Storage = 150
+
+type Day17Puzzle []uint
+
+func NewDay17(lines []string) (Day17Puzzle, error) {
+	ns := make(Day17Puzzle, 0, len(lines))
+	for _, line := range lines {
+		n, err := strconv.ParseUint(line, 10, 64)
+		if err != nil {
+			return nil, err
 		}
+		ns = append(ns, uint(n))
 	}
-	return n
+	return ns, nil
 }
 
-// PowerSet returns all combinations (including empty one) for given array.
-func PowerSet(original []uint) [][]uint {
-	powerSetSize := 1 << len(original)
-	result := make([][]uint, 0, powerSetSize)
+// Day17 solves day 17 for the selected part.
+func Day17(puzzle Day17Puzzle, part1 bool) uint {
+	return day17Count(day17Storage, puzzle, part1)
+}
 
-	var index int
-	for index < powerSetSize {
-		var subSet []uint
+func day17Count(storage uint, capacities []uint, part1 bool) uint {
+	n := len(capacities)
+	if n == 0 {
+		return 0
+	}
 
-		for j, elem := range original {
-			if index&(1<<uint(j)) > 0 {
-				subSet = append(subSet, elem)
+	var matches uint
+	minContainers := n + 1
+	minCount := uint(0)
+
+	for mask := 0; mask < (1 << n); mask++ {
+		sum := uint(0)
+		count := 0
+		for i := 0; i < n; i++ {
+			if mask&(1<<i) == 0 {
+				continue
 			}
+			sum += capacities[i]
+			count++
 		}
-		result = append(result, subSet)
-		index++
+		if sum != storage {
+			continue
+		}
+		if part1 {
+			matches++
+			continue
+		}
+		if count < minContainers {
+			minContainers = count
+			minCount = 1
+		} else if count == minContainers {
+			minCount++
+		}
 	}
-	return result
+
+	if part1 {
+		return matches
+	}
+	return minCount
 }
 
-// Day17Part2 returns number of combinations that storage can be fit into
-// capacities.
-func Day17Part2(storage uint, capacities []uint) uint {
-	// maps holds number of entriees of length n
-	m := make(map[uint]uint)
-	sum := func(ns []uint) uint {
-		var m uint
-		for _, n := range ns {
-			m += n
-		}
-		return m
-	}
-
-	for _, perm := range PowerSet(capacities) {
-		if sum(perm) == storage {
-			l := uint(len(perm))
-			m[l]++
-			// fmt.Printf("m[%d]=%d\n", l, m[l])
-		}
-	}
-
-	// find smallest existing index, return number of occurrences
-	for i := uint(1); i < storage; i++ {
-		if n, ok := m[i]; ok {
-			return n
-		}
-	}
-	// this is unreachable code, but instead of panic() we
-	return 0
-}

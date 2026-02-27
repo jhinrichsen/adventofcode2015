@@ -1,68 +1,34 @@
 package adventofcode2015
 
-import (
-	"strconv"
-	"testing"
-)
+import "testing"
 
-const storage = 150
-
-func TestDay17Example(t *testing.T) {
-	exampleCapacities := []uint{
-		20, 15, 10, 5, 5,
-	}
-	const want = 4
-	const storage = 25
-	got := Day17Part1(storage, exampleCapacities)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+func BenchmarkDay17Part1(b *testing.B) {
+	benchWithParser(b, 17, true, NewDay17, Day17)
 }
 
-func numbers(tb testing.TB, filename string) ([]uint, error) {
-	var ns []uint
-	lines := linesFromFilename(tb, filename)
-	for _, line := range lines {
-		n, err := strconv.ParseUint(line, 10, 32)
-		if err != nil {
-			return ns, err
-		}
-		ns = append(ns, uint(n))
+func BenchmarkDay17Part2(b *testing.B) {
+	benchWithParser(b, 17, false, NewDay17, Day17)
+}
+
+func TestDay17Part1Example(t *testing.T) {
+	example := []uint{20, 15, 10, 5, 5}
+	if got := day17Count(25, example, true); got != 4 {
+		t.Fatalf("want %d but got %d", 4, got)
 	}
-	return ns, nil
 }
 
 func TestDay17Part1(t *testing.T) {
-	const want = 1304
-	ns, err := numbers(t, filename(17))
-	if err != nil {
-		t.Fatal(err)
-	}
-	got := Day17Part1(storage, ns)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 17, filename, true, NewDay17, Day17, uint(1_304))
 }
 
 func TestDay17Part2Example(t *testing.T) {
-	exampleCapacities := []uint{
-		20, 15, 10, 5, 5,
-	}
-	const want = 3
-	got := Day17Part2(25, exampleCapacities)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
+	example := []uint{20, 15, 10, 5, 5}
+	if got := day17Count(25, example, false); got != 3 {
+		t.Fatalf("want %d but got %d", 3, got)
 	}
 }
 
 func TestDay17Part2(t *testing.T) {
-	const want = 18
-	ns, err := numbers(t, filename(17))
-	if err != nil {
-		t.Fatal(err)
-	}
-	got := Day17Part2(storage, ns)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 17, filename, false, NewDay17, Day17, uint(18))
 }
+
