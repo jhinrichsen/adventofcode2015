@@ -2,7 +2,7 @@ package adventofcode2015
 
 import "testing"
 
-func BenchmarkDay6Part1(b *testing.B) {
+func BenchmarkDay06Part1(b *testing.B) {
 	lines, err := linesFromFilename(filename(6))
 	if err != nil {
 		b.Fatal(err)
@@ -16,7 +16,7 @@ func BenchmarkDay6Part1(b *testing.B) {
 	}
 }
 
-func BenchmarkDay6Part2(b *testing.B) {
+func BenchmarkDay06Part2(b *testing.B) {
 	lines, err := linesFromFilename(filename(6))
 	if err != nil {
 		b.Fatal(err)

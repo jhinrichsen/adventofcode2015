@@ -37,7 +37,7 @@ func TestDay1Examples(t *testing.T) {
 	}
 }
 
-func BenchmarkDay1Part1(b *testing.B) {
+func BenchmarkDay01Part1(b *testing.B) {
 	buf, err := day1Input()
 	if err != nil {
 		b.Fatal(err)
@@ -48,7 +48,7 @@ func BenchmarkDay1Part1(b *testing.B) {
 	}
 }
 
-func BenchmarkDay1Part1Branchless(b *testing.B) {
+func BenchmarkDay01Part1Branchless(b *testing.B) {
 	buf, err := day1Input()
 	if err != nil {
 		b.Fatal(err)
@@ -92,7 +92,7 @@ func TestDay1Part2Examples(t *testing.T) {
 	}
 }
 
-func BenchmarkDay1Part2(b *testing.B) {
+func BenchmarkDay01Part2(b *testing.B) {
 	buf, err := day1Input()
 	if err != nil {
 		b.Fatal(err)
