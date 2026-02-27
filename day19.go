@@ -2,51 +2,56 @@ package adventofcode2015
 
 import (
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 )
 
 const day19Separator = "=>"
 
-// Plant holds a day 19 Red-Nosed Reindeer nuclear fusion/fission plant.
-type plant struct {
+type day19Reducer struct {
+	from string
+	into string
+}
+
+type Day19Puzzle struct {
 	replacements map[string][]string
 	molecule     string
 }
 
-// newPlant creates a plant from a list of replacements such as "H => OH".
-func newPlant(replacements []string) (plant, error) {
-	var p plant
-	p.replacements = make(map[string][]string, len(replacements))
-	for i, s := range replacements {
+func NewDay19(lines []string) (Day19Puzzle, error) {
+	if len(lines) < 3 {
+		return Day19Puzzle{}, fmt.Errorf("invalid input")
+	}
+	p := Day19Puzzle{
+		replacements: make(map[string][]string, len(lines)),
+		molecule:     lines[len(lines)-1],
+	}
+	for i, s := range lines[:len(lines)-2] {
 		parts := strings.Split(s, day19Separator)
 		if len(parts) != 2 {
-			return p, fmt.Errorf("illegal format at index %d: "+
-				"want H => OH but got %q", i, s)
+			return Day19Puzzle{}, fmt.Errorf("line %d: invalid replacement", i+1)
 		}
-		p.addReplacement(strings.TrimSpace(parts[0]),
-			strings.TrimSpace(parts[1]))
+		from := strings.TrimSpace(parts[0])
+		into := strings.TrimSpace(parts[1])
+		p.replacements[from] = append(p.replacements[from], into)
 	}
 	return p, nil
 }
 
-func (a plant) addReplacement(k, v string) {
-	if existing, ok := a.replacements[k]; ok {
-		// add to existing replacement
-		a.replacements[k] = append(existing, v)
-	} else {
-		vs := make([]string, 1)
-		vs[0] = v
-		a.replacements[k] = vs
+// Day19 solves day 19 for the selected part.
+func Day19(p Day19Puzzle, part1 bool) uint {
+	if part1 {
+		return uint(len(day19Distinct(p.replacements, p.molecule)))
 	}
+	return day19ReduceSteps(p.molecule, day19Reducers(p.replacements))
 }
 
-func (a plant) distinct() map[string]bool {
+func day19Distinct(replacements map[string][]string, molecule string) map[string]bool {
 	m := make(map[string]bool)
-	for from, v := range a.replacements {
-		for _, into := range v {
-			for c := strings.Count(a.molecule, from); c > 0; c-- {
-				r := replaceNth(a.molecule, from, into, c)
+	for from, intoList := range replacements {
+		for _, into := range intoList {
+			for c := strings.Count(molecule, from); c > 0; c-- {
+				r := replaceNth(molecule, from, into, c)
 				m[r] = true
 			}
 		}
@@ -54,39 +59,18 @@ func (a plant) distinct() map[string]bool {
 	return m
 }
 
-// Day19Part1 returns number of possible medicine molecules.
-func Day19Part1(p plant) uint {
-	return uint(len(p.distinct()))
-}
-
-type reducer struct {
-	from, into string
-}
-
-// reducers returns the complement of replacers, if O => OH is a replacer,
-// OH => O is a reducer.
-func (a plant) reducers() (rs []reducer) {
-	for k, vs := range a.replacements {
-		for _, v := range vs {
-			rs = append(rs, reducer{v, k})
+func day19Reducers(replacements map[string][]string) []day19Reducer {
+	rs := make([]day19Reducer, 0, len(replacements))
+	for from, intoList := range replacements {
+		for _, into := range intoList {
+			rs = append(rs, day19Reducer{from: into, into: from})
 		}
-
 	}
 	return rs
 }
 
-func reduced0(m map[string]bool) bool {
-	return m["e"]
-}
-
-// Day19Part2 returns number of steps to convert 'e' to plant's molecule.
-func Day19Part2(molecule string, rs []reducer) (step uint) {
-	m := make(map[string]bool)
-	m[molecule] = true
-	return reduce(m, rs)
-}
-
-func reduce(prospects map[string]bool, rs []reducer) uint {
+func day19ReduceSteps(molecule string, rs []day19Reducer) uint {
+	prospects := map[string]bool{molecule: true}
 	for step := uint(1); ; step++ {
 		reduced := make(map[string]bool)
 		for p := range prospects {
@@ -97,49 +81,35 @@ func reduce(prospects map[string]bool, rs []reducer) uint {
 				}
 			}
 		}
-
-		// end result available in prospects?
-		if reduced0(reduced) {
+		if reduced["e"] {
 			return step
 		}
 		if len(reduced) == 0 {
 			return 0
 		}
 
-		// heuristically reduce complexity: build a list of shortest prospects
-		var ss []string
+		ss := make([]string, 0, len(reduced))
 		for k := range reduced {
 			ss = append(ss, k)
 		}
-		sort.Sort(ByLen(ss))
+		slices.SortFunc(ss, func(a, b string) int {
+			if len(a) < len(b) {
+				return -1
+			}
+			if len(a) > len(b) {
+				return 1
+			}
+			return 0
+		})
 
-		// consider shortest only
 		next := make(map[string]bool)
-		fittest := len(ss)
 		const heuristic = 100
-		if fittest > heuristic {
-			fittest = heuristic
-		}
-		for _, s := range ss[:fittest] {
+		limit := min(len(ss), heuristic)
+		for _, s := range ss[:limit] {
 			next[s] = true
 		}
 		prospects = next
 	}
-}
-
-// ByLen sorts strings by length of string.
-type ByLen []string
-
-func (a ByLen) Len() int {
-	return len(a)
-}
-
-func (a ByLen) Less(i, j int) bool {
-	return len(a[i]) < len(a[j])
-}
-
-func (a ByLen) Swap(i, j int) {
-	a[i], a[j] = a[j], a[i]
 }
 
 // replaceNth replaces the nth occurrence of old in s with new.
@@ -158,3 +128,4 @@ func replaceNth(s, old, new string, n int) string {
 	}
 	return s
 }
+

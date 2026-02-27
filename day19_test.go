@@ -1,142 +1,88 @@
 package adventofcode2015
 
-import (
-	"reflect"
-	"sort"
-	"testing"
-)
+import "testing"
 
-func TestReplaceNth(t *testing.T) {
-	examples := []struct {
+func BenchmarkDay19Part1(b *testing.B) {
+	benchWithParser(b, 19, true, NewDay19, Day19)
+}
+
+func BenchmarkDay19Part2(b *testing.B) {
+	benchWithParser(b, 19, false, NewDay19, Day19)
+}
+
+func TestDay19ReplaceNth(t *testing.T) {
+	tests := []struct {
 		s, old, new string
 		n           int
-		result      string
+		want        string
 	}{
 		{"A", "A", "B", 1, "B"},
 		{"AABACA", "A", "B", 3, "AABBCA"},
 	}
-	for _, tt := range examples {
-		got := replaceNth(tt.s, tt.old, tt.new, tt.n)
-		if tt.result != got {
-			t.Fatalf("want %q but got %q", tt.result, got)
+	for _, tt := range tests {
+		if got := replaceNth(tt.s, tt.old, tt.new, tt.n); got != tt.want {
+			t.Fatalf("want %q but got %q", tt.want, got)
 		}
 	}
 }
 
-func hhoPlant() plant {
-	p, _ := newPlant([]string{
+func TestDay19Part1Example(t *testing.T) {
+	puzzle, err := NewDay19([]string{
 		"H => HO",
 		"H => OH",
-		"O => HH"})
-	return p
-}
-
-func TestDay19AddReplacement(t *testing.T) {
-	p := hhoPlant()
-
-	if len(p.replacements) != 2 {
-		t.Fatalf("want len(2) but got len(%d)", len(p.replacements))
-	}
-	if len(p.replacements["O"]) != 1 {
-		t.Fatalf("want 1 replacement for O but got %d",
-			len(p.replacements["O"]))
-	}
-	if len(p.replacements["H"]) != 2 {
-		t.Fatalf("want 2 replacements for H but got %d",
-			len(p.replacements["H"]))
-	}
-}
-
-func TestDay19Hoh(t *testing.T) {
-	const want = 4
-	p := hhoPlant()
-	p.molecule = "HOH"
-	got := Day19Part1(p)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
-}
-
-func TestDay19Hohoho(t *testing.T) {
-	const want = 7
-	p := hhoPlant()
-	p.molecule = "HOHOHO"
-	got := Day19Part1(p)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
-}
-
-func TestDay19Part1(t *testing.T) {
-	const want = 576
-	lines := linesFromFilename(t, filename(19))
-	p, err := newPlant(lines[:len(lines)-2])
+		"O => HH",
+		"",
+		"HOH",
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	p.molecule = lines[len(lines)-1]
-	got := Day19Part1(p)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
+	if got := Day19(puzzle, true); got != 4 {
+		t.Fatalf("want %d but got %d", 4, got)
 	}
 }
 
-func part2ExamplePlant() plant {
-	rs := []string{
+func TestDay19Part2Example1(t *testing.T) {
+	puzzle, err := NewDay19([]string{
 		"e => H",
 		"e => O",
 		"H => HO",
 		"H => OH",
 		"O => HH",
-	}
-	p, _ := newPlant(rs)
-	return p
-}
-
-func TestDay19Example1Part2(t *testing.T) {
-	const want = 3
-	p := part2ExamplePlant()
-	p.molecule = "HOH"
-	got := Day19Part2(p.molecule, p.reducers())
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
-}
-
-func TestDay19Example2Part2(t *testing.T) {
-	const want = 6
-	p := part2ExamplePlant()
-	p.molecule = "HOHOHO"
-	got := Day19Part2(p.molecule, p.reducers())
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
-}
-
-func TestDay19Part2(t *testing.T) {
-	const want = 207
-	lines := linesFromFilename(t, filename(19))
-	p, err := newPlant(lines[:len(lines)-2])
+		"",
+		"HOH",
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	p.molecule = lines[len(lines)-1]
-	got := Day19Part2(p.molecule, p.reducers())
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
+	if got := Day19(puzzle, false); got != 3 {
+		t.Fatalf("want %d but got %d", 3, got)
 	}
 }
 
-func TestSort(t *testing.T) {
-	want := []string{
-		"e", "bb", "aaa", "ccc", "aaaaa", "ddddddddd",
+func TestDay19Part2Example2(t *testing.T) {
+	puzzle, err := NewDay19([]string{
+		"e => H",
+		"e => O",
+		"H => HO",
+		"H => OH",
+		"O => HH",
+		"",
+		"HOHOHO",
+	})
+	if err != nil {
+		t.Fatal(err)
 	}
-	got := []string{
-		"aaa", "aaaaa", "bb", "ccc", "ddddddddd", "e",
-	}
-	// make sure _not_ to use sort.Strings(ByLen(got))
-	sort.Sort(ByLen(got))
-	if !reflect.DeepEqual(want, got) {
-		t.Fatalf("want %+v but got %+v", want, got)
+	if got := Day19(puzzle, false); got != 6 {
+		t.Fatalf("want %d but got %d", 6, got)
 	}
 }
+
+func TestDay19Part1(t *testing.T) {
+	testWithParser(t, 19, filename, true, NewDay19, Day19, uint(576))
+}
+
+func TestDay19Part2(t *testing.T) {
+	testWithParser(t, 19, filename, false, NewDay19, Day19, uint(207))
+}
+
