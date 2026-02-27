@@ -1,12 +1,14 @@
 package adventofcode2015
 
-import (
-	"testing"
-)
+import "testing"
 
-const (
-	inputDay10 = "1113122113"
-)
+func BenchmarkDay10Part1(b *testing.B) {
+	benchWithParser(b, 10, true, NewDay10, Day10)
+}
+
+func BenchmarkDay10Part2(b *testing.B) {
+	benchWithParser(b, 10, false, NewDay10, Day10)
+}
 
 func TestDay10Samples(t *testing.T) {
 	samples := []struct {
@@ -20,37 +22,18 @@ func TestDay10Samples(t *testing.T) {
 		{"111221", "312211"},
 	}
 	for _, tt := range samples {
-		id := tt.in
-		t.Run(id, func(t *testing.T) {
-			want := tt.out
-			got := lookAndSay(tt.in)
-			if want != got {
-				t.Fatalf("%q: want %q but got %q", id, want, got)
+		t.Run(tt.in, func(t *testing.T) {
+			if got := lookAndSay(tt.in); got != tt.out {
+				t.Fatalf("%q: want %q but got %q", tt.in, tt.out, got)
 			}
 		})
 	}
 }
 
 func TestDay10Part1(t *testing.T) {
-	const want = 360154
-	s := inputDay10
-	for i := 0; i < 40; i++ {
-		s = lookAndSay(s)
-	}
-	got := len(s)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 10, filename, true, NewDay10, Day10, uint(360_154))
 }
 
 func TestDay10Part2(t *testing.T) {
-	const want = 5103798
-	s := inputDay10
-	for i := 0; i < 50; i++ {
-		s = lookAndSay(s)
-	}
-	got := len(s)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 10, filename, false, NewDay10, Day10, uint(5_103_798))
 }

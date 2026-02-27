@@ -1,9 +1,31 @@
 package adventofcode2015
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
+
+type Day10Puzzle string
+
+func NewDay10(lines []string) (Day10Puzzle, error) {
+	if len(lines) != 1 {
+		return "", errors.New("invalid input")
+	}
+	return Day10Puzzle(lines[0]), nil
+}
+
+func Day10(puzzle Day10Puzzle, part1 bool) uint {
+	s := string(puzzle)
+	steps := 50
+	if part1 {
+		steps = 40
+	}
+	for range steps {
+		s = lookAndSay(s)
+	}
+	return uint(len(s))
+}
 
 func lookAndSay(s string) string {
 	if len(s) == 0 {
