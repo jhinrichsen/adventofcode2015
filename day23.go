@@ -1,87 +1,104 @@
 package adventofcode2015
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
 
-// Day23Part1 runs instructions and returns register a and b.
-// Implemented purely on string, no mnemonic e.a. (interpreter vs. compiler)
-func Day23Part1(instructions []string) (a uint, b uint) {
-	return day23(instructions, 0, 0)
-}
+type Day23Puzzle []string
 
-// Day23Part2 runs instructions and returns register a and b.
-// Implemented purely on string, no mnemonic e.a. (interpreter vs. compiler)
-func Day23Part2(instructions []string, initialA uint) (a uint, b uint) {
-	return day23(instructions, initialA, 0)
-}
-
-func day23(instructions []string, initialA, initialB uint) (a uint, b uint) {
-	// remove any "," so we get clean 1/2/3 fields
-	for i := range instructions {
-		instructions[i] = strings.ReplaceAll(instructions[i], ",", "")
+func NewDay23(lines []string) (Day23Puzzle, error) {
+	puzzle := make(Day23Puzzle, len(lines))
+	for i := range lines {
+		puzzle[i] = strings.ReplaceAll(lines[i], ",", "")
 	}
+	return puzzle, nil
+}
 
+// Day23 solves day 23 for the selected part.
+func Day23(puzzle Day23Puzzle, part1 bool) uint {
+	initialA := uint(0)
+	if !part1 {
+		initialA = 1
+	}
+	_, b := day23Run(puzzle, initialA, 0)
+	return b
+}
+
+func day23Run(instructions []string, initialA, initialB uint) (a uint, b uint) {
 	a = initialA
 	b = initialB
 
 	register := func(reg string) *uint {
 		if reg == "a" {
 			return &a
-		} else if reg == "b" {
+		}
+		if reg == "b" {
 			return &b
 		}
-		panic(fmt.Sprintf("unknown register %q", reg))
-	}
-	hlf := func(reg *uint) {
-		*reg = *reg / 2
-	}
-	tpl := func(reg *uint) {
-		*reg = *reg * 3
-	}
-	inc := func(reg *uint) {
-		*reg = *reg + 1
+		return nil
 	}
 	offset := func(s string) int {
-		i, _ := strconv.Atoi(s)
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			return 0
+		}
 		return i
 	}
-	isEven := func(n uint) bool {
-		return n%2 == 0
-	}
-	isOne := func(n uint) bool {
-		return n == 1
-	}
 
-	var op1, op2 string
-	for pc := 0; pc < len(instructions); {
+	for pc := 0; pc >= 0 && pc < len(instructions); {
 		fs := strings.Fields(instructions[pc])
-		op1 = fs[1]
+		if len(fs) < 2 {
+			break
+		}
+		op1 := fs[1]
 		switch fs[0] {
 		case "hlf":
-			hlf(register(op1))
+			r := register(op1)
+			if r == nil {
+				return
+			}
+			*r /= 2
 			pc++
 		case "tpl":
-			tpl(register(op1))
+			r := register(op1)
+			if r == nil {
+				return
+			}
+			*r *= 3
 			pc++
 		case "inc":
-			inc(register(op1))
+			r := register(op1)
+			if r == nil {
+				return
+			}
+			*r = *r + 1
 			pc++
 		case "jmp":
 			pc += offset(op1)
 		case "jie":
-			op2 = fs[2]
-			if isEven(*register(op1)) {
-				pc += offset(op2)
+			if len(fs) < 3 {
+				return
+			}
+			r := register(op1)
+			if r == nil {
+				return
+			}
+			if *r%2 == 0 {
+				pc += offset(fs[2])
 			} else {
 				pc++
 			}
 		case "jio":
-			op2 = fs[2]
-			if isOne(*register(op1)) {
-				pc += offset(op2)
+			if len(fs) < 3 {
+				return
+			}
+			r := register(op1)
+			if r == nil {
+				return
+			}
+			if *r == 1 {
+				pc += offset(fs[2])
 			} else {
 				pc++
 			}
