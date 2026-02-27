@@ -1,53 +1,42 @@
 package adventofcode2015
 
-type position [2]int
+import "image"
 
-// Day3Part1 returns number of fields visited.
-func Day3Part1(buf []byte) uint {
-	houses := make(map[position]bool)
-	pos := position{0, 0}
-	houses[pos] = true
-	for _, b := range buf {
-		pos = move(pos, b)
-		houses[pos] = true
-	}
-	return uint(len(houses))
-}
-
-func move(pos position, b byte) position {
+func move(pos image.Point, b byte) image.Point {
 	switch b {
 	case '>':
-		pos[0]++
+		pos.X++
 	case '<':
-		pos[0]--
+		pos.X--
 	case 'v':
-		pos[1]++
+		pos.Y++
 	case '^':
-		pos[1]--
+		pos.Y--
 	}
 	return pos
 }
 
-// Day3Part2 TODO.
-func Day3Part2(buf []byte) uint {
-	houses := make(map[position]bool)
+// Day03 solves day 3 for the selected part.
+func Day03(buf []byte, part1 bool) (uint, error) {
+	houses := make(map[image.Point]bool)
+	if part1 {
+		pos := image.Point{X: 0, Y: 0}
+		houses[pos] = true
+		for _, b := range buf {
+			pos = move(pos, b)
+			houses[pos] = true
+		}
+		return uint(len(houses)), nil
+	}
+
 	// index santa = 0, robo santa = 1
-	poss := []position{
-		{0, 0},
-		{0, 0},
-	}
-	// santa starts
+	poss := []image.Point{{X: 0, Y: 0}, {X: 0, Y: 0}}
 	who := 0
-	mark := func() {
-		houses[poss[who]] = true
-	}
-	// deliver to current position
-	mark()
+	houses[poss[0]] = true
 	for _, b := range buf {
 		poss[who] = move(poss[who], b)
-		mark()
-		// take turns
+		houses[poss[who]] = true
 		who = 1 - who
 	}
-	return uint(len(houses))
+	return uint(len(houses)), nil
 }
