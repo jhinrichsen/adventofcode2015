@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"strconv"
+	"strings"
 )
 
 type spellID int
@@ -36,6 +38,38 @@ type day22Player struct {
 	mana      int
 	spent     int // recharge may not affect mana, so need a separate counter
 	damage    int
+}
+
+type Day22Puzzle struct {
+	boss day22Player
+}
+
+func NewDay22(lines []string) (Day22Puzzle, error) {
+	if len(lines) != 3 {
+		return Day22Puzzle{}, fmt.Errorf("invalid input")
+	}
+	hitPoints, err := day22ParseStat(lines[0], "Hit Points:")
+	if err != nil {
+		return Day22Puzzle{}, err
+	}
+	damage, err := day22ParseStat(lines[1], "Damage:")
+	if err != nil {
+		return Day22Puzzle{}, err
+	}
+	return Day22Puzzle{
+		boss: day22Player{hitPoints: hitPoints, damage: damage},
+	}, nil
+}
+
+func day22ParseStat(line, prefix string) (int, error) {
+	if !strings.HasPrefix(line, prefix) {
+		return 0, fmt.Errorf("invalid line %q", line)
+	}
+	n, err := strconv.Atoi(strings.TrimSpace(strings.TrimPrefix(line, prefix)))
+	if err != nil {
+		return 0, err
+	}
+	return n, nil
 }
 
 // wizardSimulator holds data for one game.
@@ -216,19 +250,12 @@ func (a *wizardSimulator) turn() {
 	a.turnIdx = 1 - a.turnIdx
 }
 
-// Day22Part1 returns the least amount of mana you can spend and still win the
-// fight.
-// Of all the AOC solutions, this one is the most ugly one. And the slowest.
-func Day22Part1() int {
-	return day22(false)
+// Day22 solves day 22 for the selected part.
+func Day22(puzzle Day22Puzzle, part1 bool) uint {
+	return uint(day22(!part1, puzzle.boss))
 }
 
-// Day22Part2 runs day 22 in hard mode.
-func Day22Part2() int {
-	return day22(true)
-}
-
-func day22(hardMode bool) int {
+func day22(hardMode bool, boss day22Player) int {
 	const (
 		startMana = 500
 		maxRates  = 13
@@ -238,7 +265,7 @@ func day22(hardMode bool) int {
 	for digits := NewBase5(maxRates); len(digits.Buf) <= maxRates; digits.Inc() {
 		players := [...]day22Player{
 			{hitPoints: 50, armor: 0, mana: startMana},
-			{hitPoints: 58, damage: 9},
+			boss,
 		}
 		i := -1
 		f := func() spellID {

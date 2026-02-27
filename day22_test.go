@@ -101,20 +101,12 @@ func TestDay22Part1(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping long running testcase for day 22")
 	}
-	const want = 1269
-	got := Day22Part1()
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 22, filename, true, NewDay22, Day22, uint(1_269))
 }
 
 func TestDay22Part2(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping long running testcase for day 22")
 	}
-	const want = 1309
-	got := Day22Part2()
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 22, filename, false, NewDay22, Day22, uint(1_309))
 }
