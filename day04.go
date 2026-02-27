@@ -6,14 +6,13 @@ import (
 	"strings"
 )
 
-// Day4Part1 returns lowest positive number whose MD5 starts with 5 zeroes.
-func Day4Part1(s string) uint {
-	return mine(s, 5)
-}
-
-// Day4Part2 returns lowest positive number whose MD5 starts with 6 zeroes.
-func Day4Part2(s string) uint {
-	return mine(s, 6)
+// Day04 solves day 4 for the selected part.
+func Day04(buf []byte, part1 bool) (uint, error) {
+	secret := strings.TrimSpace(string(buf))
+	if part1 {
+		return mine(secret, 5), nil
+	}
+	return mine(secret, 6), nil
 }
 
 func mine(s string, zeroes uint) (n uint) {
