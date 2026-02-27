@@ -3,10 +3,7 @@ package adventofcode2015
 import "testing"
 
 func TestDay07Example(t *testing.T) {
-	lines, err := linesFromFilename(exampleFilename(7))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, exampleFilename(7))
 	puzzle, err := NewDay07(lines)
 	if err != nil {
 		t.Fatal(err)
@@ -34,39 +31,26 @@ func TestDay07Example(t *testing.T) {
 }
 
 func BenchmarkDay07Part1(b *testing.B) {
-	lines, err := linesFromFilename(filename(7))
-	if err != nil {
-		b.Fatal(err)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_, err := Day07Part1(lines)
-		if err != nil {
-			b.Fatal(err)
+	benchLinesErr(b, 7, true, func(lines []string, part1 bool) (uint16, error) {
+		if part1 {
+			return Day07Part1(lines)
 		}
-	}
+		return Day07Part2(lines)
+	})
 }
 
 func BenchmarkDay07Part2(b *testing.B) {
-	lines, err := linesFromFilename(filename(7))
-	if err != nil {
-		b.Fatal(err)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_, err := Day07Part2(lines)
-		if err != nil {
-			b.Fatal(err)
+	benchLinesErr(b, 7, false, func(lines []string, part1 bool) (uint16, error) {
+		if part1 {
+			return Day07Part1(lines)
 		}
-	}
+		return Day07Part2(lines)
+	})
 }
 
 func TestDay07Part1(t *testing.T) {
 	const want = 16076
-	lines, err := linesFromFilename(filename(7))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(7))
 	got, err := Day07Part1(lines)
 	if err != nil {
 		t.Fatal(err)
@@ -78,10 +62,7 @@ func TestDay07Part1(t *testing.T) {
 
 func TestDay07Part2(t *testing.T) {
 	const want = 2797
-	lines, err := linesFromFilename(filename(7))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(7))
 	got, err := Day07Part2(lines)
 	if err != nil {
 		t.Fatal(err)

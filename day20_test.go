@@ -5,22 +5,21 @@ import (
 	"testing"
 )
 
-var day20Samples = []struct {
-	in  uint
-	out uint
-}{
-	{1, 10},
-	{2, 30},
-	{3, 40},
-	{4, 70},
-	{5, 60},
-	{6, 120},
-	{7, 80},
-	{8, 150},
-	{9, 130},
-}
-
 func TestDay20Examples(t *testing.T) {
+	day20Samples := []struct {
+		in  uint
+		out uint
+	}{
+		{1, 10},
+		{2, 30},
+		{3, 40},
+		{4, 70},
+		{5, 60},
+		{6, 120},
+		{7, 80},
+		{8, 150},
+		{9, 130},
+	}
 	for _, tt := range day20Samples {
 		id := fmt.Sprintf("%d", tt.in)
 		t.Run(id, func(t *testing.T) {
@@ -54,13 +53,13 @@ func TestDay20Champ(t *testing.T) {
 }
 
 func BenchmarkDay20Champ(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		day20Part1Champ(36_000_000)
 	}
 }
 
 func BenchmarkDay20MyChamp(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		day20MyChamp(36_000_000)
 	}
 }

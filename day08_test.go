@@ -54,17 +54,16 @@ func test(t *testing.T, filename string, want int) {
 	}
 }
 
-var part2Tests = []struct {
-	in  []byte
-	out int
-}{
-	{[]byte{'"', '"'}, 6},
-	{[]byte{'"', 'a', 'b', 'c', '"'}, 9},
-	{[]byte{'"', 'a', 'a', 'a', '\\', '"', 'a', 'a', 'a', '"'}, 16},
-	{[]byte{'"', '\\', 'x', '2', '7', '"'}, 11},
-}
-
 func TestDay8Part2Examples(t *testing.T) {
+	part2Tests := []struct {
+		in  []byte
+		out int
+	}{
+		{[]byte{'"', '"'}, 6},
+		{[]byte{'"', 'a', 'b', 'c', '"'}, 9},
+		{[]byte{'"', 'a', 'a', 'a', '\\', '"', 'a', 'a', 'a', '"'}, 16},
+		{[]byte{'"', '\\', 'x', '2', '7', '"'}, 11},
+	}
 	for _, tt := range part2Tests {
 		t.Run(string(tt.in), func(t *testing.T) {
 			want := tt.out

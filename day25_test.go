@@ -14,32 +14,22 @@ import (
 //  5 |    77061  17552253  28094349   6899651   9250759  31663883
 //  6 | 33071741   6796745  25397450  24659492   1534922  27995004
 
-var day25ExampleCodes = []uint{
-	0,
-	20151125, // n = 1
-	31916031, // n = 2
-	18749137, // n = 3
-	16080970,
-	21629792,
-	17289845,
-	24592653,
-	8057251,
-	16929656,
-	30943339,
-	77061,
-	32451966,
-}
-
-var day25Examples = []struct {
-	x, y, code uint
-}{
-	{1, 1, 20151125},
-	{2, 3, 8057251},
-	{2, 5, 17552253},
-	{3, 3, 1601130},
-}
-
 func TestDay25Sequence(t *testing.T) {
+	day25ExampleCodes := []uint{
+		0,
+		20151125, // n = 1
+		31916031, // n = 2
+		18749137, // n = 3
+		16080970,
+		21629792,
+		17289845,
+		24592653,
+		8057251,
+		16929656,
+		30943339,
+		77061,
+		32451966,
+	}
 	d := newDay25()
 	for l := uint(len(day25ExampleCodes)); d.n < l; d.next() {
 		want := day25ExampleCodes[d.n]
@@ -51,6 +41,14 @@ func TestDay25Sequence(t *testing.T) {
 }
 
 func TestDay25Examples(t *testing.T) {
+	day25Examples := []struct {
+		x, y, code uint
+	}{
+		{1, 1, 20151125},
+		{2, 3, 8057251},
+		{2, 5, 17552253},
+		{3, 3, 1601130},
+	}
 	for _, tt := range day25Examples {
 		id := fmt.Sprintf("(%d/%d)", tt.x, tt.y)
 		t.Run(id, func(t *testing.T) {
@@ -70,7 +68,7 @@ func BenchmarkDay25Part1(b *testing.B) {
 		want = 9132360
 	)
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		got := Day25Part1(x, y)
 		if want != got {
 			b.Fatalf("want %d but got %d", want, got)

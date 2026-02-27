@@ -25,11 +25,8 @@ func TestDay15NewIngredient(t *testing.T) {
 	}
 }
 
-func ingredients(filename string) ([]Ingredient, error) {
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		return nil, err
-	}
+func ingredients(tb testing.TB, filename string) ([]Ingredient, error) {
+	lines := linesFromFilename(tb, filename)
 	var is []Ingredient
 	for _, line := range lines {
 		i, err := NewIngredient(line)
@@ -43,7 +40,7 @@ func ingredients(filename string) ([]Ingredient, error) {
 
 func TestDay15Example(t *testing.T) {
 	const want = 62_842_880
-	is, err := ingredients(exampleFilename(15))
+	is, err := ingredients(t, exampleFilename(15))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +59,7 @@ func TestDay15Example(t *testing.T) {
 
 func TestDay15ProveExample(t *testing.T) {
 	const want = 62_842_880
-	is, err := ingredients(exampleFilename(15))
+	is, err := ingredients(t, exampleFilename(15))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +70,7 @@ func TestDay15ProveExample(t *testing.T) {
 
 func TestDay15Part1(t *testing.T) {
 	const want = 13_882_464
-	is, err := ingredients(filename(15))
+	is, err := ingredients(t, filename(15))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -84,7 +81,7 @@ func TestDay15Part1(t *testing.T) {
 
 func TestDay15Part2(t *testing.T) {
 	const want = 11_171_160
-	is, err := ingredients(filename(15))
+	is, err := ingredients(t, filename(15))
 	if err != nil {
 		t.Fatal(err)
 	}

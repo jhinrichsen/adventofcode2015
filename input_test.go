@@ -1,0 +1,102 @@
+package adventofcode2015
+
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+	"testing"
+)
+
+func linesFromFilename(tb testing.TB, filename string) []string {
+	tb.Helper()
+	f, err := os.Open(filename)
+	if err != nil {
+		tb.Fatal(err)
+	}
+	lines := linesFromReader(tb, f)
+	if b, ok := tb.(*testing.B); ok {
+		b.ResetTimer()
+	}
+	return lines
+}
+
+func linesFromReader(tb testing.TB, r io.Reader) []string {
+	tb.Helper()
+	var lines []string
+	sc := bufio.NewScanner(r)
+	for sc.Scan() {
+		line := sc.Text()
+		lines = append(lines, line)
+	}
+	if err := sc.Err(); err != nil {
+		tb.Fatal(err)
+	}
+	return lines
+}
+
+func exampleFilename(day uint8) string {
+	return fmt.Sprintf("testdata/day%d_example.txt", int(day))
+}
+
+//nolint:unused // shared cross-repo test helper pattern
+func exampleNFilename(day uint8, n int) string {
+	return fmt.Sprintf("testdata/day%d_example%d.txt", int(day), n)
+}
+
+//nolint:unused // shared cross-repo test helper pattern
+func example1Filename(day uint8) string {
+	return exampleNFilename(day, 1)
+}
+
+//nolint:unused // shared cross-repo test helper pattern
+func example2Filename(day uint8) string {
+	return exampleNFilename(day, 2)
+}
+
+//nolint:unused // shared cross-repo test helper pattern
+func example3Filename(day uint8) string {
+	return exampleNFilename(day, 3)
+}
+
+func filename(day uint8) string {
+	return fmt.Sprintf("testdata/day%d.txt", int(day))
+}
+
+func file(tb testing.TB, day uint8) []byte {
+	tb.Helper()
+	buf, err := os.ReadFile(filename(day))
+	if err != nil {
+		tb.Fatal(err)
+	}
+	if b, ok := tb.(*testing.B); ok {
+		b.ResetTimer()
+	}
+	return buf
+}
+
+//nolint:unused // shared cross-repo test helper pattern
+func exampleFile(tb testing.TB, day uint8) []byte {
+	tb.Helper()
+	buf, err := os.ReadFile(exampleFilename(day))
+	if err != nil {
+		tb.Fatal(err)
+	}
+	if b, ok := tb.(*testing.B); ok {
+		b.ResetTimer()
+	}
+	return buf
+}
+
+//nolint:unused // shared cross-repo test helper pattern
+func fileFromFilename(tb testing.TB, filenameFunc func(uint8) string, day uint8) []byte {
+	tb.Helper()
+	buf, err := os.ReadFile(filenameFunc(day))
+	if err != nil {
+		tb.Fatal(err)
+	}
+	if b, ok := tb.(*testing.B); ok {
+		b.ResetTimer()
+	}
+	return buf
+}

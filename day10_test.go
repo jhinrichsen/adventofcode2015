@@ -8,18 +8,17 @@ const (
 	inputDay10 = "1113122113"
 )
 
-var samples = []struct {
-	in  string
-	out string
-}{
-	{"1", "11"},
-	{"11", "21"},
-	{"21", "1211"},
-	{"1211", "111221"},
-	{"111221", "312211"},
-}
-
 func TestDay10Samples(t *testing.T) {
+	samples := []struct {
+		in  string
+		out string
+	}{
+		{"1", "11"},
+		{"11", "21"},
+		{"21", "1211"},
+		{"1211", "111221"},
+		{"111221", "312211"},
+	}
 	for _, tt := range samples {
 		id := tt.in
 		t.Run(id, func(t *testing.T) {

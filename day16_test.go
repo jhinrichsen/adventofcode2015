@@ -45,10 +45,7 @@ func probe() map[string]uint {
 func TestDay16Part1(t *testing.T) {
 	const want = 373
 	m := probe()
-	lines, err := linesFromFilename(filename(16))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(16))
 	var got uint
 	for _, line := range lines {
 		sue, err := newSue(line)
@@ -68,10 +65,7 @@ func TestDay16Part1(t *testing.T) {
 func TestDay16Part2(t *testing.T) {
 	const want = 260
 	m := probe()
-	lines, err := linesFromFilename(filename(16))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(16))
 	var got uint
 	for _, line := range lines {
 		sue, err := newSue(line)
