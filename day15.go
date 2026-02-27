@@ -6,165 +6,114 @@ import (
 	"strings"
 )
 
-// TSP is the number of table spoon units for a combination of ingredients.
 const (
-	CALORIES = 500
-	TSP      = 100
+	day15Calories = 500
+	day15TSP      = 100
 )
 
-// Ingredient are what cookies consist of.
-type Ingredient struct {
-	Name       string
-	Properties map[string]int
+type day15Ingredient struct {
+	capacity   int
+	durability int
+	flavor     int
+	texture    int
+	calories   int
 }
 
-// properties without calories.
-func (a Ingredient) values() []int {
-	return []int{
-		a.Properties["capacity"],
-		a.Properties["durability"],
-		a.Properties["flavor"],
-		a.Properties["texture"],
-		// a.Properties["calories"],
+type Day15Puzzle []day15Ingredient
+
+func NewDay15(lines []string) (Day15Puzzle, error) {
+	puzzle := make(Day15Puzzle, 0, len(lines))
+	for i, line := range lines {
+		ing, err := day15ParseIngredient(line)
+		if err != nil {
+			return nil, fmt.Errorf("line %d: %w", i+1, err)
+		}
+		puzzle = append(puzzle, ing)
 	}
+	return puzzle, nil
 }
 
-func (a Ingredient) calories() int {
-	return a.Properties["calories"]
+// Day15 solves day 15 for the selected part.
+func Day15(puzzle Day15Puzzle, part1 bool) uint {
+	if len(puzzle) == 0 {
+		return 0
+	}
+
+	ch := make(chan []int)
+	go KCompositions(day15TSP, len(puzzle), ch)
+
+	best := uint(0)
+	for amounts := range ch {
+		if !part1 && day15TotalCalories(puzzle, amounts) != day15Calories {
+			continue
+		}
+		best = max(best, day15Score(puzzle, amounts))
+	}
+	return best
 }
 
-// NewIngredient parses a line in form "Butterscotch: capacity -1, durability
-// -2, flavor 6, texture 3, calories 8" into an Ingredient.
-func NewIngredient(s string) (Ingredient, error) {
+func day15ParseIngredient(s string) (day15Ingredient, error) {
 	parts := strings.Split(s, ":")
 	if len(parts) != 2 {
-		return Ingredient{},
-			fmt.Errorf("want %d parts but got %d", 2, len(parts))
+		return day15Ingredient{}, fmt.Errorf("invalid ingredient")
 	}
 	props := strings.Split(parts[1], ",")
 	if len(props) != 5 {
-		return Ingredient{},
-			fmt.Errorf("want %d parts but got %d", 5, len(props))
+		return day15Ingredient{}, fmt.Errorf("invalid properties")
 	}
-	m := make(map[string]int)
-	for _, prop := range props {
-		ps := strings.Fields(prop)
-		n, err := strconv.Atoi(ps[1])
+	vals := [5]int{}
+	for i, prop := range props {
+		fields := strings.Fields(prop)
+		if len(fields) != 2 {
+			return day15Ingredient{}, fmt.Errorf("invalid property %q", prop)
+		}
+		n, err := strconv.Atoi(fields[1])
 		if err != nil {
-			return Ingredient{},
-				fmt.Errorf("not a number for property %q: %q",
-					ps[0], ps[1])
+			return day15Ingredient{}, err
 		}
-		m[ps[0]] = n
+		vals[i] = n
 	}
-	return Ingredient{parts[0], m}, nil
+	return day15Ingredient{
+		capacity:   vals[0],
+		durability: vals[1],
+		flavor:     vals[2],
+		texture:    vals[3],
+		calories:   vals[4],
+	}, nil
 }
 
-// Tsp is the cooking unit one teaspoon.
-type Tsp uint
-
-// Serving is one single ingredient of a cookie recipe.
-type Serving struct {
-	Ingredient
-	tsp Tsp
-}
-
-func (a Serving) calories() uint {
-	c := a.Ingredient.calories() * int(a.tsp)
-	if c < 0 {
-		return 0
+func day15Score(puzzle Day15Puzzle, amounts []int) uint {
+	capacity := 0
+	durability := 0
+	flavor := 0
+	texture := 0
+	for i, ing := range puzzle {
+		a := amounts[i]
+		capacity += a * ing.capacity
+		durability += a * ing.durability
+		flavor += a * ing.flavor
+		texture += a * ing.texture
 	}
-	return uint(c)
-}
-
-// Cookie consists of ingredients in full-teaspoon units.
-type Cookie []Serving
-
-func (a Cookie) tsps() []Tsp {
-	var tsps []Tsp
-	for _, s := range a {
-		tsps = append(tsps, s.tsp)
+	if capacity < 0 {
+		capacity = 0
 	}
-	return tsps
-}
-
-// properties without calories.
-func (a Cookie) properties() [][]int {
-	ps := make([][]int, len(a))
-	for y := range a {
-		ps[y] = a[y].values()
+	if durability < 0 {
+		durability = 0
 	}
-	return ps
-}
-
-func (a Cookie) score() uint {
-	product := uint(1)
-	tsps := a.tsps()        // list of tsps
-	props := a.properties() // matrix of properties, y same order as tsps
-	for x := range props[0] {
-		propTotal := 0
-		for y := range a {
-			propTotal += int(tsps[y]) * props[y][x]
-		}
-		// If any properties had produced a negative total, it would
-		// have instead become zero
-		if propTotal < 0 {
-			propTotal = 0
-		}
-		product *= uint(propTotal)
+	if flavor < 0 {
+		flavor = 0
 	}
-	return product
-}
-
-func (a Cookie) calories() uint {
-	var c uint
-	for _, i := range a {
-		c += i.calories()
+	if texture < 0 {
+		texture = 0
 	}
-	return c
+	return uint(capacity * durability * flavor * texture)
 }
 
-// Day15Part1 returns fittest cookie for all combinations of ingredients.
-// No hardcoded number of ingredients, otherwise five embedded loops will do the
-// combination trick.
-func Day15Part1(is []Ingredient) Cookie {
-	return day15(is, func(a Cookie) bool {
-		// do not filter anything
-		return false
-	})
-}
-
-// Day15Part2 returns fittest cookie for all combinations of ingredients that
-// does not exceed 500 calories. No hardcoded number of ingredients, otherwise
-// five embedded loops will do the combination trick.
-func Day15Part2(is []Ingredient) Cookie {
-	return day15(is, func(a Cookie) bool {
-		// this is a filter function, so we ignore any non-500
-		return a.calories() != CALORIES
-	})
-}
-
-func day15(is []Ingredient, cookieFilter func(Cookie) bool) Cookie {
-	// start combination generator
-	ch := make(chan ([]int))
-	go KCompositions(TSP, len(is), ch)
-
-	var combinations [][]int
-	for digits := range ch {
-		combinations = append(combinations, digits)
+func day15TotalCalories(puzzle Day15Puzzle, amounts []int) int {
+	total := 0
+	for i, ing := range puzzle {
+		total += amounts[i] * ing.calories
 	}
-	var champ Cookie
-	var highscore uint
-	for _, digits := range combinations {
-		var c Cookie
-		for i, digit := range digits {
-			c = append(c, Serving{is[i], Tsp(digit)})
-		}
-		sc := c.score()
-		if sc > highscore && !cookieFilter(c) {
-			highscore = sc
-			champ = c
-		}
-	}
-	return champ
+	return total
 }
+
