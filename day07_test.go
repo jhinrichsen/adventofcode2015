@@ -23,7 +23,7 @@ func TestDay07Example(t *testing.T) {
 		"y": 456,
 	}
 	for wire, signal := range want {
-		got, err := puzzle.Signal(wire)
+		got, err := puzzle.signal(wire, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
