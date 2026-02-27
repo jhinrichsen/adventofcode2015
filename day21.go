@@ -124,36 +124,3 @@ var day21Rings = []day21Item{
 	{40, 0, 2},
 	{80, 0, 3},
 }
-
-func day21ItemCombinations() []day21Item {
-	m := make(map[day21Item]bool, 1024)
-	ringSets := []day21Item{{0, 0, 0}} // no rings
-	for i := range len(day21Rings) {
-		ringSets = append(ringSets, day21Rings[i]) // one ring
-		for j := i + 1; j < len(day21Rings); j++ { // two rings
-			ringSets = append(ringSets, day21Item{
-				cost:   day21Rings[i].cost + day21Rings[j].cost,
-				damage: day21Rings[i].damage + day21Rings[j].damage,
-				armor:  day21Rings[i].armor + day21Rings[j].armor,
-			})
-		}
-	}
-
-	for _, weapon := range day21Weapons {
-		for _, armor := range day21Armors {
-			for _, rings := range ringSets {
-					item := day21Item{
-						cost:   weapon.cost + armor.cost + rings.cost,
-						damage: weapon.damage + armor.damage + rings.damage,
-						armor:  weapon.armor + armor.armor + rings.armor,
-					}
-					m[item] = true
-			}
-		}
-	}
-	out := make([]day21Item, 0, len(m))
-	for it := range m {
-		out = append(out, it)
-	}
-	return out
-}

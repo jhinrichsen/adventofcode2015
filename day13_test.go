@@ -21,4 +21,3 @@ func TestDay13Part1(t *testing.T) {
 func TestDay13Part2(t *testing.T) {
 	testWithParser(t, 13, filename, false, NewDay13, Day13, uint(668))
 }
-

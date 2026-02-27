@@ -101,4 +101,3 @@ func day14ScoreWinner(rs []day14Reindeer, sec uint) uint {
 	}
 	return best
 }
-

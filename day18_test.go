@@ -106,4 +106,3 @@ func day18String(buf []byte, w, h int) string {
 	}
 	return sb.String()
 }
-

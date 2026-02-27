@@ -127,11 +127,3 @@ func Day09(puzzle Day09Puzzle, part1 bool) uint {
 	}
 	return best
 }
-
-func keys(m map[string]bool) []string {
-	ss := make([]string, 0, len(m))
-	for k := range m {
-		ss = append(ss, k)
-	}
-	return ss
-}

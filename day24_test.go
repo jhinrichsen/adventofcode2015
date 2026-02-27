@@ -23,4 +23,3 @@ func TestDay24Part2(t *testing.T) {
 	}
 	testWithParser(t, 24, filename, false, NewDay24, Day24, uint(77_387_711))
 }
-

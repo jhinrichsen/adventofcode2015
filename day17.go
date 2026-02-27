@@ -63,4 +63,3 @@ func day17Count(storage uint, capacities []uint, part1 bool) uint {
 	}
 	return minCount
 }
-

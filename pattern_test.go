@@ -103,19 +103,3 @@ func benchLines[R any](
 		_ = solver(lines, part1)
 	}
 }
-
-func benchLinesErr[R any](
-	b *testing.B,
-	day uint8,
-	part1 bool,
-	solver func([]string, bool) (R, error),
-) {
-	b.Helper()
-	lines := linesFromFilename(b, filename(day))
-	for b.Loop() {
-		_, err := solver(lines, part1)
-		if err != nil {
-			b.Fatal(err)
-		}
-	}
-}

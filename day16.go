@@ -114,33 +114,6 @@ const (
 
 var day16Target = [10]uint{3, 7, 2, 3, 0, 0, 5, 3, 2, 1}
 
-func day16PropID(name string) (int, bool) {
-	switch name {
-	case "children":
-		return day16Children, true
-	case "cats":
-		return day16Cats, true
-	case "samoyeds":
-		return day16Samoyeds, true
-	case "pomeranians":
-		return day16Pomeranians, true
-	case "akitas":
-		return day16Akitas, true
-	case "vizslas":
-		return day16Vizslas, true
-	case "goldfish":
-		return day16Goldfish, true
-	case "trees":
-		return day16Trees, true
-	case "cars":
-		return day16Cars, true
-	case "perfumes":
-		return day16Perfumes, true
-	default:
-		return -1, false
-	}
-}
-
 func day16PropIDBytes(name string) (int, bool) {
 	switch len(name) {
 	case 4:
