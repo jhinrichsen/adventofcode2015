@@ -1,42 +1,118 @@
 package adventofcode2015
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
 
-// Sue is identified by a number, and has some properties.
-type Sue struct {
-	Number     uint
-	Properties map[string]uint
+type day16Sue struct {
+	number uint
+	props  map[string]uint
 }
 
-// parseSue converts a line "Sue 475: trees: 2, cars: 7, akitas: 8" into a map.
-func newSue(s string) (Sue, error) {
-	parts := strings.SplitN(s, ":", 2)
-	n, err := strconv.ParseUint(strings.Fields(parts[0])[1], 10, 32)
-	if err != nil {
-		return Sue{}, err
+type Day16Puzzle []day16Sue
+
+func NewDay16(lines []string) (Day16Puzzle, error) {
+	puzzle := make(Day16Puzzle, 0, len(lines))
+	for i, line := range lines {
+		sue, err := day16ParseSue(line)
+		if err != nil {
+			return nil, fmt.Errorf("line %d: %w", i+1, err)
+		}
+		puzzle = append(puzzle, sue)
 	}
+	return puzzle, nil
+}
+
+// Day16 solves day 16 for the selected part.
+func Day16(puzzle Day16Puzzle, part1 bool) uint {
+	target := day16Target()
+	for _, sue := range puzzle {
+		if part1 {
+			if day16MatchExact(target, sue.props) {
+				return sue.number
+			}
+			continue
+		}
+		if day16MatchRanges(target, sue.props) {
+			return sue.number
+		}
+	}
+	return 0
+}
+
+func day16ParseSue(s string) (day16Sue, error) {
+	parts := strings.SplitN(s, ":", 2)
+	if len(parts) != 2 {
+		return day16Sue{}, fmt.Errorf("invalid line")
+	}
+	idFields := strings.Fields(parts[0])
+	if len(idFields) != 2 {
+		return day16Sue{}, fmt.Errorf("invalid sue id")
+	}
+	n, err := strconv.ParseUint(idFields[1], 10, 64)
+	if err != nil {
+		return day16Sue{}, err
+	}
+
 	props := strings.Split(parts[1], ",")
 	m := make(map[string]uint, len(props))
 	for _, prop := range props {
 		ps := strings.Split(prop, ":")
-		n, err := strconv.ParseUint(strings.TrimSpace(ps[1]), 10, 32)
-		if err != nil {
-			return Sue{}, err
+		if len(ps) != 2 {
+			return day16Sue{}, fmt.Errorf("invalid property %q", prop)
 		}
-		m[strings.TrimSpace(ps[0])] = uint(n)
+		v, err := strconv.ParseUint(strings.TrimSpace(ps[1]), 10, 64)
+		if err != nil {
+			return day16Sue{}, err
+		}
+		m[strings.TrimSpace(ps[0])] = uint(v)
 	}
-	return Sue{uint(n), m}, nil
+	return day16Sue{number: uint(n), props: m}, nil
 }
 
-// match map properties. cannot use reflect.DeepEqual because maps are
-// incomplete, so match values on existing keys in both maps.
-func match(m1, m2 map[string]uint) bool {
-	for k, v := range m1 {
-		if v2, ok := m2[k]; ok {
-			if v != v2 {
+func day16Target() map[string]uint {
+	return map[string]uint{
+		"children":    3,
+		"cats":        7,
+		"samoyeds":    2,
+		"pomeranians": 3,
+		"akitas":      0,
+		"vizslas":     0,
+		"goldfish":    5,
+		"trees":       3,
+		"cars":        2,
+		"perfumes":    1,
+	}
+}
+
+func day16MatchExact(target, props map[string]uint) bool {
+	for k, v := range props {
+		if want, ok := target[k]; ok && v != want {
+			return false
+		}
+	}
+	return true
+}
+
+func day16MatchRanges(target, props map[string]uint) bool {
+	for k, v := range props {
+		want, ok := target[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "cats", "trees":
+			if v <= want {
+				return false
+			}
+		case "pomeranians", "goldfish":
+			if v >= want {
+				return false
+			}
+		default:
+			if v != want {
 				return false
 			}
 		}
@@ -44,29 +120,3 @@ func match(m1, m2 map[string]uint) bool {
 	return true
 }
 
-func matchWorkaroundForBrokenTurboEncapulator(m1, m2 map[string]uint) bool {
-	for k, v := range m1 {
-		if v2, ok := m2[k]; ok {
-			// property dependant equality checks
-			switch k {
-			case "cats":
-				fallthrough
-			case "tree":
-				if v > v2 {
-					return false
-				}
-			case "pomeranians":
-				fallthrough
-			case "goldfish":
-				if v < v2 {
-					return false
-				}
-			default:
-				if v != v2 {
-					return false
-				}
-			}
-		}
-	}
-	return true
-}
