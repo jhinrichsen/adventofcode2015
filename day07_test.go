@@ -11,7 +11,6 @@ func TestDay07Example(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	c := day07CircuitFromPuzzle(puzzle)
 
 	want := map[string]uint16{
 		"d": 72,
@@ -24,7 +23,7 @@ func TestDay07Example(t *testing.T) {
 		"y": 456,
 	}
 	for wire, signal := range want {
-		got, err := c.signal(wire)
+		got, err := puzzle.Signal(wire)
 		if err != nil {
 			t.Fatal(err)
 		}

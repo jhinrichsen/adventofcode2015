@@ -1,0 +1,20 @@
+goos: linux
+goarch: amd64
+pkg: gitlab.com/jhinrichsen/adventofcode2015
+cpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics     
+BenchmarkDay07Part1-16    	    9440	    120931 ns/op	   87328 B/op	    1375 allocs/op
+BenchmarkDay07Part1-16    	   17394	     69394 ns/op	   87328 B/op	    1375 allocs/op
+BenchmarkDay07Part1-16    	   16863	     70023 ns/op	   87328 B/op	    1375 allocs/op
+BenchmarkDay07Part1-16    	   16903	     73447 ns/op	   87328 B/op	    1375 allocs/op
+BenchmarkDay07Part1-16    	   17474	     68892 ns/op	   87328 B/op	    1375 allocs/op
+BenchmarkDay07Part1-16    	   17908	     69996 ns/op	   87328 B/op	    1375 allocs/op
+BenchmarkDay07Part1-16    	   17306	     71721 ns/op	   87328 B/op	    1375 allocs/op
+BenchmarkDay07Part1-16    	   17281	     70645 ns/op	   87328 B/op	    1375 allocs/op
+BenchmarkDay07Part2-16    	   15162	     76906 ns/op	   95552 B/op	    1380 allocs/op
+BenchmarkDay07Part2-16    	   15747	     78690 ns/op	   95552 B/op	    1380 allocs/op
+BenchmarkDay07Part2-16    	   15252	     78101 ns/op	   95552 B/op	    1380 allocs/op
+BenchmarkDay07Part2-16    	   15454	     77482 ns/op	   95552 B/op	    1380 allocs/op
+BenchmarkDay07Part2-16    	   14816	     77036 ns/op	   95552 B/op	    1380 allocs/op
+BenchmarkDay07Part2-16    	   15523	     79539 ns/op	   95552 B/op	    1380 allocs/op
+BenchmarkDay07Part2-16    	   15265	     78913 ns/op	   95552 B/op	    1380 allocs/op
+BenchmarkDay07Part2-16    	   14178	     81227 ns/op	   95552 B/op	    1380 allocs/op

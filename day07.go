@@ -2,7 +2,6 @@ package adventofcode2015
 
 import (
 	"fmt"
-	"maps"
 	"strconv"
 	"strings"
 )
@@ -19,7 +18,7 @@ const (
 )
 
 type day07Operand struct {
-	wire    string
+	id      int
 	literal uint16
 	isValue bool
 }
@@ -31,44 +30,43 @@ type day07Expr struct {
 }
 
 type Day07Puzzle struct {
-	wires map[string]day07Expr
+	wireID map[string]int
+	exprs  []day07Expr
+	aID    int
+	bID    int
 }
 
-type day07Circuit struct {
-	wires map[string]day07Expr
-	cache map[string]uint16
-}
-
-func parseDay07Operand(s string) day07Operand {
+func parseDay07Operand(s string, getID func(string) int) day07Operand {
 	v, err := strconv.ParseUint(s, 10, 16)
 	if err == nil {
 		return day07Operand{literal: uint16(v), isValue: true}
 	}
-	return day07Operand{wire: s}
+	return day07Operand{id: getID(s)}
 }
 
-func parseDay07Line(line string) (dest string, expr day07Expr, err error) {
+func parseDay07Line(line string,
+	getID func(string) int) (destID int, expr day07Expr, err error) {
 	parts := strings.Fields(line)
 	switch len(parts) {
 	case 3:
 		if parts[1] != "->" {
-			return "", day07Expr{}, fmt.Errorf("invalid instruction: %q", line)
+			return -1, day07Expr{}, fmt.Errorf("invalid instruction: %q", line)
 		}
-		return parts[2], day07Expr{
+		return getID(parts[2]), day07Expr{
 			op: day07Assign,
-			a:  parseDay07Operand(parts[0]),
+			a:  parseDay07Operand(parts[0], getID),
 		}, nil
 	case 4:
 		if parts[0] != "NOT" || parts[2] != "->" {
-			return "", day07Expr{}, fmt.Errorf("invalid instruction: %q", line)
+			return -1, day07Expr{}, fmt.Errorf("invalid instruction: %q", line)
 		}
-		return parts[3], day07Expr{
+		return getID(parts[3]), day07Expr{
 			op: day07Not,
-			a:  parseDay07Operand(parts[1]),
+			a:  parseDay07Operand(parts[1], getID),
 		}, nil
 	case 5:
 		if parts[3] != "->" {
-			return "", day07Expr{}, fmt.Errorf("invalid instruction: %q", line)
+			return -1, day07Expr{}, fmt.Errorf("invalid instruction: %q", line)
 		}
 		var op day07Op
 		switch parts[1] {
@@ -81,96 +79,150 @@ func parseDay07Line(line string) (dest string, expr day07Expr, err error) {
 		case "RSHIFT":
 			op = day07RShift
 		default:
-			return "", day07Expr{}, fmt.Errorf("unknown operator %q", parts[1])
+			return -1, day07Expr{}, fmt.Errorf("unknown operator %q", parts[1])
 		}
-		return parts[4], day07Expr{
+		return getID(parts[4]), day07Expr{
 			op: op,
-			a:  parseDay07Operand(parts[0]),
-			b:  parseDay07Operand(parts[2]),
+			a:  parseDay07Operand(parts[0], getID),
+			b:  parseDay07Operand(parts[2], getID),
 		}, nil
 	default:
-		return "", day07Expr{}, fmt.Errorf("cannot parse instruction: %q", line)
+		return -1, day07Expr{}, fmt.Errorf("cannot parse instruction: %q", line)
 	}
 }
 
 func NewDay07(lines []string) (Day07Puzzle, error) {
 	puzzle := Day07Puzzle{
-		wires: make(map[string]day07Expr, len(lines)),
+		wireID: make(map[string]int, len(lines)),
+		exprs:  make([]day07Expr, 0, len(lines)),
+		aID:    -1,
+		bID:    -1,
 	}
+	getID := func(name string) int {
+		if id, ok := puzzle.wireID[name]; ok {
+			return id
+		}
+		id := len(puzzle.exprs)
+		puzzle.wireID[name] = id
+		puzzle.exprs = append(puzzle.exprs, day07Expr{})
+		return id
+	}
+
 	for _, line := range lines {
-		dest, expr, err := parseDay07Line(line)
+		destID, expr, err := parseDay07Line(line, getID)
 		if err != nil {
 			return Day07Puzzle{}, err
 		}
-		puzzle.wires[dest] = expr
+		puzzle.exprs[destID] = expr
+	}
+	if id, ok := puzzle.wireID["a"]; ok {
+		puzzle.aID = id
+	}
+	if id, ok := puzzle.wireID["b"]; ok {
+		puzzle.bID = id
 	}
 	return puzzle, nil
 }
 
-func day07CircuitFromPuzzle(puzzle Day07Puzzle) day07Circuit {
-	return day07Circuit{
-		wires: maps.Clone(puzzle.wires),
-		cache: make(map[string]uint16, len(puzzle.wires)),
+func day07DepIDs(expr day07Expr) [2]int {
+	ids := [2]int{-1, -1}
+	switch expr.op {
+	case day07Assign, day07Not:
+		if !expr.a.isValue {
+			ids[0] = expr.a.id
+		}
+	case day07And, day07Or, day07LShift, day07RShift:
+		if !expr.a.isValue {
+			ids[0] = expr.a.id
+		}
+		if !expr.b.isValue {
+			ids[1] = expr.b.id
+		}
+	}
+	return ids
+}
+
+func day07EvalExpr(expr day07Expr, vals []uint16) uint16 {
+	operand := func(op day07Operand) uint16 {
+		if op.isValue {
+			return op.literal
+		}
+		return vals[op.id]
+	}
+	x := operand(expr.a)
+	switch expr.op {
+	case day07Assign:
+		return x
+	case day07Not:
+		return ^x
+	case day07And:
+		return x & operand(expr.b)
+	case day07Or:
+		return x | operand(expr.b)
+	case day07LShift:
+		return x << operand(expr.b)
+	case day07RShift:
+		return x >> operand(expr.b)
+	default:
+		return 0
 	}
 }
 
-func (a *day07Circuit) operand(op day07Operand) (uint16, error) {
-	if op.isValue {
-		return op.literal, nil
-	}
-	return a.signal(op.wire)
-}
-
-func (a *day07Circuit) signal(wire string) (uint16, error) {
-	if v, ok := a.cache[wire]; ok {
-		return v, nil
-	}
-	expr, ok := a.wires[wire]
+func (a Day07Puzzle) signal(wire string, overrideB *uint16) (uint16, error) {
+	targetID, ok := a.wireID[wire]
 	if !ok {
 		return 0, fmt.Errorf("unknown wire %q", wire)
 	}
 
-	x, err := a.operand(expr.a)
-	if err != nil {
-		return 0, err
-	}
+	state := make([]byte, len(a.exprs)) // 0=new, 1=visiting, 2=done
+	vals := make([]uint16, len(a.exprs))
+	stack := make([]int, 0, 64)
+	stack = append(stack, targetID)
 
-	var v uint16
-	switch expr.op {
-	case day07Assign:
-		v = x
-	case day07Not:
-		v = ^x
-	case day07And:
-		y, err := a.operand(expr.b)
-		if err != nil {
-			return 0, err
+	for len(stack) > 0 {
+		id := stack[len(stack)-1]
+		if state[id] == 2 {
+			stack = stack[:len(stack)-1]
+			continue
 		}
-		v = x & y
-	case day07Or:
-		y, err := a.operand(expr.b)
-		if err != nil {
-			return 0, err
+		if overrideB != nil && id == a.bID {
+			vals[id] = *overrideB
+			state[id] = 2
+			stack = stack[:len(stack)-1]
+			continue
 		}
-		v = x | y
-	case day07LShift:
-		y, err := a.operand(expr.b)
-		if err != nil {
-			return 0, err
+		if state[id] == 0 {
+			state[id] = 1
 		}
-		v = x << y
-	case day07RShift:
-		y, err := a.operand(expr.b)
-		if err != nil {
-			return 0, err
-		}
-		v = x >> y
-	default:
-		return 0, fmt.Errorf("unknown op %d", expr.op)
-	}
 
-	a.cache[wire] = v
-	return v, nil
+		expr := a.exprs[id]
+		deps := day07DepIDs(expr)
+		needDep := false
+		for _, depID := range deps {
+			if depID < 0 {
+				continue
+			}
+			switch state[depID] {
+			case 0:
+				stack = append(stack, depID)
+				needDep = true
+			case 1:
+				return 0, fmt.Errorf("circular dependency for wire %q", wire)
+			}
+		}
+		if needDep {
+			continue
+		}
+
+		vals[id] = day07EvalExpr(expr, vals)
+		state[id] = 2
+		stack = stack[:len(stack)-1]
+	}
+	return vals[targetID], nil
+}
+
+func (a Day07Puzzle) Signal(wire string) (uint16, error) {
+	return a.signal(wire, nil)
 }
 
 // Day07Part1 returns the signal provided to wire "a".
@@ -179,8 +231,10 @@ func Day07Part1(lines []string) (uint16, error) {
 	if err != nil {
 		return 0, err
 	}
-	c := day07CircuitFromPuzzle(puzzle)
-	return c.signal("a")
+	if puzzle.aID < 0 {
+		return 0, fmt.Errorf("wire %q not found", "a")
+	}
+	return puzzle.signal("a", nil)
 }
 
 // Day07Part2 overrides wire "b" with the Part 1 result and recomputes wire "a".
@@ -189,15 +243,15 @@ func Day07Part2(lines []string) (uint16, error) {
 	if err != nil {
 		return 0, err
 	}
-	c1 := day07CircuitFromPuzzle(puzzle)
-	a, err := c1.signal("a")
+	if puzzle.aID < 0 {
+		return 0, fmt.Errorf("wire %q not found", "a")
+	}
+	if puzzle.bID < 0 {
+		return 0, fmt.Errorf("wire %q not found", "b")
+	}
+	aSignal, err := puzzle.signal("a", nil)
 	if err != nil {
 		return 0, err
 	}
-	c := day07CircuitFromPuzzle(puzzle)
-	c.wires["b"] = day07Expr{
-		op: day07Assign,
-		a:  day07Operand{literal: a, isValue: true},
-	}
-	return c.signal("a")
+	return puzzle.signal("a", &aSignal)
 }
