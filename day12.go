@@ -3,89 +3,84 @@ package adventofcode2015
 import (
 	"encoding/json"
 	"strconv"
-	"strings"
-	"unicode"
 )
 
-func isNumeric(r rune) bool {
-	return r == '+' ||
-		r == '-' ||
-		unicode.IsDigit(r)
+// Day12 solves day 12 for the selected part.
+func Day12(buf []byte, part1 bool) (uint, error) {
+	if part1 {
+		return uint(sumNumbers(buf)), nil
+	}
+	n, err := sumWithoutRed(buf)
+	return uint(n), err
 }
 
-func sum(s string) int {
-	// erase everything non-numeric
-	var sb strings.Builder
-	for _, r := range s {
-		if isNumeric(r) {
-			sb.WriteRune(r)
-		} else {
-			sb.WriteByte(' ')
+func sumNumbers(buf []byte) int {
+	total := 0
+	for i := 0; i < len(buf); i++ {
+		b := buf[i]
+		if (b < '0' || b > '9') && b != '-' {
+			continue
 		}
-	}
-
-	// Iterate numbers
-	var total int
-	for _, s := range strings.Fields(sb.String()) {
-		n, _ := strconv.Atoi(s)
-		total += n
-	}
-	return total
-}
-
-func sum2(s string) int {
-	buf := []byte(s)
-	// "the empty interface says nothing"
-	var data interface{}
-	if err := json.Unmarshal(buf, &data); err != nil {
-		return 0
-	}
-
-	numbers := make(chan int)
-	go walk(data, numbers)
-
-	var total int
-	for n := range numbers {
-		total += n
+		sign := 1
+		if b == '-' {
+			sign = -1
+			i++
+			if i >= len(buf) || buf[i] < '0' || buf[i] > '9' {
+				continue
+			}
+		}
+		n := int(buf[i] - '0')
+		for i+1 < len(buf) && buf[i+1] >= '0' && buf[i+1] <= '9' {
+			i++
+			n = n*10 + int(buf[i]-'0')
+		}
+		total += sign * n
 	}
 	return total
 }
 
-func walk(root interface{}, numbers chan<- int) {
-	defer close(numbers)
-	stack := []interface{}{root}
+func sumWithoutRed(buf []byte) (int, error) {
+	var root any
+	if err := json.Unmarshal(buf, &root); err != nil {
+		return 0, err
+	}
+
+	total := 0
+	stack := []any{root}
 	for len(stack) > 0 {
 		last := len(stack) - 1
 		v := stack[last]
 		stack = stack[:last]
 
-		switch vv := v.(type) {
-		case string:
-			// ignore strings
+		switch t := v.(type) {
 		case float64:
-			numbers <- int(vv)
-		case []interface{}:
-			for i := len(vv) - 1; i >= 0; i-- {
-				stack = append(stack, vv[i])
+			total += int(t)
+		case []any:
+			for i := len(t) - 1; i >= 0; i-- {
+				stack = append(stack, t[i])
 			}
-		case map[string]interface{}:
-			if hasRedProperty(vv) {
+		case map[string]any:
+			if hasRedValue(t) {
 				continue
 			}
-			for _, item := range vv {
+			for _, item := range t {
 				stack = append(stack, item)
+			}
+		case json.Number:
+			n, err := strconv.Atoi(string(t))
+			if err == nil {
+				total += n
 			}
 		}
 	}
+	return total, nil
 }
 
-func hasRedProperty(m map[string]interface{}) bool {
+func hasRedValue(m map[string]any) bool {
 	for _, v := range m {
-		switch t := v.(type) {
-		case string:
-			if t == "red" {
-				return true
-			}
+		s, ok := v.(string)
+		if ok && s == "red" {
+			return true
 		}
 	}
 	return false
