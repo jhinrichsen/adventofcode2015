@@ -10,30 +10,6 @@ import (
 	"testing"
 )
 
-var day12SamplesPart1 = []struct {
-	in  string
-	out int
-}{
-	{`[1,2,3]`, 6},
-	{`{"a":2,"b":4}`, 6},
-	{`[[[3]]]`, 3},
-	{`{"a":{"b":4},"c":-1}`, 3},
-	{`{"a":[-1,1]}`, 0},
-	{`[-1,{"a":1}]`, 0},
-	{`[]`, 0},
-	{`{}`, 0},
-}
-
-var day12SamplesPart2 = []struct {
-	in  string
-	out int
-}{
-	{`[1,2,3]`, 6},
-	{`[1,{"c":"red","b":2},3]`, 4},
-	{`{"d":"red","e":[1,2,3,4],"f":5}`, 0},
-	{`[1,"red",5]`, 6},
-}
-
 // Neither strconv.Atoi() nor fmt.Sscanf() support recovery of illegal reads.
 func NoTestParse(t *testing.T) {
 	const s = "30a 4b -5cd"
@@ -59,6 +35,19 @@ func NoTestParse(t *testing.T) {
 }
 
 func TestDay12SamplesPart1(t *testing.T) {
+	day12SamplesPart1 := []struct {
+		in  string
+		out int
+	}{
+		{`[1,2,3]`, 6},
+		{`{"a":2,"b":4}`, 6},
+		{`[[[3]]]`, 3},
+		{`{"a":{"b":4},"c":-1}`, 3},
+		{`{"a":[-1,1]}`, 0},
+		{`[-1,{"a":1}]`, 0},
+		{`[]`, 0},
+		{`{}`, 0},
+	}
 	for _, tt := range day12SamplesPart1 {
 		id := tt.in
 		t.Run(id, func(t *testing.T) {
@@ -100,6 +89,15 @@ func TestDay12Part1Sum2(t *testing.T) {
 }
 
 func TestDay12SamplesPart2(t *testing.T) {
+	day12SamplesPart2 := []struct {
+		in  string
+		out int
+	}{
+		{`[1,2,3]`, 6},
+		{`[1,{"c":"red","b":2},3]`, 4},
+		{`{"d":"red","e":[1,2,3,4],"f":5}`, 0},
+		{`[1,"red",5]`, 6},
+	}
 	for _, tt := range day12SamplesPart2 {
 		id := tt.in
 		t.Run(id, func(t *testing.T) {

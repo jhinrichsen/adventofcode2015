@@ -42,7 +42,7 @@ func sum2(s string) int {
 	}
 
 	numbers := make(chan int)
-	go walk(0, data, numbers)
+	go walk(data, numbers)
 
 	var total int
 	for n := range numbers {
@@ -51,31 +51,31 @@ func sum2(s string) int {
 	return total
 }
 
-func walk(depth int, v interface{}, numbers chan<- int) {
-	switch vv := v.(type) {
-	case string:
-		// ignore strings
-	case float64:
-		// fmt.Println(v, "is number", vv)
-		numbers <- int(vv)
-	case []interface{}:
-		// fmt.Println(v, "is an array:")
-		for _, v := range vv {
-			walk(depth+1, v, numbers)
-		}
-	case map[string]interface{}:
-		// fmt.Println(v, "is a map:")
-		if !hasRedProperty(vv) {
-			for _, v := range vv {
-				walk(depth+1, v, numbers)
+func walk(root interface{}, numbers chan<- int) {
+	defer close(numbers)
+	stack := []interface{}{root}
+	for len(stack) > 0 {
+		last := len(stack) - 1
+		v := stack[last]
+		stack = stack[:last]
+
+		switch vv := v.(type) {
+		case string:
+			// ignore strings
+		case float64:
+			numbers <- int(vv)
+		case []interface{}:
+			for i := len(vv) - 1; i >= 0; i-- {
+				stack = append(stack, vv[i])
+			}
+		case map[string]interface{}:
+			if hasRedProperty(vv) {
+				continue
+			}
+			for _, item := range vv {
+				stack = append(stack, item)
 			}
 		}
-	default:
-		panic(vv)
-	}
-	// Once we're done, and back to root level, indicate end of numbers
-	if depth == 0 {
-		close(numbers)
 	}
 }
 
