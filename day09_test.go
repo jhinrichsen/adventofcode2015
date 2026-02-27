@@ -1,12 +1,11 @@
 package adventofcode2015
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestDay9Part1Example(t *testing.T) {
 	const want = 605
-	got, _, err := Day9(exampleFilename(9))
+	lines := linesFromFilename(t, exampleFilename(9))
+	got, _, err := Day9(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -17,7 +16,8 @@ func TestDay9Part1Example(t *testing.T) {
 
 func TestDay9Part1(t *testing.T) {
 	const want = 117
-	got, _, err := Day9(filename(9))
+	lines := linesFromFilename(t, filename(9))
+	got, _, err := Day9(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,8 @@ func TestDay9Part1(t *testing.T) {
 
 func TestDay9Part2Example(t *testing.T) {
 	const want = 982
-	_, got, err := Day9(exampleFilename(9))
+	lines := linesFromFilename(t, exampleFilename(9))
+	_, got, err := Day9(lines)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,7 +40,8 @@ func TestDay9Part2Example(t *testing.T) {
 
 func TestDay9Part2(t *testing.T) {
 	const want = 909
-	_, got, err := Day9(filename(9))
+	lines := linesFromFilename(t, filename(9))
+	_, got, err := Day9(lines)
 	if err != nil {
 		t.Fatal(err)
 	}

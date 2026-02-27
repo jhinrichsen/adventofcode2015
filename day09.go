@@ -40,7 +40,6 @@ func (a routes) distance(cities []string) (uint, error) {
 		for _, r := range a {
 			if cities[i-1] == r.a && cities[i] == r.b ||
 				cities[i-1] == r.b && cities[i] == r.a {
-
 				n += r.distance
 				found = true
 				break
@@ -54,12 +53,8 @@ func (a routes) distance(cities []string) (uint, error) {
 	return n, nil
 }
 
-func newRoutes(filename string) (routes, error) {
+func newRoutes(lines []string) (routes, error) {
 	var rs routes
-	lines, err := linesFromFilename(filename)
-	if err != nil {
-		return rs, err
-	}
 	for _, line := range lines {
 		// "London to Dublin = 464"
 		parts := strings.Fields(line)
@@ -82,11 +77,11 @@ func newRoutes(filename string) (routes, error) {
 // generics.
 // There's basically three algorithms that fit: Fisher-Yates random shuffle,
 // Steinhaus–Johnson–Trotter, and Heap.
-func Day9(filename string) (uint, uint, error) {
+func Day9(lines []string) (uint, uint, error) {
 	min := uint(math.MaxUint32)
 	var max uint
 
-	r, err := newRoutes(filename)
+	r, err := newRoutes(lines)
 	if err != nil {
 		return min, max, err
 	}
