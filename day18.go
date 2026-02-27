@@ -1,126 +1,121 @@
 package adventofcode2015
 
-import (
-	"bufio"
-	"strings"
-)
+import "errors"
 
 const (
-	lightOn  = '#'
-	lightOff = '.'
+	day18LightOn  = '#'
+	day18LightOff = '.'
+	day18Steps    = 100
 )
 
-type grid struct {
-	buf    []byte
-	width  int
-	height int
+type Day18Puzzle struct {
+	buf []byte
+	w   int
+	h   int
 }
 
-// newGrid parses lines of #. combinations, separated by newline.
-func newGrid(s string) (grid, error) {
-	var g grid
-	sc := bufio.NewScanner(strings.NewReader(s))
-	for sc.Scan() {
-		line := sc.Bytes()
-		if g.width == 0 {
-			g.width = len(line)
-		}
-		g.buf = append(g.buf, line...)
-		g.height++
+func NewDay18(lines []string) (Day18Puzzle, error) {
+	if len(lines) == 0 {
+		return Day18Puzzle{}, errors.New("empty input")
 	}
-	return g, nil
+	w := len(lines[0])
+	if w == 0 {
+		return Day18Puzzle{}, errors.New("empty line")
+	}
+
+	buf := make([]byte, 0, w*len(lines))
+	for _, line := range lines {
+		if len(line) != w {
+			return Day18Puzzle{}, errors.New("non-rectangular grid")
+		}
+		for i := range len(line) {
+			if line[i] != day18LightOn && line[i] != day18LightOff {
+				return Day18Puzzle{}, errors.New("invalid char")
+			}
+		}
+		buf = append(buf, []byte(line)...)
+	}
+	return Day18Puzzle{buf: buf, w: w, h: len(lines)}, nil
 }
 
-func (a grid) dim() (uint, uint) {
-	return uint(a.width), uint(a.height)
+// Day18 solves day 18 for the selected part.
+func Day18(puzzle Day18Puzzle, part1 bool) uint {
+	buf := make([]byte, len(puzzle.buf))
+	copy(buf, puzzle.buf)
+
+	if !part1 {
+		day18SetCorners(buf, puzzle.w, puzzle.h, day18LightOn)
+	}
+	for range day18Steps {
+		buf = day18Step(buf, puzzle.w, puzzle.h)
+		if !part1 {
+			day18SetCorners(buf, puzzle.w, puzzle.h, day18LightOn)
+		}
+	}
+	return day18CountOn(buf)
 }
 
-// on returns number of lights in grid that are "on".
-func (a grid) on() uint {
+func day18Step(buf []byte, w, h int) []byte {
+	next := make([]byte, len(buf))
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			idx := y*w + x
+			n := day18NeighborsOn(buf, w, h, x, y)
+			if buf[idx] == day18LightOn {
+				if n == 2 || n == 3 {
+					next[idx] = day18LightOn
+				} else {
+					next[idx] = day18LightOff
+				}
+				continue
+			}
+			if n == 3 {
+				next[idx] = day18LightOn
+			} else {
+				next[idx] = day18LightOff
+			}
+		}
+	}
+	return next
+}
+
+func day18NeighborsOn(buf []byte, w, h, x, y int) uint {
 	var n uint
-	for _, b := range a.buf {
-		if b == lightOn {
+	for dy := -1; dy <= 1; dy++ {
+		yy := y + dy
+		if yy < 0 || yy >= h {
+			continue
+		}
+		for dx := -1; dx <= 1; dx++ {
+			if dx == 0 && dy == 0 {
+				continue
+			}
+			xx := x + dx
+			if xx < 0 || xx >= w {
+				continue
+			}
+			if buf[yy*w+xx] == day18LightOn {
+				n++
+			}
+		}
+	}
+	return n
+}
+
+func day18SetCorners(buf []byte, w, h int, state byte) {
+	buf[0] = state
+	buf[w-1] = state
+	buf[(h-1)*w] = state
+	buf[(h-1)*w+(w-1)] = state
+}
+
+func day18CountOn(buf []byte) uint {
+	var n uint
+	for _, b := range buf {
+		if b == day18LightOn {
 			n++
 		}
 	}
 	return n
 }
 
-func (a *grid) setCorners(t bool) {
-	var b byte
-	if t {
-		b = lightOn
-	} else {
-		b = lightOff
-	}
-	w, h := a.width, a.height
-	a.buf[0] = b             // top-left
-	a.buf[w-1] = b           // top-right
-	a.buf[(h-1)*w] = b       // bottom-left
-	a.buf[(h-1)*w+(w-1)] = b // bottom-right
-}
-
-func (a *grid) step() {
-	next := make([]byte, len(a.buf))
-	g := Grid{W: a.width, H: a.height}
-
-	for idx, nbrs := range g.C8Indices() {
-		current := a.buf[idx]
-
-		var count uint
-		for nidx := range nbrs {
-			if a.buf[nidx] == lightOn {
-				count++
-			}
-		}
-
-		next[idx] = nextStatus(current == lightOn, count)
-	}
-	a.buf = next
-}
-
-func (a grid) String() string {
-	var sb strings.Builder
-	for y := 0; y < a.height; y++ {
-		sb.Write(a.buf[y*a.width : (y+1)*a.width])
-		if y < a.height-1 {
-			sb.WriteRune('\n')
-		}
-	}
-	return sb.String()
-}
-
-// next returns status of next iteration, depending on current status and number
-// of neighbours that are on.
-func nextStatus(isOn bool, n uint) byte {
-	if isOn {
-		if n == 2 || n == 3 {
-			return lightOn
-		}
-		return lightOff
-	}
-	if n == 3 {
-		return lightOn
-	}
-	return lightOff
-}
-
-// Day18Part1 returns number of lights that are on after n steps.
-// Conway's Game of life.
-func Day18Part1(g grid, steps uint) uint {
-	for ; steps > 0; steps-- {
-		g.step()
-	}
-	return g.on()
-}
-
-// Day18Part2 returns number of lights that are on after n steps under the
-// precondition that all corner lights are always on.
-func Day18Part2(g grid, steps uint) uint {
-	for ; steps > 0; steps-- {
-		g.setCorners(true)
-		g.step()
-	}
-	g.setCorners(true)
-	return g.on()
-}
