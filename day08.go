@@ -1,42 +1,58 @@
 package adventofcode2015
 
-// Day8Part1 returns logical number of characters for given buffer.
-// Physical number of characters can easily be computed via len(buf).
-func Day8Part1(buf []byte) int {
-	n := 0
-	for i := 0; i < len(buf); i++ {
-		switch buf[i] {
-		case '"':
-		case '\\':
-			i++
-			switch buf[i] {
-			case 'x':
-				i += 2
-				n++
-			default:
-				n++
-			}
-		default:
-			n++
+// Day08 solves day 8 for the selected part.
+func Day08(lines []string, part1 bool) uint {
+	var totalCode uint
+	var totalMemory uint
+	var totalEncoded uint
+
+	for _, line := range lines {
+		codeLen := uint(len(line))
+		totalCode += codeLen
+		if part1 {
+			totalMemory += day08MemoryLen(line)
+			continue
 		}
+		totalEncoded += day08EncodedLen(line)
+	}
+
+	if part1 {
+		return totalCode - totalMemory
+	}
+	return totalEncoded - totalCode
+}
+
+func day08MemoryLen(s string) uint {
+	if len(s) < 2 {
+		return 0
+	}
+
+	var n uint
+	for i := 1; i < len(s)-1; i++ {
+		if s[i] != '\\' {
+			n++
+			continue
+		}
+		i++
+		if i >= len(s)-1 {
+			break
+		}
+		if s[i] == 'x' {
+			i += 2
+		}
+		n++
 	}
 	return n
 }
 
-// Day8Part2 escapes a buffer and returns the number of escaped bytes, including
-// a starting and leading ".
-// " -> \"
-// \ -> \\
-func Day8Part2(buf []byte) int {
-	total := len(buf)
-	for _, b := range buf {
-		if b == '\\' {
-			total++
+func day08EncodedLen(s string) uint {
+	n := uint(2) // opening + closing quotes
+	for i := range len(s) {
+		if s[i] == '\\' || s[i] == '"' {
+			n += 2
+			continue
 		}
-		if b == '"' {
-			total++
-		}
+		n++
 	}
-	// leading and trailing "
-	return total + 2
+	return n
 }

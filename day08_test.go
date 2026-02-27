@@ -1,106 +1,27 @@
 package adventofcode2015
 
-import (
-	"bufio"
-	"os"
-	"testing"
-)
+import "testing"
 
-func TestHexEscape(t *testing.T) {
-	// "\xa8br\x8bjr\""
-	buf := []byte{
-		'"',
-		'\\', 'x', 'a', '8',
-		'b', 'r',
-		'\\', 'x', '8', 'b',
-		'j', 'r', '\\', '"', '"'}
-	wantLen := 16
-	gotLen := len(buf)
-	if wantLen != gotLen {
-		t.Fatalf("want len %d but got %d", wantLen, gotLen)
-	}
-
-	want := 7
-	got := Day8Part1(buf)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
-}
-func TestDay8Part1Example(t *testing.T) {
-	test(t, exampleFilename(8), 12)
+func BenchmarkDay08Part1(b *testing.B) {
+	benchLines(b, 8, true, Day08)
 }
 
-func TestDay8Part1(t *testing.T) {
-	test(t, filename(8), 1371)
+func BenchmarkDay08Part2(b *testing.B) {
+	benchLines(b, 8, false, Day08)
 }
 
-func test(t *testing.T, filename string, want int) {
-	f, err := os.Open(filename)
-	if err != nil {
-		t.Fatal(err)
-	}
-	// m >= n
-	mm := 0
-	nn := 0
-	sc := bufio.NewScanner(f)
-	for sc.Scan() {
-		line := sc.Bytes()
-		mm += len(line)
-		nn += Day8Part1(line)
-	}
-	got := mm - nn
-	if want != got {
-		t.Fatalf("want %d but got %d\n", want, got)
-	}
+func TestDay08Part1Example(t *testing.T) {
+	testLines(t, 8, exampleFilename, true, Day08, uint(12))
 }
 
-func TestDay8Part2Examples(t *testing.T) {
-	part2Tests := []struct {
-		in  []byte
-		out int
-	}{
-		{[]byte{'"', '"'}, 6},
-		{[]byte{'"', 'a', 'b', 'c', '"'}, 9},
-		{[]byte{'"', 'a', 'a', 'a', '\\', '"', 'a', 'a', 'a', '"'}, 16},
-		{[]byte{'"', '\\', 'x', '2', '7', '"'}, 11},
-	}
-	for _, tt := range part2Tests {
-		t.Run(string(tt.in), func(t *testing.T) {
-			want := tt.out
-			got := Day8Part2(tt.in)
-			if want != got {
-				t.Fatalf("%q: want %d but got %d", string(tt.in),
-					want, got)
-			}
-		})
-	}
-	want := 6
-	buf := []byte{
-		'"',
-		'"',
-	}
-	got := Day8Part2(buf)
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+func TestDay08Part1(t *testing.T) {
+	testLines(t, 8, filename, true, Day08, uint(1_371))
 }
 
-func TestDay8Part2(t *testing.T) {
-	f, err := os.Open(filename(8))
-	if err != nil {
-		t.Fatal(err)
-	}
-	mm := 0
-	nn := 0
-	sc := bufio.NewScanner(f)
-	for sc.Scan() {
-		line := sc.Bytes()
-		mm += len(line)
-		nn += Day8Part2(line)
-	}
-	want := 2117
-	got := nn - mm
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+func TestDay08Part2Example(t *testing.T) {
+	testLines(t, 8, exampleFilename, false, Day08, uint(19))
+}
+
+func TestDay08Part2(t *testing.T) {
+	testLines(t, 8, filename, false, Day08, uint(2_117))
 }
