@@ -2,7 +2,7 @@
 
 ## 🚨 CRITICAL: Solution Confidentiality
 
-**Solutions MUST NEVER appear anywhere except in unit test `want` values.**
+**Solutions MUST NOT appear anywhere except in unit test `want` values.**
 
 Prohibited locations:
 - ❌ Git commit messages
@@ -11,7 +11,7 @@ Prohibited locations:
 - ❌ Documentation files (README.adoc, AGENTS.md)
 - ❌ Console output or logs
 
-**ONLY** permitted location:
+Permitted location (solutions **MUST** appear only here):
 - ✅ Unit test files: `TestDayXXPart1` and `TestDayXXPart2` (the `want` parameter)
 
 **Example commit messages:**
@@ -24,22 +24,28 @@ Prohibited locations:
 
 ## Critical Rules
 
+### Requirement Keywords
+The key words **MUST**, **MUST NOT**, **SHOULD**, and **MAY** in this document are to be interpreted as described in RFC 2119 and RFC 8174.
+
+### Absolute Prohibition
+- **MUST NOT** use recursion anywhere in this repository (puzzle code, helpers, or tests)
+
 ### Function Signatures (PRIMARY RULE)
 - **MUST** implement: `func DayXX(<input>) uint`
 - **SHOULD** use: `func DayXX(<input>, part1 bool) uint` unless alternatives are more elegant
 - **IF** parser required (input cannot be directly processed by `input_test.go` functions):
   - Parser: `func NewDayXX(<input>) DayXXPuzzle` (return by value)
   - Combined: `func DayXX(puzzle DayXXPuzzle) uint`
-- **NEVER** use methods: `func (p *DayXXPuzzle) DayXX() uint`
+- Alternative/custom implementations used for comparison or optimization (for example `Day01Branchless`) **MAY** use any practical signature.
 
 ### Export Policy (MANDATORY)
-- **ONLY** export the day entrypoints and parser/puzzle types: `DayXX*`, `NewDayXX`, `DayXXPuzzle`
+- **MUST** export only the day entrypoints and parser/puzzle types: `DayXX*`, `NewDayXX`, `DayXXPuzzle`
 - Keep internal helpers unexported (e.g. parser internals, evaluators, temporary structs)
 - Do **NOT** add exported convenience methods on puzzle structs unless explicitly required
 
 ### File Access Prohibition
 - Puzzles must not perform I/O
-- **ONLY** tests may read files using `input_test.go` functions
+- **MUST** use `input_test.go` helpers for all file reads in tests; puzzle code **MUST NOT** read files
 
 ### uint Pattern (MANDATORY)
 - **ALL** puzzle return types that are counts/sums/totals/amounts must be `uint`
@@ -48,23 +54,23 @@ Prohibited locations:
 - Example: `func exploreRegion(...) (area, perimeter uint)`
 
 ### Coordinate System
-- **ALWAYS** use `x`/`y` throughout (never row/col)
+- **MUST** use `x`/`y` throughout; **MUST NOT** use row/col naming
 - `dimX` (width), `dimY` (height) for dimensions
 - `grid[y][x]` indexing pattern
 - `startY, startX int` parameter order
 
 ### Data Types
-- **ALWAYS** use `byte` for ASCII characters (A-Z, 0-9, symbols)
-- **NEVER** use `rune` - unnecessary UTF-8 overhead for AoC
+- **MUST** use `byte` for ASCII characters (A-Z, 0-9, symbols)
+- **MUST NOT** use `rune` - unnecessary UTF-8 overhead for AoC
 - Use `[]byte(string)` for conversion, not manual loops
 
 ### Algorithm Requirements
-- **NEVER** use recursion
-- **ALWAYS** use iterative with explicit stacks: `[]image.Point`
+- **MUST NOT** use recursion
+- **MUST** use iterative implementations with explicit stacks: `[]image.Point`
 - Use `image.Point{X: x, Y: y}` for coordinates
 
 ### Modern Go Patterns (MANDATORY)
-- **ALWAYS** use latest Go 1.24+ features where applicable
+- **MUST** use the latest Go language and standard library features available in the Go version declared in `go.mod`
 - Use `for range N` instead of `for i := 0; i < N; i++` (range over integers)
 - Use `slices` package: `slices.Equal`, `slices.Contains`, `slices.Sort`
 - Use `maps` package: `maps.Equal`, `maps.Clone` when needed
@@ -72,9 +78,9 @@ Prohibited locations:
 - Use `min()` and `max()` built-in functions
 
 ### Error Handling (MANDATORY)
-- **NEVER** silently ignore errors with blank identifier `_`
-- **NEVER** panic - AoC problems should never panic
-- **ALWAYS** handle errors gracefully (continue, skip, use zero value)
+- **MUST NOT** silently ignore errors with blank identifier `_`
+- **MUST NOT** panic - AoC problems should not panic
+- **MUST** handle errors gracefully (continue, skip, use zero value)
 - AoC input is always valid, so errors won't occur in practice
 - Bad: `n, _ := strconv.Atoi(line)`
 - Bad: `n, err := strconv.Atoi(line); if err != nil { panic(err) }`
@@ -84,18 +90,30 @@ Prohibited locations:
 ### Test Structure
 - Table-driven tests with external files
 - `testdata/dayXX_example1.txt` not inline strings
-- **NEVER** use multiline string literals in tests - always use external testdata files
+- **MUST NOT** use multiline string literals in tests; **MUST** use external testdata files
 - `lines := linesFromFilename(t, filename)` in tests only
 - Multiple examples: use `example1Filename(day)`, `example2Filename(day)`, etc.
 - Available filename functions: `exampleFilename()`, `exampleNFilename()`, `example1Filename()`, `example2Filename()`, `example3Filename()`, `filename()`
 
 ### Input Parsing (Flexible)
-- **Parser is optional** - only use if beneficial for complexity
+- Parser is optional; you **MAY** use a parser when beneficial for complexity
 - `func DayXX(input []byte)` - fine if puzzle can parse bytes directly
 - `func DayXX(lines []string)` - fine if puzzle needs line-based input
 - `func NewDayXX()` + `DayXX(puzzle)` - use for complex data structures
 - Choose the most appropriate input format for each puzzle's needs
 - Use appropriate `input_test.go` helper functions
+
+### Day Migration Pattern
+When migrating legacy days to the new style, apply this pattern:
+- **MUST** make `DayXX(input, part1 bool)` (or equivalent canonical solver) the single source of truth
+- Alternative/custom implementations (for comparison or optimization) **MAY** exist separately (for example `DayXXBranchless`)
+- **MUST NOT** keep redundant wrapper entrypoints that duplicate part1/part2 logic
+- **MUST** use zero-padded two-digit day naming everywhere: `DayXX`, `NewDayXX`, `TestDayXX...`, `BenchmarkDayXX...`, and regex patterns like `^TestDayXX` / `^BenchmarkDayXX`
+- **MUST** route parse/validation errors through a parser step (`NewDayXX(...)`) when parsing is non-trivial; solvers **MUST NOT** silently skip malformed records (for example `if err != nil { continue }`)
+- **MUST** keep benchmarks as one-line calls via shared benchmark helpers (for example `bench(...)`, `benchLines(...)`, `benchWithParser(...)`)
+- **MUST** keep file-based tests as one-line calls via shared test helpers (for example `testSolver(...)`, `testLines(...)`, `testWithParser(...)`)
+- **SHOULD** keep example tables local to the test function that uses them (inline/local scope)
+- **SHOULD** reduce nonessential file-level globals/constants when straightforward to inline without harming readability
 
 ## Commit Message Convention
 
@@ -167,8 +185,8 @@ Focus on:
    - Add a "Day XX" section to README.adoc if not present
    - Include the benchstat output
    - Add a short, concise explanation of the optimization
-   - NEVER use bold (**) in README.adoc - use proper AsciiDoc formatting
-   - NEVER include solution values in documentation
+   - **MUST NOT** use bold (**) in README.adoc - use proper AsciiDoc formatting
+   - **MUST NOT** include solution values in documentation
 
 6. **Commit changes**
    ```bash
