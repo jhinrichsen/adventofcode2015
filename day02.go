@@ -7,67 +7,62 @@ import (
 )
 
 type sizes [3]uint
+type Day02Puzzle []sizes
 
-func newSizes(s string) (sizes, error) {
-	var ss sizes
-	parts := strings.Split(s, "x")
-	if len(ss) != len(parts) {
-		return ss, fmt.Errorf("want %d parts but got %d", len(ss), len(parts))
-	}
-	for i, p := range parts {
-		n, err := strconv.Atoi(p)
-		if err != nil {
-			return ss, fmt.Errorf("error parsing %q: part %d is not a number", s, i)
-		}
-		ss[i] = uint(n)
-	}
-	return ss, nil
-}
-
-// Day2Part1 returns sum of sizes.
-func Day2Part1(lines []string) (uint, error) {
-	var sum uint
+func NewDay02(lines []string) (Day02Puzzle, error) {
+	puzzle := make(Day02Puzzle, 0, len(lines))
 	for _, line := range lines {
-		s, err := newSizes(line)
-		if err != nil {
-			return sum, err
+		if line == "" {
+			continue
 		}
-		sum += s.size()
+		parts := strings.Split(line, "x")
+		var s sizes
+		if len(s) != len(parts) {
+			return nil, fmt.Errorf("want %d parts but got %d", len(s), len(parts))
+		}
+		for i, p := range parts {
+			n, err := strconv.Atoi(p)
+			if err != nil {
+				return nil, fmt.Errorf("error parsing %q: part %d is not a number", line, i)
+			}
+			s[i] = uint(n)
+		}
+		puzzle = append(puzzle, s)
 	}
-	return sum, nil
+	return puzzle, nil
 }
 
-func (a sizes) size() uint {
-	s1 := a[0] * a[1]
-	s2 := a[1] * a[2]
-	s3 := a[2] * a[0]
+// Day02 solves day 2 for the selected part.
+func Day02(puzzle Day02Puzzle, part1 bool) uint {
+	var sum uint
+	for _, s := range puzzle {
+		if part1 {
+			sum += wrappingPaperSize(s)
+		} else {
+			sum += ribbonLength(s)
+		}
+	}
+	return sum
+}
+
+func wrappingPaperSize(s sizes) uint {
+	s1 := s[0] * s[1]
+	s2 := s[1] * s[2]
+	s3 := s[2] * s[0]
 	return 2*(s1+s2+s3) + min(s1, min(s2, s3))
 }
 
-// Day2Part2 returns the length of the ribbon band.
-func Day2Part2(lines []string) (uint, error) {
-	var sum uint
-	for _, line := range lines {
-		s, err := newSizes(line)
-		if err != nil {
-			return sum, err
-		}
-		sum += s.ribbon()
-	}
-	return sum, nil
+func ribbonLength(s sizes) uint {
+	return bowLength(s) + smallestPerimeter(s)
 }
 
-func (a sizes) ribbon() uint {
-	return a.bow() + a.present()
+func bowLength(s sizes) uint {
+	return s[0] * s[1] * s[2]
 }
 
-func (a sizes) bow() uint {
-	return a[0] * a[1] * a[2]
-}
-
-func (a sizes) present() uint {
-	s1 := 2 * (a[0] + a[1])
-	s2 := 2 * (a[1] + a[2])
-	s3 := 2 * (a[2] + a[0])
+func smallestPerimeter(s sizes) uint {
+	s1 := 2 * (s[0] + s[1])
+	s2 := 2 * (s[1] + s[2])
+	s3 := 2 * (s[2] + s[0])
 	return min(s1, min(s2, s3))
 }
