@@ -1,11 +1,20 @@
 package adventofcode2015
 
 import (
-	"fmt"
 	"strconv"
 )
 
 type weights []uint
+
+type Day24Puzzle weights
+
+func NewDay24(lines []string) (Day24Puzzle, error) {
+	ws, err := newWeights(lines)
+	if err != nil {
+		return nil, err
+	}
+	return Day24Puzzle(ws), nil
+}
 
 func (a weights) sum() (n uint) {
 	for i := range a {
@@ -35,23 +44,18 @@ func newWeights(lines []string) (weights, error) {
 	return ws, nil
 }
 
-// Day24Part1 returns quantum entanglement of minimal number of packages in
-// group 1.
-func Day24Part1(ws weights) uint {
-	return day24(ws, 3)
-}
-
-// Day24Part2 returns quantum entanglement of minimal number of packages in
-// group 1.
-func Day24Part2(ws weights) uint {
-	return day24(ws, 4)
+// Day24 solves day 24 for the selected part.
+func Day24(puzzle Day24Puzzle, part1 bool) uint {
+	if part1 {
+		return day24(weights(puzzle), 3)
+	}
+	return day24(weights(puzzle), 4)
 }
 
 func day24(ws weights, nGroups uint) uint {
 	total := ws.sum()
 	if total%nGroups != 0 {
-		panic(fmt.Sprintf("cannot split total weight %d into nGroups "+
-			"groups of exactly the same weight", total))
+		return 0
 	}
 
 	ch := make(chan []uint)
