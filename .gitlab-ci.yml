@@ -26,11 +26,10 @@ vuln-report:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
   script:
-    - make test.log govulncheck.sarif
+    - make govulncheck.sarif
   coverage: '/coverage: \d+\.\d+%/'
   artifacts:
     reports:
       sast: govulncheck.sarif
     paths:
       - govulncheck.sarif
-      - test.log
