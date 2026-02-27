@@ -2,7 +2,6 @@ package adventofcode2015
 
 import (
 	"fmt"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -50,20 +49,26 @@ func (a *day25State) next() {
 	a.code = a.code * 252533 % 33554393
 }
 
-func (a day25State) x() uint {
-	m := uint(math.Floor((-1 + math.Sqrt(float64(8*a.n-7))) / 2))
-	return a.n - m*(m+1)/2
-}
-
-func (a day25State) y() uint {
-	t := uint(math.Floor(-1+math.Sqrt(float64(8*a.n-7)))) / 2
-	return (t*t+3*t+4)/2 - a.n
-}
-
 func day25CodeAt(x, y uint) uint {
-	d := newDay25State()
-	for !(d.x() == x && d.y() == y) {
-		d.next()
+	const (
+		start = uint(20151125)
+		mul   = uint(252533)
+		mod   = uint(33554393)
+	)
+	diag := x + y - 1
+	n := (diag-1)*diag/2 + x
+	return start * powMod(mul, n-1, mod) % mod
+}
+
+func powMod(base, exp, mod uint) uint {
+	result := uint(1)
+	base %= mod
+	for exp > 0 {
+		if exp&1 == 1 {
+			result = result * base % mod
+		}
+		base = base * base % mod
+		exp >>= 1
 	}
-	return d.code
+	return result
 }

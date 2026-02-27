@@ -18,7 +18,7 @@ func TestDay16Parse(t *testing.T) {
 	if sue.number != 475 {
 		t.Fatalf("want %d but got %d", 475, sue.number)
 	}
-	if sue.props["trees"] != 2 || sue.props["cars"] != 7 || sue.props["akitas"] != 8 {
+	if sue.props[day16Trees] != 2 || sue.props[day16Cars] != 7 || sue.props[day16Akitas] != 8 {
 		t.Fatalf("unexpected parsed properties: %+v", sue.props)
 	}
 }
@@ -30,4 +30,3 @@ func TestDay16Part1(t *testing.T) {
 func TestDay16Part2(t *testing.T) {
 	testWithParser(t, 16, filename, false, NewDay16, Day16, uint(260))
 }
-

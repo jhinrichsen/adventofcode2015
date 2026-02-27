@@ -65,45 +65,61 @@ func Day09(puzzle Day09Puzzle, part1 bool) uint {
 		return 0
 	}
 
-	ids := make([]uint, n)
+	ids := make([]int, n)
 	for i := range n {
-		ids[i] = uint(i)
-	}
-
-	perms := make(chan []uint)
-	go heapUint(n, ids, perms)
-
-	best := uint(0)
-	if part1 {
-		best = ^uint(0)
+		ids[i] = i
 	}
 	found := false
 
-	for perm := range perms {
+	eval := func() (uint, bool) {
 		var sum uint
-		valid := true
 		for i := 1; i < n; i++ {
-			a := perm[i-1]
-			b := perm[i]
+			a := ids[i-1]
+			b := ids[i]
 			if !puzzle.has[a][b] {
-				valid = false
-				break
+				return 0, false
 			}
 			sum += puzzle.dist[a][b]
 		}
-		if !valid {
-			continue
-		}
+		return sum, true
+	}
+
+	best := uint(0)
+	updateBest := func(sum uint) {
 		if !found {
 			best = sum
 			found = true
-			continue
+			return
 		}
 		if part1 {
 			best = min(best, sum)
 		} else {
 			best = max(best, sum)
 		}
+	}
+
+	if sum, ok := eval(); ok {
+		updateBest(sum)
+	}
+
+	// Iterative Heap permutation traversal, evaluated in-place.
+	c := make([]int, n)
+	for i := 0; i < n; {
+		if c[i] < i {
+			if i%2 == 0 {
+				ids[0], ids[i] = ids[i], ids[0]
+			} else {
+				ids[c[i]], ids[i] = ids[i], ids[c[i]]
+			}
+			if sum, ok := eval(); ok {
+				updateBest(sum)
+			}
+			c[i]++
+			i = 0
+			continue
+		}
+		c[i] = 0
+		i++
 	}
 
 	if !found {

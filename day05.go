@@ -1,9 +1,6 @@
 package adventofcode2015
 
-import (
-	"bytes"
-	"strings"
-)
+import "strings"
 
 // Day05 solves day 5 for the selected part.
 func Day05(input []string, part1 bool) (n uint) {
@@ -76,11 +73,34 @@ func p4(s string) bool {
 		return false
 	}
 	buf := []byte(s)
-	for i := 0; i < len(buf)-3; i++ {
-		pair := buf[i : i+2]
-		right := buf[i+2 : len(s)]
-		if bytes.Contains(right, pair) {
+	for i := 0; i < len(buf)-1; i++ {
+		if buf[i] < 'a' || buf[i] > 'z' || buf[i+1] < 'a' || buf[i+1] > 'z' {
+			return p4Generic(buf)
+		}
+	}
+
+	// seen stores first index+1 where a pair appeared.
+	// 0 means unseen; checking (i+1)-seen[pair] >= 2 guarantees non-overlap.
+	var seen [26 * 26]int
+	for i := 0; i < len(buf)-1; i++ {
+		pair := int(buf[i]-'a')*26 + int(buf[i+1]-'a')
+		if seen[pair] != 0 && (i+1)-seen[pair] >= 2 {
 			return true
+		}
+		if seen[pair] == 0 {
+			seen[pair] = i + 1
+		}
+	}
+	return false
+}
+
+func p4Generic(buf []byte) bool {
+	for i := 0; i < len(buf)-3; i++ {
+		a0, a1 := buf[i], buf[i+1]
+		for j := i + 2; j < len(buf)-1; j++ {
+			if a0 == buf[j] && a1 == buf[j+1] {
+				return true
+			}
 		}
 	}
 	return false

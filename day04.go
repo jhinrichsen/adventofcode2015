@@ -1,24 +1,34 @@
 package adventofcode2015
 
 import (
+	"bytes"
 	"crypto/md5"
-	"fmt"
-	"strings"
+	"strconv"
 )
 
 // Day04 solves day 4 for the selected part.
 func Day04(buf []byte, part1 bool) (uint, error) {
-	secret := strings.TrimSpace(string(buf))
+	secret := bytes.TrimSpace(buf)
 	if part1 {
-		return mine(secret, 5), nil
+		return mine(secret, true), nil
 	}
-	return mine(secret, 6), nil
+	return mine(secret, false), nil
 }
 
-func mine(s string, zeroes uint) (n uint) {
-	prefix := strings.Repeat("0", int(zeroes))
-	for !strings.HasPrefix(fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s%d", s, n)))), prefix) {
+func mine(secret []byte, part1 bool) (n uint) {
+	candidate := make([]byte, len(secret), len(secret)+20)
+	copy(candidate, secret)
+	for {
+		candidate = candidate[:len(secret)]
+		candidate = strconv.AppendUint(candidate, uint64(n), 10)
+		sum := md5.Sum(candidate)
+		if part1 {
+			if sum[0] == 0 && sum[1] == 0 && sum[2] < 0x10 {
+				return
+			}
+		} else if sum[0] == 0 && sum[1] == 0 && sum[2] == 0 {
+			return
+		}
 		n++
 	}
-	return
 }

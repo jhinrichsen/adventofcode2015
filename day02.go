@@ -2,8 +2,6 @@ package adventofcode2015
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 )
 
 type sizes [3]uint
@@ -15,21 +13,44 @@ func NewDay02(lines []string) (Day02Puzzle, error) {
 		if line == "" {
 			continue
 		}
-		parts := strings.Split(line, "x")
-		var s sizes
-		if len(s) != len(parts) {
-			return nil, fmt.Errorf("want %d parts but got %d", len(s), len(parts))
-		}
-		for i, p := range parts {
-			n, err := strconv.Atoi(p)
-			if err != nil {
-				return nil, fmt.Errorf("error parsing %q: part %d is not a number", line, i)
-			}
-			s[i] = uint(n)
+		s, err := parseDay02Sizes(line)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing %q: %w", line, err)
 		}
 		puzzle = append(puzzle, s)
 	}
 	return puzzle, nil
+}
+
+func parseDay02Sizes(line string) (sizes, error) {
+	var out sizes
+	part := 0
+	n := uint(0)
+	hasDigit := false
+	for i := 0; i < len(line); i++ {
+		c := line[i]
+		if c >= '0' && c <= '9' {
+			n = n*10 + uint(c-'0')
+			hasDigit = true
+			continue
+		}
+		if c == 'x' {
+			if !hasDigit || part >= len(out)-1 {
+				return sizes{}, fmt.Errorf("invalid separator at %d", i)
+			}
+			out[part] = n
+			part++
+			n = 0
+			hasDigit = false
+			continue
+		}
+		return sizes{}, fmt.Errorf("invalid character %q", c)
+	}
+	if part != len(out)-1 || !hasDigit {
+		return sizes{}, fmt.Errorf("invalid dimensions")
+	}
+	out[part] = n
+	return out, nil
 }
 
 // Day02 solves day 2 for the selected part.

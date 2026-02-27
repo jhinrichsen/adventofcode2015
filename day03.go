@@ -1,41 +1,61 @@
 package adventofcode2015
 
-import "image"
-
-func move(pos image.Point, b byte) image.Point {
-	switch b {
-	case '>':
-		pos.X++
-	case '<':
-		pos.X--
-	case 'v':
-		pos.Y++
-	case '^':
-		pos.Y--
-	}
-	return pos
+func day03Key(x, y int) uint64 {
+	return uint64(uint32(x))<<32 | uint64(uint32(y))
 }
 
 // Day03 solves day 3 for the selected part.
 func Day03(buf []byte, part1 bool) (uint, error) {
-	houses := make(map[image.Point]bool)
+	houses := make(map[uint64]struct{}, len(buf)+1)
 	if part1 {
-		pos := image.Point{X: 0, Y: 0}
-		houses[pos] = true
+		x, y := 0, 0
+		houses[day03Key(x, y)] = struct{}{}
 		for _, b := range buf {
-			pos = move(pos, b)
-			houses[pos] = true
+			switch b {
+			case '>':
+				x++
+			case '<':
+				x--
+			case 'v':
+				y++
+			case '^':
+				y--
+			}
+			houses[day03Key(x, y)] = struct{}{}
 		}
 		return uint(len(houses)), nil
 	}
 
-	// index santa = 0, robo santa = 1
-	poss := []image.Point{{X: 0, Y: 0}, {X: 0, Y: 0}}
+	sx, sy := 0, 0
+	rx, ry := 0, 0
 	who := 0
-	houses[poss[0]] = true
+	houses[day03Key(0, 0)] = struct{}{}
 	for _, b := range buf {
-		poss[who] = move(poss[who], b)
-		houses[poss[who]] = true
+		if who == 0 {
+			switch b {
+			case '>':
+				sx++
+			case '<':
+				sx--
+			case 'v':
+				sy++
+			case '^':
+				sy--
+			}
+			houses[day03Key(sx, sy)] = struct{}{}
+		} else {
+			switch b {
+			case '>':
+				rx++
+			case '<':
+				rx--
+			case 'v':
+				ry++
+			case '^':
+				ry--
+			}
+			houses[day03Key(rx, ry)] = struct{}{}
+		}
 		who = 1 - who
 	}
 	return uint(len(houses)), nil

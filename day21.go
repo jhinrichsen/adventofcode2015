@@ -45,16 +45,23 @@ func NewDay21(lines []string) (Day21Puzzle, error) {
 
 // Day21 solves day 21 for the selected part.
 func Day21(puzzle Day21Puzzle, part1 bool) uint {
-	combos := day21ItemCombinations()
 	bestWin := int(^uint(0) >> 1)
 	bestLose := 0
 
-	for _, gear := range combos {
-		me := day21Player{hitPoints: 100, damage: gear.damage, armor: gear.armor}
-		if day21Win(me, puzzle.boss) {
-			bestWin = min(bestWin, gear.cost)
-		} else {
-			bestLose = max(bestLose, gear.cost)
+	for _, weapon := range day21Weapons {
+		for _, armor := range day21Armors {
+			// no rings
+			day21UpdateBest(&bestWin, &bestLose, weapon.cost+armor.cost, weapon.damage+armor.damage, weapon.armor+armor.armor, puzzle.boss)
+			// one ring
+			for i := range len(day21Rings) {
+				r1 := day21Rings[i]
+				day21UpdateBest(&bestWin, &bestLose, weapon.cost+armor.cost+r1.cost, weapon.damage+armor.damage+r1.damage, weapon.armor+armor.armor+r1.armor, puzzle.boss)
+				// two rings
+				for j := i + 1; j < len(day21Rings); j++ {
+					r2 := day21Rings[j]
+					day21UpdateBest(&bestWin, &bestLose, weapon.cost+armor.cost+r1.cost+r2.cost, weapon.damage+armor.damage+r1.damage+r2.damage, weapon.armor+armor.armor+r1.armor+r2.armor, puzzle.boss)
+				}
+			}
 		}
 	}
 
@@ -62,6 +69,15 @@ func Day21(puzzle Day21Puzzle, part1 bool) uint {
 		return uint(bestWin)
 	}
 	return uint(bestLose)
+}
+
+func day21UpdateBest(bestWin, bestLose *int, cost, damage, armor int, boss day21Player) {
+	me := day21Player{hitPoints: 100, damage: damage, armor: armor}
+	if day21Win(me, boss) {
+		*bestWin = min(*bestWin, cost)
+	} else {
+		*bestLose = max(*bestLose, cost)
+	}
 }
 
 func day21ParseStat(line, prefix string) (int, error) {
@@ -76,16 +92,11 @@ func day21ParseStat(line, prefix string) (int, error) {
 }
 
 func day21Win(me, boss day21Player) bool {
-	for {
-		boss.hitPoints -= max(1, me.damage-boss.armor)
-		if boss.hitPoints <= 0 {
-			return true
-		}
-		me.hitPoints -= max(1, boss.damage-me.armor)
-		if me.hitPoints <= 0 {
-			return false
-		}
-	}
+	meHit := max(1, me.damage-boss.armor)
+	bossHit := max(1, boss.damage-me.armor)
+	turnsToKillBoss := (boss.hitPoints + meHit - 1) / meHit
+	turnsToKillMe := (me.hitPoints + bossHit - 1) / bossHit
+	return turnsToKillBoss <= turnsToKillMe
 }
 
 var day21Weapons = []day21Item{

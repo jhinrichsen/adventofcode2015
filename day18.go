@@ -42,12 +42,14 @@ func NewDay18(lines []string) (Day18Puzzle, error) {
 func Day18(puzzle Day18Puzzle, part1 bool) uint {
 	buf := make([]byte, len(puzzle.buf))
 	copy(buf, puzzle.buf)
+	next := make([]byte, len(buf))
 
 	if !part1 {
 		day18SetCorners(buf, puzzle.w, puzzle.h, day18LightOn)
 	}
 	for range day18Steps {
-		buf = day18Step(buf, puzzle.w, puzzle.h)
+		day18StepInto(buf, next, puzzle.w, puzzle.h)
+		buf, next = next, buf
 		if !part1 {
 			day18SetCorners(buf, puzzle.w, puzzle.h, day18LightOn)
 		}
@@ -57,10 +59,30 @@ func Day18(puzzle Day18Puzzle, part1 bool) uint {
 
 func day18Step(buf []byte, w, h int) []byte {
 	next := make([]byte, len(buf))
+	day18StepInto(buf, next, w, h)
+	return next
+}
+
+func day18StepInto(buf, next []byte, w, h int) {
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			idx := y*w + x
-			n := day18NeighborsOn(buf, w, h, x, y)
+			n := uint(0)
+			y0 := max(0, y-1)
+			y1 := min(h-1, y+1)
+			x0 := max(0, x-1)
+			x1 := min(w-1, x+1)
+			for yy := y0; yy <= y1; yy++ {
+				row := yy * w
+				for xx := x0; xx <= x1; xx++ {
+					if xx == x && yy == y {
+						continue
+					}
+					if buf[row+xx] == day18LightOn {
+						n++
+					}
+				}
+			}
 			if buf[idx] == day18LightOn {
 				if n == 2 || n == 3 {
 					next[idx] = day18LightOn
@@ -76,30 +98,6 @@ func day18Step(buf []byte, w, h int) []byte {
 			}
 		}
 	}
-	return next
-}
-
-func day18NeighborsOn(buf []byte, w, h, x, y int) uint {
-	var n uint
-	for dy := -1; dy <= 1; dy++ {
-		yy := y + dy
-		if yy < 0 || yy >= h {
-			continue
-		}
-		for dx := -1; dx <= 1; dx++ {
-			if dx == 0 && dy == 0 {
-				continue
-			}
-			xx := x + dx
-			if xx < 0 || xx >= w {
-				continue
-			}
-			if buf[yy*w+xx] == day18LightOn {
-				n++
-			}
-		}
-	}
-	return n
 }
 
 func day18SetCorners(buf []byte, w, h int, state byte) {
@@ -118,4 +116,3 @@ func day18CountOn(buf []byte) uint {
 	}
 	return n
 }
-

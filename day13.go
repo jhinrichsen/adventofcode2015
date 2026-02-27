@@ -67,21 +67,18 @@ func Day13(puzzle Day13Puzzle, part1 bool) uint {
 		size++
 	}
 
-	ids := make([]uint, size)
+	order := make([]int, size)
 	for i := range size {
-		ids[i] = uint(i)
+		order[i] = i
 	}
-
-	perms := make(chan []uint)
-	go heapUint(size, ids, perms)
 
 	best := 0
 	found := false
-	for perm := range perms {
+	eval := func() {
 		total := 0
 		for i := range size {
-			a := int(perm[i])
-			b := int(perm[(i+1)%size])
+			a := order[i]
+			b := order[(i+1)%size]
 			if a < n && b < n {
 				total += puzzle.change[a][b] + puzzle.change[b][a]
 			}
@@ -91,9 +88,31 @@ func Day13(puzzle Day13Puzzle, part1 bool) uint {
 			found = true
 		}
 	}
+	eval()
+	for day13NextPermutation(order[1:]) {
+		eval()
+	}
 	if !found || best < 0 {
 		return 0
 	}
 	return uint(best)
 }
 
+func day13NextPermutation(a []int) bool {
+	i := len(a) - 2
+	for i >= 0 && a[i] >= a[i+1] {
+		i--
+	}
+	if i < 0 {
+		return false
+	}
+	j := len(a) - 1
+	for a[j] <= a[i] {
+		j--
+	}
+	a[i], a[j] = a[j], a[i]
+	for l, r := i+1, len(a)-1; l < r; l, r = l+1, r-1 {
+		a[l], a[r] = a[r], a[l]
+	}
+	return true
+}

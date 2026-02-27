@@ -36,20 +36,12 @@ func linesFromReader(tb testing.TB, r io.Reader) []string {
 }
 
 func exampleFilename(day uint8) string {
-	padded := fmt.Sprintf("testdata/day%02d_example.txt", int(day))
-	if _, err := os.Stat(padded); err == nil {
-		return padded
-	}
-	return fmt.Sprintf("testdata/day%d_example.txt", int(day))
+	return fmt.Sprintf("testdata/day%02d_example.txt", int(day))
 }
 
 //nolint:unused // shared cross-repo test helper pattern
 func exampleNFilename(day uint8, n int) string {
-	padded := fmt.Sprintf("testdata/day%02d_example%d.txt", int(day), n)
-	if _, err := os.Stat(padded); err == nil {
-		return padded
-	}
-	return fmt.Sprintf("testdata/day%d_example%d.txt", int(day), n)
+	return fmt.Sprintf("testdata/day%02d_example%d.txt", int(day), n)
 }
 
 //nolint:unused // shared cross-repo test helper pattern
@@ -68,11 +60,7 @@ func example3Filename(day uint8) string {
 }
 
 func filename(day uint8) string {
-	padded := fmt.Sprintf("testdata/day%02d.txt", int(day))
-	if _, err := os.Stat(padded); err == nil {
-		return padded
-	}
-	return fmt.Sprintf("testdata/day%d.txt", int(day))
+	return fmt.Sprintf("testdata/day%02d.txt", int(day))
 }
 
 func file(tb testing.TB, day uint8) []byte {

@@ -2,6 +2,7 @@ package adventofcode2015
 
 import (
 	"fmt"
+	"math/rand"
 	"slices"
 	"strings"
 )
@@ -66,22 +67,73 @@ func day19Reducers(replacements map[string][]string) []day19Reducer {
 			rs = append(rs, day19Reducer{from: into, into: from})
 		}
 	}
+	slices.SortFunc(rs, func(a, b day19Reducer) int {
+		if len(a.from) > len(b.from) {
+			return -1
+		}
+		if len(a.from) < len(b.from) {
+			return 1
+		}
+		return 0
+	})
 	return rs
 }
 
 func day19ReduceSteps(molecule string, rs []day19Reducer) uint {
-	prospects := map[string]bool{molecule: true}
+	if steps := day19ReduceGreedy(molecule, rs); steps > 0 {
+		return steps
+	}
+	return day19ReduceSearch(molecule, rs)
+}
+
+func day19ReduceGreedy(molecule string, rs []day19Reducer) uint {
+	base := make([]day19Reducer, len(rs))
+	copy(base, rs)
+	rng := rand.New(rand.NewSource(1))
+	for range 512 {
+		order := make([]day19Reducer, len(base))
+		copy(order, base)
+		rng.Shuffle(len(order), func(i, j int) {
+			order[i], order[j] = order[j], order[i]
+		})
+		current := molecule
+		steps := uint(0)
+		for current != "e" {
+			progress := false
+			for _, r := range order {
+				i := strings.Index(current, r.from)
+				if i < 0 {
+					continue
+				}
+				current = current[:i] + r.into + current[i+len(r.from):]
+				steps++
+				progress = true
+				break
+			}
+			if !progress {
+				break
+			}
+		}
+		if current == "e" {
+			return steps
+		}
+	}
+	return 0
+}
+
+func day19ReduceSearch(molecule string, rs []day19Reducer) uint {
+	prospects := map[string]struct{}{molecule: {}}
 	for step := uint(1); ; step++ {
-		reduced := make(map[string]bool)
+		reduced := make(map[string]struct{})
 		for p := range prospects {
 			for _, r := range rs {
-				for c := strings.Count(p, r.from); c >= 0; c-- {
+				for c := strings.Count(p, r.from); c > 0; c-- {
 					s := replaceNth(p, r.from, r.into, c)
-					reduced[s] = true
+					reduced[s] = struct{}{}
 				}
 			}
 		}
-		if reduced["e"] {
+		if _, ok := reduced["e"]; ok {
 			return step
 		}
 		if len(reduced) == 0 {
@@ -102,11 +154,11 @@ func day19ReduceSteps(molecule string, rs []day19Reducer) uint {
 			return 0
 		})
 
-		next := make(map[string]bool)
+		next := make(map[string]struct{})
 		const heuristic = 100
 		limit := min(len(ss), heuristic)
 		for _, s := range ss[:limit] {
-			next[s] = true
+			next[s] = struct{}{}
 		}
 		prospects = next
 	}
@@ -128,4 +180,3 @@ func replaceNth(s, old, new string, n int) string {
 	}
 	return s
 }
-

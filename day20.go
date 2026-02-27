@@ -29,31 +29,37 @@ func Day20(puzzle Day20Puzzle, part1 bool) uint {
 }
 
 func day20Part1(target uint) uint {
-	houses := make([]uint, target/10+1)
-	for elf := uint(1); elf < uint(len(houses)); elf++ {
-		for house := elf; house < uint(len(houses)); house += elf {
-			houses[house] += elf * 10
+	n := int(target/10 + 1)
+	houses := make([]uint32, n)
+	for elf := 1; elf < n; elf++ {
+		presents := uint32(elf * 10)
+		for house := elf; house < n; house += elf {
+			houses[house] += presents
 		}
 	}
-	for house := uint(1); house < uint(len(houses)); house++ {
-		if houses[house] >= target {
-			return house
+	target32 := uint32(target)
+	for house := 1; house < n; house++ {
+		if houses[house] >= target32 {
+			return uint(house)
 		}
 	}
 	return 0
 }
 
 func day20Part2(target uint) uint {
-	houses := make([]uint, target/11+1)
-	for elf := uint(1); elf < uint(len(houses)); elf++ {
-		limit := min(uint(len(houses)-1), elf*50)
+	n := int(target/11 + 1)
+	houses := make([]uint32, n)
+	for elf := 1; elf < n; elf++ {
+		limit := min(n-1, elf*50)
+		presents := uint32(elf * 11)
 		for house := elf; house <= limit; house += elf {
-			houses[house] += elf * 11
+			houses[house] += presents
 		}
 	}
-	for house := uint(1); house < uint(len(houses)); house++ {
-		if houses[house] >= target {
-			return house
+	target32 := uint32(target)
+	for house := 1; house < n; house++ {
+		if houses[house] >= target32 {
+			return uint(house)
 		}
 	}
 	return 0
@@ -71,4 +77,3 @@ func day20PresentsPart1(house uint) uint {
 	}
 	return sum
 }
-

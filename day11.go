@@ -21,27 +21,29 @@ func Day11(puzzle Day11Puzzle, part1 bool) string {
 
 func inc(s string) string {
 	bs := []byte(s)
-	idx := len(bs) - 1
-_inc:
-	if bs[idx] == 'z' {
-		bs[idx] = 'a'
-		idx--
-		goto _inc
-	} else {
-		bs[idx]++
-	}
+	incBytes(bs)
 	return string(bs)
+}
+
+func incBytes(bs []byte) {
+	for idx := len(bs) - 1; idx >= 0; idx-- {
+		if bs[idx] == 'z' {
+			bs[idx] = 'a'
+			continue
+		}
+		bs[idx]++
+		return
+	}
 }
 
 // Passwords must include one increasing straight of at least three letters.
 func req1(s string) bool {
-	bs := []byte(s)
-	hasThree := func(idx int) bool {
-		return bs[idx] == bs[idx+1]-1 &&
-			bs[idx+1] == bs[idx+2]-1
-	}
-	for i := range bs[:len(bs)-2] {
-		if hasThree(i) {
+	return req1Bytes([]byte(s))
+}
+
+func req1Bytes(bs []byte) bool {
+	for i := 0; i+2 < len(bs); i++ {
+		if bs[i]+1 == bs[i+1] && bs[i+1]+1 == bs[i+2] {
 			return true
 		}
 	}
@@ -50,7 +52,10 @@ func req1(s string) bool {
 
 // Passwords may not contain the letters i, o, or l.
 func req2(s string) bool {
-	bs := []byte(s)
+	return req2Bytes([]byte(s))
+}
+
+func req2Bytes(bs []byte) bool {
 	for i := range len(bs) {
 		if bs[i] == 'i' || bs[i] == 'o' || bs[i] == 'l' {
 			return false
@@ -62,23 +67,35 @@ func req2(s string) bool {
 // Passwords must contain at least two different, non-overlapping pairs of
 // letters.
 func req3(s string) bool {
-	pairs := make(map[byte]bool)
-	bs := []byte(s)
-	for i := 0; i < len(s)-1; i++ {
+	return req3Bytes([]byte(s))
+}
+
+func req3Bytes(bs []byte) bool {
+	var pairs [26]bool
+	nPairs := 0
+	for i := 0; i+1 < len(bs); i++ {
 		if bs[i] == bs[i+1] {
-			pairs[bs[i]] = true
-			// pars must not overlap
+			idx := bs[i] - 'a'
+			if !pairs[idx] {
+				pairs[idx] = true
+				nPairs++
+				if nPairs >= 2 {
+					return true
+				}
+			}
+			// pairs must not overlap
 			i++
 		}
 	}
-	return len(pairs) >= 2
+	return false
 }
 
 func next(s string) string {
-_again:
-	s = inc(s)
-	if !req1(s) || !req2(s) || !req3(s) {
-		goto _again
+	bs := []byte(s)
+	for {
+		incBytes(bs)
+		if req1Bytes(bs) && req2Bytes(bs) && req3Bytes(bs) {
+			return string(bs)
+		}
 	}
-	return s
 }

@@ -35,19 +35,38 @@ func NewDay15(lines []string) (Day15Puzzle, error) {
 
 // Day15 solves day 15 for the selected part.
 func Day15(puzzle Day15Puzzle, part1 bool) uint {
-	if len(puzzle) == 0 {
+	n := len(puzzle)
+	if n == 0 {
 		return 0
 	}
-
-	ch := make(chan []int)
-	go KCompositions(day15TSP, len(puzzle), ch)
-
 	best := uint(0)
-	for amounts := range ch {
-		if !part1 && day15TotalCalories(puzzle, amounts) != day15Calories {
+	amounts := make([]int, n)
+	remaining := make([]int, n)
+	next := make([]int, n)
+	depth := 0
+	remaining[0] = day15TSP
+	for depth >= 0 {
+		if depth == n-1 {
+			amounts[depth] = remaining[depth]
+			best = max(best, day15ScoreWithCalories(puzzle, amounts, part1))
+			depth--
+			if depth >= 0 {
+				next[depth]++
+			}
 			continue
 		}
-		best = max(best, day15Score(puzzle, amounts))
+		if next[depth] > remaining[depth] {
+			next[depth] = 0
+			depth--
+			if depth >= 0 {
+				next[depth]++
+			}
+			continue
+		}
+		amounts[depth] = next[depth]
+		depth++
+		remaining[depth] = remaining[depth-1] - amounts[depth-1]
+		next[depth] = 0
 	}
 	return best
 }
@@ -82,17 +101,22 @@ func day15ParseIngredient(s string) (day15Ingredient, error) {
 	}, nil
 }
 
-func day15Score(puzzle Day15Puzzle, amounts []int) uint {
+func day15ScoreWithCalories(puzzle Day15Puzzle, amounts []int, part1 bool) uint {
 	capacity := 0
 	durability := 0
 	flavor := 0
 	texture := 0
+	calories := 0
 	for i, ing := range puzzle {
 		a := amounts[i]
 		capacity += a * ing.capacity
 		durability += a * ing.durability
 		flavor += a * ing.flavor
 		texture += a * ing.texture
+		calories += a * ing.calories
+	}
+	if !part1 && calories != day15Calories {
+		return 0
 	}
 	if capacity < 0 {
 		capacity = 0
@@ -108,12 +132,3 @@ func day15Score(puzzle Day15Puzzle, amounts []int) uint {
 	}
 	return uint(capacity * durability * flavor * texture)
 }
-
-func day15TotalCalories(puzzle Day15Puzzle, amounts []int) int {
-	total := 0
-	for i, ing := range puzzle {
-		total += amounts[i] * ing.calories
-	}
-	return total
-}
-

@@ -185,50 +185,6 @@ func NewDay07(lines []string) (Day07Puzzle, error) {
 	return puzzle, nil
 }
 
-func day07DepIDs(expr day07Expr) [2]int {
-	ids := [2]int{-1, -1}
-	switch expr.op {
-	case day07Assign, day07Not:
-		if !expr.a.isValue {
-			ids[0] = expr.a.id
-		}
-	case day07And, day07Or, day07LShift, day07RShift:
-		if !expr.a.isValue {
-			ids[0] = expr.a.id
-		}
-		if !expr.b.isValue {
-			ids[1] = expr.b.id
-		}
-	}
-	return ids
-}
-
-func day07EvalExpr(expr day07Expr, vals *[day07MaxWires]uint16) uint16 {
-	operand := func(op day07Operand) uint16 {
-		if op.isValue {
-			return op.literal
-		}
-		return vals[op.id]
-	}
-	x := operand(expr.a)
-	switch expr.op {
-	case day07Assign:
-		return x
-	case day07Not:
-		return ^x
-	case day07And:
-		return x & operand(expr.b)
-	case day07Or:
-		return x | operand(expr.b)
-	case day07LShift:
-		return x << operand(expr.b)
-	case day07RShift:
-		return x >> operand(expr.b)
-	default:
-		return 0
-	}
-}
-
 func (a Day07Puzzle) signal(targetID int, overrideB *uint16) (uint16, error) {
 	if !a.defined[targetID] {
 		return 0, fmt.Errorf("unknown wire id %d", targetID)
@@ -261,26 +217,56 @@ func (a Day07Puzzle) signal(targetID int, overrideB *uint16) (uint16, error) {
 		}
 
 		expr := a.exprs[id]
-		deps := day07DepIDs(expr)
 		needDep := false
-		for _, depID := range deps {
-			if depID < 0 {
-				continue
-			}
+		pushDep := func(depID int) error {
 			switch state[depID] {
 			case 0:
 				stack[sp] = depID
 				sp++
 				needDep = true
 			case 1:
-				return 0, fmt.Errorf("circular dependency for wire id %d", id)
+				return fmt.Errorf("circular dependency for wire id %d", id)
+			}
+			return nil
+		}
+		if !expr.a.isValue {
+			if err := pushDep(expr.a.id); err != nil {
+				return 0, err
+			}
+		}
+		if (expr.op == day07And || expr.op == day07Or ||
+			expr.op == day07LShift || expr.op == day07RShift) && !expr.b.isValue {
+			if err := pushDep(expr.b.id); err != nil {
+				return 0, err
 			}
 		}
 		if needDep {
 			continue
 		}
 
-		vals[id] = day07EvalExpr(expr, &vals)
+		operand := func(op day07Operand) uint16 {
+			if op.isValue {
+				return op.literal
+			}
+			return vals[op.id]
+		}
+		x := operand(expr.a)
+		switch expr.op {
+		case day07Assign:
+			vals[id] = x
+		case day07Not:
+			vals[id] = ^x
+		case day07And:
+			vals[id] = x & operand(expr.b)
+		case day07Or:
+			vals[id] = x | operand(expr.b)
+		case day07LShift:
+			vals[id] = x << operand(expr.b)
+		case day07RShift:
+			vals[id] = x >> operand(expr.b)
+		default:
+			vals[id] = 0
+		}
 		state[id] = 2
 		sp--
 	}

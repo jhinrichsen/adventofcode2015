@@ -46,13 +46,11 @@ func day08MemoryLen(s string) uint {
 }
 
 func day08EncodedLen(s string) uint {
-	n := uint(2) // opening + closing quotes
+	n := uint(len(s) + 2) // original bytes + wrapping quotes
 	for i := range len(s) {
 		if s[i] == '\\' || s[i] == '"' {
-			n += 2
-			continue
+			n++
 		}
-		n++
 	}
 	return n
 }
