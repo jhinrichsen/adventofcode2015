@@ -1,21 +1,23 @@
 package adventofcode2015
 
-const (
-	openPar  = '('
-	closePar = ')'
-)
-
-// Day1Part1 returns number of opening braces minus number of closing braces.
-func Day1Part1(buf []byte) int {
+// Day01 solves day 1 for the selected part.
+func Day01(buf []byte, part1 bool) (int, error) {
 	floor := 0
-	for _, b := range buf {
-		if b == openPar {
+	for i, b := range buf {
+		if b == '(' {
 			floor++
 		} else {
 			floor--
 		}
+		if !part1 && floor < 0 {
+			// position is 1-based
+			return i + 1, nil
+		}
 	}
-	return floor
+	if part1 {
+		return floor, nil
+	}
+	return 0, nil
 }
 
 // Day1Part1Branchless returns number of opening braces minus number of closing
@@ -29,26 +31,17 @@ func Day1Part1Branchless(buf []byte) (floor int) {
 		// floor += int((closePar - b) - (b - 40))
 		// floor += int((closePar - b) -b + 40)
 		// floor += int(closePar - b - b + 40)
-		// floor += int(openPar + closePar - b - b)
-		// floor += int(openPar + closePar - b - b)
+		// floor += int('(' + ')' - b - b)
+		// floor += int('(' + ')' - b - b)
 		floor += int(81 - 2*b)
 	}
 	return
 }
 
-// Day1Part2 returns position where floor gets negative.
-func Day1Part2(buf []byte) int {
-	var floor int
-	for i, b := range buf {
-		if b == openPar {
-			floor++
-		} else {
-			floor--
-		}
-		if floor < 0 {
-			// position is 1-based
-			return i + 1
-		}
+// Day01Branchless solves day 1 using the branchless part 1 variant.
+func Day01Branchless(buf []byte, part1 bool) (int, error) {
+	if part1 {
+		return Day1Part1Branchless(buf), nil
 	}
-	return 0
+	return Day01(buf, false)
 }
