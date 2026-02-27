@@ -8,7 +8,7 @@ Prohibited locations:
 - ❌ Git commit messages
 - ❌ Pull request titles/descriptions
 - ❌ Code comments
-- ❌ Documentation files (README.adoc, CLAUDE.md)
+- ❌ Documentation files (README.adoc, AGENTS.md)
 - ❌ Console output or logs
 
 **ONLY** permitted location:
@@ -31,6 +31,11 @@ Prohibited locations:
   - Parser: `func NewDayXX(<input>) DayXXPuzzle` (return by value)
   - Combined: `func DayXX(puzzle DayXXPuzzle) uint`
 - **NEVER** use methods: `func (p *DayXXPuzzle) DayXX() uint`
+
+### Export Policy (MANDATORY)
+- **ONLY** export the day entrypoints and parser/puzzle types: `DayXX*`, `NewDayXX`, `DayXXPuzzle`
+- Keep internal helpers unexported (e.g. parser internals, evaluators, temporary structs)
+- Do **NOT** add exported convenience methods on puzzle structs unless explicitly required
 
 ### File Access Prohibition
 - Puzzles must not perform I/O
@@ -117,7 +122,7 @@ Use conventional commits with day number as scope:
 
 **Scope:**
 - Use `dayXX` (lowercase, zero-padded) for day-specific commits
-- Omit scope for repository-wide changes (e.g., `chore: update CLAUDE.md`)
+- Omit scope for repository-wide changes (e.g., `chore: update AGENTS.md`)
 
 ## Benchmark Optimization Workflow
 
