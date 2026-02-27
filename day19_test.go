@@ -6,6 +6,23 @@ import (
 	"testing"
 )
 
+func TestReplaceNth(t *testing.T) {
+	examples := []struct {
+		s, old, new string
+		n           int
+		result      string
+	}{
+		{"A", "A", "B", 1, "B"},
+		{"AABACA", "A", "B", 3, "AABBCA"},
+	}
+	for _, tt := range examples {
+		got := replaceNth(tt.s, tt.old, tt.new, tt.n)
+		if tt.result != got {
+			t.Fatalf("want %q but got %q", tt.result, got)
+		}
+	}
+}
+
 func hhoPlant() plant {
 	p, _ := newPlant([]string{
 		"H => HO",
@@ -52,10 +69,7 @@ func TestDay19Hohoho(t *testing.T) {
 
 func TestDay19Part1(t *testing.T) {
 	const want = 576
-	lines, err := linesFromFilename(filename(19))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(19))
 	p, err := newPlant(lines[:len(lines)-2])
 	if err != nil {
 		t.Fatal(err)
@@ -101,10 +115,7 @@ func TestDay19Example2Part2(t *testing.T) {
 
 func TestDay19Part2(t *testing.T) {
 	const want = 207
-	lines, err := linesFromFilename(filename(19))
-	if err != nil {
-		t.Fatal(err)
-	}
+	lines := linesFromFilename(t, filename(19))
 	p, err := newPlant(lines[:len(lines)-2])
 	if err != nil {
 		t.Fatal(err)
