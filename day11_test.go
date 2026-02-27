@@ -2,6 +2,14 @@ package adventofcode2015
 
 import "testing"
 
+func BenchmarkDay11Part1(b *testing.B) {
+	benchWithParser(b, 11, true, NewDay11, Day11)
+}
+
+func BenchmarkDay11Part2(b *testing.B) {
+	benchWithParser(b, 11, false, NewDay11, Day11)
+}
+
 func TestDay11Inc(t *testing.T) {
 	s := "xx"
 	s = inc(s)
@@ -60,17 +68,9 @@ func TestDay11Nextghijklmn(t *testing.T) {
 }
 
 func TestDay11Part1(t *testing.T) {
-	const want = "hepxxyzz"
-	got := next("hepxcrrq")
-	if want != got {
-		t.Fatalf("want %q but got %q", want, got)
-	}
+	testWithParser(t, 11, filename, true, NewDay11, Day11, "hepxxyzz")
 }
 
 func TestDay11Part2(t *testing.T) {
-	const want = "heqaabcc"
-	got := next(next("hepxcrrq"))
-	if want != got {
-		t.Fatalf("want %q but got %q", want, got)
-	}
+	testWithParser(t, 11, filename, false, NewDay11, Day11, "heqaabcc")
 }

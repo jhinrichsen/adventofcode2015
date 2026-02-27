@@ -1,5 +1,24 @@
 package adventofcode2015
 
+import "errors"
+
+type Day11Puzzle string
+
+func NewDay11(lines []string) (Day11Puzzle, error) {
+	if len(lines) != 1 {
+		return "", errors.New("invalid input")
+	}
+	return Day11Puzzle(lines[0]), nil
+}
+
+func Day11(puzzle Day11Puzzle, part1 bool) string {
+	first := next(string(puzzle))
+	if part1 {
+		return first
+	}
+	return next(first)
+}
+
 func inc(s string) string {
 	bs := []byte(s)
 	idx := len(bs) - 1
@@ -31,8 +50,9 @@ func req1(s string) bool {
 
 // Passwords may not contain the letters i, o, or l.
 func req2(s string) bool {
-	for _, r := range s {
-		if r == 'i' || r == 'o' || r == 'l' {
+	bs := []byte(s)
+	for i := range len(bs) {
+		if bs[i] == 'i' || bs[i] == 'o' || bs[i] == 'l' {
 			return false
 		}
 	}
