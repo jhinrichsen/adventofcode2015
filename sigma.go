@@ -186,7 +186,7 @@ func yieldIndex() func() uint {
 }
 
 // SigmaRecursiveF accepts a recursive function to allow for optional
-// memozation.
+// memoization.
 func SigmaRecursiveF(n uint, f func(uint) uint) (sum uint) {
 	genIdx := yieldIndex()
 	genSign := yieldSign()
