@@ -1,157 +1,148 @@
 package adventofcode2015
 
 import (
-	"sort"
+	"fmt"
+	"strconv"
+	"strings"
 )
 
 type day21Player struct {
-	hitPoints int  // also known as life, score
-	items     item // all the gear he is carrying (one or more)
+	hitPoints int
+	damage    int
+	armor     int
 }
 
-func (a day21Player) alive() bool {
-	return a.hitPoints > 0
+type day21Item struct {
+	cost   int
+	damage int
+	armor  int
 }
 
-var day21Boss = day21Player{
-	hitPoints: 100,
-	items: item{
-		damage: 8,
-		armor:  2,
-	},
+type Day21Puzzle struct {
+	boss day21Player
 }
-var nakedMe = day21Player{100, item{0, 0, 0}}
 
-// duel plays until one player dies.
-func duel(players *[2]day21Player) {
-	attack := 0 // player 1 begins
-	turn := func() {
-		attack = 1 - attack
+func NewDay21(lines []string) (Day21Puzzle, error) {
+	if len(lines) != 3 {
+		return Day21Puzzle{}, fmt.Errorf("invalid input")
 	}
+	hitPoints, err := day21ParseStat(lines[0], "Hit Points:")
+	if err != nil {
+		return Day21Puzzle{}, err
+	}
+	damage, err := day21ParseStat(lines[1], "Damage:")
+	if err != nil {
+		return Day21Puzzle{}, err
+	}
+	armor, err := day21ParseStat(lines[2], "Armor:")
+	if err != nil {
+		return Day21Puzzle{}, err
+	}
+	return Day21Puzzle{
+		boss: day21Player{hitPoints: hitPoints, damage: damage, armor: armor},
+	}, nil
+}
+
+// Day21 solves day 21 for the selected part.
+func Day21(puzzle Day21Puzzle, part1 bool) uint {
+	combos := day21ItemCombinations()
+	bestWin := int(^uint(0) >> 1)
+	bestLose := 0
+
+	for _, gear := range combos {
+		me := day21Player{hitPoints: 100, damage: gear.damage, armor: gear.armor}
+		if day21Win(me, puzzle.boss) {
+			bestWin = min(bestWin, gear.cost)
+		} else {
+			bestLose = max(bestLose, gear.cost)
+		}
+	}
+
+	if part1 {
+		return uint(bestWin)
+	}
+	return uint(bestLose)
+}
+
+func day21ParseStat(line, prefix string) (int, error) {
+	if !strings.HasPrefix(line, prefix) {
+		return 0, fmt.Errorf("invalid stat line %q", line)
+	}
+	n, err := strconv.Atoi(strings.TrimSpace(strings.TrimPrefix(line, prefix)))
+	if err != nil {
+		return 0, err
+	}
+	return n, nil
+}
+
+func day21Win(me, boss day21Player) bool {
 	for {
-		damage := players[attack].items.damage -
-			players[1-attack].items.armor
-		if damage < 1 {
-			damage = 1
+		boss.hitPoints -= max(1, me.damage-boss.armor)
+		if boss.hitPoints <= 0 {
+			return true
 		}
-		players[1-attack].hitPoints -= int(damage)
-		if !players[1-attack].alive() {
-			return
+		me.hitPoints -= max(1, boss.damage-me.armor)
+		if me.hitPoints <= 0 {
+			return false
 		}
-		turn()
 	}
 }
 
-type item struct {
-	cost, damage, armor int
+var day21Weapons = []day21Item{
+	{8, 4, 0},
+	{10, 5, 0},
+	{25, 6, 0},
+	{40, 7, 0},
+	{74, 8, 0},
 }
 
-func (a *item) add(i item) {
-	a.cost += i.cost
-	a.damage += i.damage
-	a.armor += i.armor
+var day21Armors = []day21Item{
+	{0, 0, 0},
+	{13, 0, 1},
+	{31, 0, 2},
+	{53, 0, 3},
+	{75, 0, 4},
+	{102, 0, 5},
 }
 
-// Must always have one weapon, even in part 2.
-var weaponItems = []item{
-	{8, 4, 0},  // Dagger
-	{10, 5, 0}, // Shortsword
-	{25, 6, 0}, // Warhammer
-	{40, 7, 0}, // Longsword
-	{74, 8, 0}, // Greataxe
+var day21Rings = []day21Item{
+	{25, 1, 0},
+	{50, 2, 0},
+	{100, 3, 0},
+	{20, 0, 1},
+	{40, 0, 2},
+	{80, 0, 3},
 }
 
-var armorItems = []item{
-	{0, 0, 0},   // No armor
-	{13, 0, 1},  // Leather
-	{31, 0, 2},  // Chainmail
-	{53, 0, 3},  // Splitmail
-	{75, 0, 4},  // Bandedmail
-	{102, 0, 5}, // Platemail
-}
+func day21ItemCombinations() []day21Item {
+	m := make(map[day21Item]bool, 1024)
+	ringSets := []day21Item{{0, 0, 0}} // no rings
+	for i := range len(day21Rings) {
+		ringSets = append(ringSets, day21Rings[i]) // one ring
+		for j := i + 1; j < len(day21Rings); j++ { // two rings
+			ringSets = append(ringSets, day21Item{
+				cost:   day21Rings[i].cost + day21Rings[j].cost,
+				damage: day21Rings[i].damage + day21Rings[j].damage,
+				armor:  day21Rings[i].armor + day21Rings[j].armor,
+			})
+		}
+	}
 
-var ringItems = []item{
-	{0, 0, 0},   // No ring
-	{25, 1, 0},  // Damage +1
-	{50, 2, 0},  // Damage +2
-	{100, 3, 0}, // Damage +3
-	{20, 0, 1},  // Defense +1
-	{40, 0, 2},  // Defense +2
-	{80, 0, 3},  // Defense +3
-}
-
-// itemCombinations returns array sorted by cost asc.
-// i got part 2 wrong, it seems as if one cannot carry any combination, but
-// still need exactly one weapon.
-func itemCombinations() []item {
-	m := make(map[item]bool, 5*6*15)
-	// 1 weapon
-	for _, weapon := range weaponItems {
-		for _, armor := range armorItems {
-			for _, ring1 := range ringItems {
-				for _, ring2 := range ringItems {
-					// cannot use the same ring twice
-					if ring1 == ring2 {
-						continue
+	for _, weapon := range day21Weapons {
+		for _, armor := range day21Armors {
+			for _, rings := range ringSets {
+					item := day21Item{
+						cost:   weapon.cost + armor.cost + rings.cost,
+						damage: weapon.damage + armor.damage + rings.damage,
+						armor:  weapon.armor + armor.armor + rings.armor,
 					}
-					w := weapon
-					w.add(armor)
-					w.add(ring1)
-					w.add(ring2)
-					m[w] = true
-				}
+					m[item] = true
 			}
 		}
 	}
-	// map -> array
-	var cs []item
-	for k := range m {
-		cs = append(cs, k)
+	out := make([]day21Item, 0, len(m))
+	for it := range m {
+		out = append(out, it)
 	}
-	return cs
-}
-
-// Day21Part1 returns minimal cost to survive.
-func Day21Part1() int {
-	cs := itemCombinations()
-	// sort by cost asc
-	sort.Slice(cs, func(i, j int) bool {
-		return cs[i].cost < cs[j].cost
-	})
-	for _, c := range cs {
-		p := nakedMe
-		p.items.armor = c.armor
-		p.items.damage = c.damage
-		players := [...]day21Player{
-			p,
-			day21Boss,
-		}
-		duel(&players)
-		if players[0].alive() {
-			return c.cost
-		}
-	}
-	return 0
-}
-
-// Day21Part2 returns highest cost so that player 0 still loses.
-func Day21Part2() int {
-	cs := itemCombinations()
-	// sort by cost desc
-	sort.Slice(cs, func(i, j int) bool {
-		return cs[i].cost > cs[j].cost
-	})
-	for _, items := range cs {
-		p := nakedMe
-		p.items = items
-		players := [...]day21Player{
-			p,
-			day21Boss,
-		}
-		duel(&players)
-		if !players[0].alive() {
-			return players[0].items.cost
-		}
-	}
-	return 0
+	return out
 }

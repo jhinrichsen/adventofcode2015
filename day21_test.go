@@ -1,34 +1,28 @@
 package adventofcode2015
 
-import (
-	"testing"
-)
+import "testing"
 
-func TestDay21Part1Naked(t *testing.T) {
-	const want = false // we will not survive without stuff
-	players := [...]day21Player{
-		nakedMe,   // Player #1
-		day21Boss, // Player #2
-	}
-	duel(&players)
-	got := players[0].alive()
-	if want != got {
-		t.Fatalf("want %t but got %t", want, got)
+func BenchmarkDay21Part1(b *testing.B) {
+	benchWithParser(b, 21, true, NewDay21, Day21)
+}
+
+func BenchmarkDay21Part2(b *testing.B) {
+	benchWithParser(b, 21, false, NewDay21, Day21)
+}
+
+func TestDay21NakedLoses(t *testing.T) {
+	boss := day21Player{hitPoints: 100, damage: 8, armor: 2}
+	me := day21Player{hitPoints: 100, damage: 0, armor: 0}
+	if day21Win(me, boss) {
+		t.Fatalf("expected naked player to lose")
 	}
 }
 
 func TestDay21Part1(t *testing.T) {
-	const want = 91
-	got := Day21Part1()
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 21, filename, true, NewDay21, Day21, uint(91))
 }
 
 func TestDay21Part2(t *testing.T) {
-	const want = 158
-	got := Day21Part2()
-	if want != got {
-		t.Fatalf("want %d but got %d", want, got)
-	}
+	testWithParser(t, 21, filename, false, NewDay21, Day21, uint(158))
 }
+
