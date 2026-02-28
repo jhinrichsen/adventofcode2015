@@ -1,12 +1,14 @@
 = Advent of Code 2015
 :doctype: book
-:toc:
+:toc: macro
 
 image:https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015?status.svg["godoc", link="https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015"]
 image:https://goreportcard.com/badge/gitlab.com/jhinrichsen/adventofcode2015["Go report card", link="https://goreportcard.com/report/gitlab.com/jhinrichsen/adventofcode2015"]
 image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/main/pipeline.svg[link="https://gitlab.com/jhinrichsen/adventofcode2015/-/commits/main",title="pipeline status"]
 image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/master/coverage.svg?style=flat["coverage", link="https://gitlab.com/jhinrichsen/adventofcode2015/-/jobs"]
 image:https://img.shields.io/badge/runtime-0.6s-brightgreen.svg["runtime"]
+
+toc::[]
 
 This is an implementation of https://adventofcode.com/2015[Advent of Code 2015] in Rust (from day 1 through 7) and Go.
 
@@ -71,7 +73,120 @@ PASS
 ok  	gitlab.com/jhinrichsen/adventofcode2015	22.969s
 ----
 
+== Day 1: Not Quite Lisp
 
+Not much to improve here, you think?
+
+----
+var floor int
+for i, b := range buf {
+	if b == '(' {
+		floor++
+	} else {
+		floor--
+	}
+	// for part 2, return first negative floor
+	if !part1 && floor < 0 {
+		// position is 1-based
+		return i + 1, nil
+	}
+}
+return floor, nil
+----
+
+Sometimes CPU branch prediction is expensive, escpecially on random/ mixed input as in our case.
+Other than e.g. the loop prediction, which will branch predictively 6999 times, and then fail on
+the loop exit, `(` and `)` are randomly appearing.
+
+Let's try a branchless version.
+The two brace characters are ASCII 40 and 41, delta is 1.
+Multiplied by two, it is 80 and 82, delta now is 2.
+Subtract from 81, we get -1 or 1.
+
+----
+floor += 81 - 2*int(b)
+----
+
+or, translated to `x86_64`
+
+----
+LEAQ    1(DX), R8           ; candidate floor+1
+DECQ    DX                  ; floor--
+CMPB    SIB, $40            ; b == '(' ?
+CMOVQEQ R8, DX              ; if yes: floor = old+1 else keep floor--
+----
+
+versus branchless
+
+----
+ADDQ    SI, SI              ; 2*b
+SUBQ    SI, DX              ; floor -= 2*b
+ADDQ    $81, DX             ; floor += 81  => floor += (81 - 2*b)
+----
+
+=== Steady-State Benchmarks
+
+[cols="2,1,1,1,1"]
+|===
+|Benchmark | Samples | Median ns/op | Min ns/op | Max ns/op
+
+|BenchmarkDay01Part1-16
+|8 ^1^
+|2876.0
+|2863.0
+|2892.0
+
+|BenchmarkDay01Part1Branchless-16
+|10
+|2870.5
+|2848.0
+|2905.0
+
+|BenchmarkDay01Part2-16
+|10
+|847.65
+|838.9
+|852.1
+
+|BenchmarkDay01Part2Branchless-16
+|10
+|759.1
+|754.0
+|768.1
+|===
+
+^1^ (first two samples dropped due to CPU entering performance mode)
+
+Derived ratios (branchless / baseline):
+
+- Part 1: `0.998x` (effectively identical)
+- Part 2: `0.896x` (branchless about 10.4 percent faster)
+
+==== Why Part 1 Is Identical But Part 2 Differs
+
+Compiled loops are structurally the same (index increment, bounds check, load byte, loop branch).
+The only meaningful difference is floor update:
+
+- Baseline `Day01`: increment/decrement path with compare + conditional move
+- Branchless `Day01Branchless`: arithmetic transform (`+81 - 2*b`)
+
+Part 1 behavior:
+
+- `part1=true`, so the `!part1` gate is predictably taken back to loop each iteration
+- The basement-sign test path is skipped
+- Result: shared loop/front-end work dominates, both implementations converge to same throughput
+
+Part 2 behavior:
+
+- `part1=false`, so sign-check path executes each iteration
+- Floor-update dependency chain feeds the sign test every iteration
+- On this CPU, arithmetic update chain in branchless version is slightly more favorable than compare+cmov path
+- Result: branchless gains about 10 percent
+
+Prediction effects:
+
+- Predictor behavior is similar across both Part 2 variants (highly regular loop, rare terminal exit)
+- Difference is primarily dataflow/execute-path cost, not branch prediction quality
 
 == Day 2: I Was Told There Would Be No Math
 
