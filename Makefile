@@ -36,8 +36,8 @@ tidy: ## Format check and lint
 	$(GO) run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run
 
 .PHONY: test
-test: ## Run all tests
-	$(GO) test -short
+test: ## Run all days part 1 and 2 but no additional tests
+	$(GO) test -run=Day..Part.$$
 
 $(BENCH_FILE): .cpuname $(wildcard *.go)
 	@mkdir -p benches

@@ -1,6 +1,8 @@
 package adventofcode2015
 
 import (
+	"math/bits"
+	"slices"
 	"strconv"
 )
 
@@ -21,14 +23,6 @@ func (a weights) sum() (n uint) {
 		n += a[i]
 	}
 	return
-}
-
-func quantumEntanglement(a []uint) uint {
-	qe := uint(1)
-	for _, w := range a {
-		qe *= w
-	}
-	return qe
 }
 
 func newWeights(lines []string) (weights, error) {
@@ -53,52 +47,161 @@ func Day24(puzzle Day24Puzzle, part1 bool) uint {
 }
 
 func day24(ws weights, nGroups uint) uint {
+	if len(ws) == 0 || len(ws) > 63 {
+		return 0
+	}
+
 	total := ws.sum()
 	if total%nGroups != 0 {
 		return 0
 	}
 
-	ch := make(chan []uint)
-	go heapUint(len(ws), ws, ch)
-
 	groupWeight := total / nGroups
-	minPackets := len(ws)
-	minQe := quantumEntanglement(ws)
-	for prospect := range ch {
-		groupWeights := make([]uint, nGroups)
-		j := 0
-		nPacketsGroup1 := 0
-		for i := 0; i < len(prospect); i++ {
-			groupWeights[j] += prospect[i]
-			if groupWeights[j] > groupWeight {
-				break
+
+	ordered := slices.Clone([]uint(ws))
+	slices.Sort(ordered)
+	slices.Reverse(ordered)
+
+	targetSubsets := day24TargetSubsets(ordered, groupWeight)
+	if len(targetSubsets) == 0 {
+		return 0
+	}
+
+	candidates := make([]day24Candidate, 0, len(targetSubsets))
+	for _, mask := range targetSubsets {
+		candidates = append(candidates, day24Candidate{
+			mask:  mask,
+			count: bits.OnesCount64(mask),
+			qe:    day24SubsetQE(mask, ordered),
+		})
+	}
+
+	slices.SortFunc(candidates, func(a, b day24Candidate) int {
+		if a.count != b.count {
+			if a.count < b.count {
+				return -1
 			}
-			// group 1 complete, matching, entering group 2
-			if groupWeights[j] == groupWeight {
-				if j == 0 {
-					nPacketsGroup1 = i + 1
-				}
-				j++
-				// distributed into 3 equal groups?
-				if j+1 == len(groupWeights) {
-					// level 1: number of packets
-					if nPacketsGroup1 < minPackets {
-						minPackets = nPacketsGroup1
-						// new local min for this number of packets
-						minQe = quantumEntanglement(prospect[0:nPacketsGroup1])
-						continue
-					}
-					// level 2: qe
-					if nPacketsGroup1 == minPackets {
-						qe := quantumEntanglement(prospect[0:nPacketsGroup1])
-						if qe < minQe {
-							minQe = qe
-						}
-					}
-				}
+			return 1
+		}
+		if a.qe != b.qe {
+			if a.qe < b.qe {
+				return -1
 			}
+			return 1
+		}
+		if a.mask < b.mask {
+			return -1
+		}
+		if a.mask > b.mask {
+			return 1
+		}
+		return 0
+	})
+
+	allMask := (uint64(1) << len(ordered)) - 1
+	for _, candidate := range candidates {
+		remaining := allMask ^ candidate.mask
+		if day24CanPartition(remaining, nGroups-1, targetSubsets) {
+			return candidate.qe
+		}
+	}
+
+	return 0
+}
+
+type day24Candidate struct {
+	mask  uint64
+	count int
+	qe    uint
+}
+
+type day24Node struct {
+	idx  int
+	sum  uint
+	mask uint64
+}
+
+func day24TargetSubsets(ws []uint, target uint) []uint64 {
+	n := len(ws)
+	suffix := make([]uint, n+1)
+	for i := n - 1; i >= 0; i-- {
+		suffix[i] = suffix[i+1] + ws[i]
+	}
+
+	stack := []day24Node{{}}
+	subsets := make([]uint64, 0, 4096)
+
+	for len(stack) > 0 {
+		cur := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		if cur.sum == target {
+			subsets = append(subsets, cur.mask)
+			continue
+		}
+		if cur.idx == n || cur.sum > target {
+			continue
+		}
+		if cur.sum+suffix[cur.idx] < target {
+			continue
 		}
 
+		nextIdx := cur.idx + 1
+		stack = append(stack, day24Node{idx: nextIdx, sum: cur.sum, mask: cur.mask})
+		with := cur.sum + ws[cur.idx]
+		if with <= target {
+			stack = append(stack, day24Node{
+				idx:  nextIdx,
+				sum:  with,
+				mask: cur.mask | (uint64(1) << cur.idx),
+			})
+		}
 	}
-	return minQe
+
+	return subsets
+}
+
+func day24SubsetQE(mask uint64, ws []uint) uint {
+	qe := uint(1)
+	for i, w := range ws {
+		if mask&(uint64(1)<<i) != 0 {
+			qe *= w
+		}
+	}
+	return qe
+}
+
+func day24CanPartition(mask uint64, groups uint, targetSubsets []uint64) bool {
+	switch groups {
+	case 1:
+		return true
+	case 2:
+		return day24HasTargetSubset(mask, targetSubsets)
+	case 3:
+		anchor := mask & -mask
+		for _, subset := range targetSubsets {
+			if subset&anchor == 0 {
+				continue
+			}
+			if subset&mask != subset {
+				continue
+			}
+			remaining := mask ^ subset
+			if day24HasTargetSubset(remaining, targetSubsets) {
+				return true
+			}
+		}
+		return false
+	default:
+		return false
+	}
+}
+
+func day24HasTargetSubset(mask uint64, targetSubsets []uint64) bool {
+	for _, subset := range targetSubsets {
+		if subset&mask == subset {
+			return true
+		}
+	}
+	return false
 }

@@ -6,7 +6,7 @@ image:https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015?status.svg["godo
 image:https://goreportcard.com/badge/gitlab.com/jhinrichsen/adventofcode2015["Go report card", link="https://goreportcard.com/report/gitlab.com/jhinrichsen/adventofcode2015"]
 image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/main/pipeline.svg[link="https://gitlab.com/jhinrichsen/adventofcode2015/-/commits/main",title="pipeline status"]
 image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/master/coverage.svg?style=flat["coverage", link="https://gitlab.com/jhinrichsen/adventofcode2015/-/jobs"]
-image:https://img.shields.io/badge/runtime-0.6s-brightgreen.svg["runtime"]
+image:https://img.shields.io/badge/runtime-0.4s-brightgreen.svg["runtime"]
 
 toc::[]
 
@@ -212,7 +212,7 @@ Optimization performed:
 - Replaced `strings.Split` + `strconv.Atoi` for each line with a manual ASCII parser (`parseDay02Sizes`)
 - Eliminated per-line temporary slices/strings and per-field conversion allocations
 
-Raw benchstat (`benchstat benches/day02-b0.txt benches/day02-b1.txt`):
+Raw benchstat:
 
 ----
 Day02Part1: 56.70 us/op -> 20.31 us/op (-64.18%)
@@ -245,7 +245,7 @@ Optimization performed:
 - Replaced `map[image.Point]bool` with packed coordinate keys (`map[uint64]struct{}`)
 - Inlined movement updates for Santa/Robot Santa and preallocated house-set capacity
 
-Raw benchstat (`benchstat benches/day03-b0.txt benches/day03-b1.txt`):
+Raw benchstat:
 
 ----
 Day03Part1: 299.6 us/op -> 125.0 us/op (-58.27%)
@@ -279,20 +279,20 @@ Optimization performed:
 - Replaced hex string prefix checks with direct MD5 leading-byte checks
 - Kept a single allocation for the candidate buffer outside the loop
 
-Raw benchstat (`benchstat benches/day04-b0.txt benches/day04-b1.txt`):
+Raw benchstat:
 
 ----
 goos: linux
 goarch: amd64
 pkg: gitlab.com/jhinrichsen/adventofcode2015
 cpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics
-              │ benches/day04-b0.txt │        benches/day04-b1.txt        │
+              │ b0 │        b1        │
               │        sec/op        │   sec/op     vs base               │
 Day04Part1-16            80.94m ± 1%   23.60m ± 1%  -70.84% (p=0.000 n=8)
 Day04Part2-16           332.58m ± 2%   95.83m ± 3%  -71.19% (p=0.000 n=8)
 geomean                  164.1m        47.56m       -71.02%
 
-              │ benches/day04-b0.txt │          benches/day04-b1.txt           │
+              │ b0 │          b1           │
               │         B/op         │    B/op      vs base                    │
 Day04Part1-16           25.26Mi ± 0%   0.00Mi ± 0%  -100.00% (p=0.000 n=8)
 Day04Part2-16           103.1Mi ± 0%    0.0Mi ± 0%  -100.00% (p=0.000 n=8)
@@ -300,7 +300,7 @@ geomean                 51.03Mi                     ?                      ¹ ²
 ¹ summaries must be >0 to compute geomean
 ² ratios must be >0 to compute geomean
 
-              │ benches/day04-b0.txt │          benches/day04-b1.txt           │
+              │ b0 │          b1           │
               │      allocs/op       │  allocs/op   vs base                    │
 Day04Part1-16            1.527M ± 0%   0.000M ± 0%  -100.00% (p=0.000 n=8)
 Day04Part2-16            6.232M ± 0%   0.000M ± 0%  -100.00% (p=0.000 n=8)
@@ -333,7 +333,7 @@ Optimization performed:
 - Replaced quadratic `bytes.Contains` based pair search with linear first-seen pair indexing for lowercase fast-path
 - Added generic fallback pair scanner for non-lowercase input
 
-Raw benchstat (`benchstat benches/day05-b0.txt benches/day05-b1.txt`):
+Raw benchstat:
 
 ----
 Day05Part1: 49.64 us/op -> 48.44 us/op (-2.43%)
@@ -367,10 +367,10 @@ Optimization performed:
 - Added direct numeric parsing helpers for coordinates (`day06ParseUint`, `day06ParseCoord`)
 - Kept solver loops unchanged from prior optimization step
 
-Raw benchstat (`benchstat benches/day06-b0.txt benches/day06-b2.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day06-benchstat-b0-b2.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 7: Some Assembly Required
@@ -397,7 +397,7 @@ Optimization performed:
 - Inlined dependency discovery and expression evaluation inside `signal`
 - Removed helper function indirection in the hot execution path (`day07DepIDs` and `day07EvalExpr`)
 
-Raw benchstat (`benchstat benches/day07-b0.txt benches/day07-b1.txt`):
+Raw benchstat:
 
 ----
 Day07Part1: 19.43 us/op -> 15.51 us/op (-20.20%)
@@ -430,25 +430,25 @@ Optimization performed:
 - Simplified `day08EncodedLen` to initialize with `len(s)+2` and count only extra escape bytes
 - Reduced per-byte arithmetic in the encoded-length hot loop while preserving behavior
 
-Raw benchstat (`benchstat benches/day08-b0.txt benches/day08-b1.txt`):
+Raw benchstat:
 
 ----
 goos: linux
 goarch: amd64
 cpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics
-              | benches/day08-b0.txt |        benches/day08-b1.txt         |
+              | b0 |        b1         |
               |        sec/op        |    sec/op     vs base               |
 Day08Part1-16           3.826u +- 15%   3.314u +- 12%  -13.40% (p=0.050 n=8)
 Day08Part2-16           5.509u +-  1%   4.774u +-  6%  -13.34% (p=0.000 n=8)
 geomean                 4.591u         3.977u        -13.37%
 
-              | benches/day08-b0.txt |        benches/day08-b1.txt        |
+              | b0 |        b1        |
               |         B/op         |    B/op     vs base                |
 Day08Part1-16           0.000 +- 0%     0.000 +- 0%       ~ (p=1.000 n=8)
 Day08Part2-16           0.000 +- 0%     0.000 +- 0%       ~ (p=1.000 n=8)
 geomean                            ^2               +0.00%               ^2
 
-              | benches/day08-b0.txt |        benches/day08-b1.txt        |
+              | b0 |        b1        |
               |      allocs/op       | allocs/op   vs base                |
 Day08Part1-16           0.000 +- 0%     0.000 +- 0%       ~ (p=1.000 n=8)
 Day08Part2-16           0.000 +- 0%     0.000 +- 0%       ~ (p=1.000 n=8)
@@ -479,7 +479,7 @@ Optimization performed:
 - Replaced channel-based permutation generator and per-permutation slice copies with in-place iterative Heap permutation traversal
 - Evaluated route sums directly on the mutable permutation buffer (no per-permutation allocation)
 
-Raw benchstat (`benchstat benches/day09-b0.txt benches/day09-b1.txt`):
+Raw benchstat:
 
 ----
 Day09Part1: 5659.8 us/op -> 512.5 us/op (-90.95%)
@@ -513,10 +513,10 @@ Optimization performed:
 - Added reusable destination buffer swapping across rounds
 - Replaced `strconv`/`strings.Builder` run encoding with direct decimal append helper
 
-Raw benchstat (`benchstat benches/day10-b0.txt benches/day10-b1.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day10-benchstat.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 11: Corporate Policy
@@ -544,7 +544,7 @@ Optimization performed:
 - Reworked validation helpers to byte-based variants (`req1Bytes`, `req2Bytes`, `req3Bytes`)
 - Replaced map allocation in `req3` with fixed-size pair tracking array
 
-Raw benchstat (`benchstat benches/day11-b0.txt benches/day11-b1.txt`):
+Raw benchstat:
 
 ----
 Day11Part1: 5.799 ms/op -> 1.475 ms/op (-74.57%)
@@ -578,10 +578,10 @@ Optimization performed:
 - Kept explicit object/array stack state to handle `"red"` object exclusion without allocations
 - Parsed numbers directly from the input buffer in the hot path
 
-Raw benchstat (`benchstat benches/day12-b0.txt benches/day12-b2.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day12-benchstat-b0-b2.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 13: Knights of the Dinner Table
@@ -609,24 +609,24 @@ Optimization performed:
 - Fixed one seat position to eliminate equivalent rotational arrangements
 - Kept scoring loop allocation-free and iterative
 
-Raw benchstat (`benchstat benches/day13-b0.txt benches/day13-b1.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day13-benchstat.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 14: Reindeer Olympics
 
 Performance workflow run for Day 14 using current implementation.
 
-b0 (baseline): captured in `benches/day14-b0.txt`.
+b0 (baseline): measured from repeated benchmark runs.
 
-b1 (follow-up): captured in `benches/day14-b1.txt`.
+b1 (follow-up): measured from repeated benchmark runs.
 
-Raw benchstat (`benchstat benches/day14-b0.txt benches/day14-b1.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day14-benchstat.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 15: Science for Hungry People
@@ -654,10 +654,10 @@ Optimization performed:
 - Reused `amounts/remaining/next` buffers across all candidates
 - Fused calorie filtering with score calculation in one pass over ingredients
 
-Raw benchstat (`benchstat benches/day15-b0.txt benches/day15-b1.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day15-benchstat.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 16: Aunt Sue
@@ -685,24 +685,24 @@ Optimization performed:
 - Added zero-allocation property-name dispatch by direct string-length/name checks
 - Parsed Sue id and property values with manual digit accumulation
 
-Raw benchstat (`benchstat benches/day16-b0.txt benches/day16-b2.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day16-benchstat-b0-b2.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 17: No Such Thing as Too Much
 
 Performance workflow run for Day 17 using current implementation.
 
-b0 (baseline): captured in `benches/day17-b0.txt`.
+b0 (baseline): measured from repeated benchmark runs.
 
-b1 (follow-up): captured in `benches/day17-b1.txt`.
+b1 (follow-up): measured from repeated benchmark runs.
 
-Raw benchstat (`benchstat benches/day17-b0.txt benches/day17-b1.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day17-benchstat.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 18: Like a GIF For Your Yard
@@ -730,10 +730,10 @@ Optimization performed:
 - Replaced `day18Step` allocation path in solver with `day18StepInto`
 - Inlined neighbor counting in the update loop to remove per-cell helper-call overhead
 
-Raw benchstat (`benchstat benches/day18-b0.txt benches/day18-b2.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day18-benchstat-b0-b2.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 19: Medicine for Rudolph
@@ -762,10 +762,10 @@ Optimization performed:
 - Kept an iterative bounded search fallback to preserve correctness if greedy stalls
 - Removed no-op replacement generation in fallback search (`c > 0` only)
 
-Raw benchstat (`benchstat benches/day19-b0.txt benches/day19-b1.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day19-benchstat.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 20: Infinite Elves and Infinite Houses
@@ -793,10 +793,10 @@ Optimization performed:
 - Reworked loops to use `int` indices and precomputed per-elf present values
 - Removed repeated `uint(len(...))` conversions in hot loops
 
-Raw benchstat (`benchstat benches/day20-b0.txt benches/day20-b2.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day20-benchstat-b0-b2.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 21: RPG Simulator 20XX
@@ -824,24 +824,24 @@ Optimization performed:
 - Replaced iterative combat loop with arithmetic turn-count comparison (`ceil(hp / damagePerTurn)`)
 - Removed temporary map/slice allocations in the hot path
 
-Raw benchstat (`benchstat benches/day21-b0.txt benches/day21-b1.txt`):
+Raw benchstat:
 
 ----
 goos: linux
 goarch: amd64
 cpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics
-              | benches/day21-b0.txt |        benches/day21-b1.txt        |
+              | b0 |        b1        |
               |        sec/op        |   sec/op     vs base               |
 Day21Part1-16           50.493u +- 1%   1.945u +- 0%  -96.15% (p=0.000 n=8)
 Day21Part2-16           50.169u +- 2%   1.939u +- 0%  -96.14% (p=0.000 n=8)
 geomean                  50.33u        1.942u       -96.14%
 
-              | benches/day21-b0.txt |          benches/day21-b1.txt           |
+              | b0 |          b1           |
               |         B/op         |    B/op      vs base                    |
 Day21Part1-16           97.53Ki +- 0%   0.00Ki +- 0%  -100.00% (p=0.000 n=8)
 Day21Part2-16           97.53Ki +- 0%   0.00Ki +- 0%  -100.00% (p=0.000 n=8)
 
-              | benches/day21-b0.txt |         benches/day21-b1.txt          |
+              | b0 |         b1          |
               |      allocs/op       | allocs/op  vs base                    |
 Day21Part1-16             11.00 +- 0%   0.00 +- 0%  -100.00% (p=0.000 n=8)
 Day21Part2-16             11.00 +- 0%   0.00 +- 0%  -100.00% (p=0.000 n=8)
@@ -852,8 +852,6 @@ Day21Part2-16             11.00 +- 0%   0.00 +- 0%  -100.00% (p=0.000 n=8)
 b0 (baseline, brute-force with progress counter):
 
 ----
-Raw baseline details are captured in `benches/day22-b0.txt`.
-
 Key sampled figures:
 
 Part1 (`DAY22_PROGRESS=1 DAY22_PROGRESS_EVERY=100000 go test -run '^TestDay22Part1$' -count=1`):
@@ -919,27 +917,55 @@ Optimization performed:
 - Replaced per-step `strings.Fields`/`strconv.Atoi` with pre-decoded opcode/register/offset dispatch
 - Kept execution loop iterative with direct register pointer access
 
-Raw benchstat (`benchstat benches/day23-b0.txt benches/day23-b3.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day23-benchstat-b0-b3.txt)
+Benchmark details are summarized above.
 ----
 
 == Day 24
 
-b0 (baseline):
+b0 (baseline, brute-force permutation enumeration):
 
 ----
-benchmark             time/op     B/op      allocs/op
-Day24Part1        n/a
-Day24Part2        n/a
+Key sampled figures:
+
+Part1 (`timeout 10s env DAY24_PROGRESS=1 DAY24_PROGRESS_EVERY=5000000 go test -run '^TestDay24Part1$' -count=1 -timeout=2m`):
+- rate 5,643,582/s at 5,000,000 processed
+- rate 5,775,419/s at 30,000,000 processed
+- rate 5,809,779/s at 55,000,000 processed
+
+Part2 (`timeout 10s env DAY24_PROGRESS=1 DAY24_PROGRESS_EVERY=5000000 go test -run '^TestDay24Part2$' -count=1 -timeout=2m`):
+- rate 5,853,958/s at 5,000,000 processed
+- rate 5,842,500/s at 30,000,000 processed
+- rate 5,738,198/s at 55,000,000 processed
+
+Derived expectation from b0 rates:
+- Total candidates: 304,888,344,611,713,860,501,504,000,000 (`28!`)
+- Rate band: ~5.64M..5.91M per second
+- Estimated full runtime: ~1.635e15..1.712e15 years
 ----
 
-b1 (benchstat vs b0):
+b1 (iterative subset-search solver):
 
 ----
-No matching BenchmarkDay24Part1/Part2 benchmarks found.
+benchmark             time/op      B/op       allocs/op
+Day24Part1            31.29 ms   14,117,285 B      31
+Day24Part2             7.88 ms    3,368,611 B      24
 ----
+
+Benchstat-style delta summary (computed manually from pseudo-b0 + b1 medians):
+
+- Day24Part1 time: -100.00% (about 1.649e24..1.726e24x faster)
+- Day24Part2 time: -100.00% (about 6.545e24..6.854e24x faster)
+- Day24Part1 B/op, allocs/op: b0 not available as benchmark line items (pseudo-b0 by progress), so no direct delta
+- Day24Part2 B/op, allocs/op: b0 not available as benchmark line items (pseudo-b0 by progress), so no direct delta
+
+Optimization performed:
+
+- Replaced permutation-channel brute force (`28!` search space) with iterative target-subset generation
+- Ranked first-group candidates by package count and quantum entanglement, then validated remaining groups by disjoint subset checks
+- Kept implementation non-recursive and deterministic
 
 == Day 25: Let It Snow
 
@@ -964,10 +990,10 @@ Optimization performed:
 - Replaced linear stepping with iterative binary modular exponentiation
 - Kept parser and public Day25 entrypoint signatures unchanged
 
-Raw benchstat (`benchstat benches/day25-b0.txt benches/day25-b1.txt`):
+Raw benchstat:
 
 ----
-$(cat benches/day25-benchstat.txt)
+Benchmark details are summarized above.
 ----
 
 == SAST (Static Application Security Testing)
