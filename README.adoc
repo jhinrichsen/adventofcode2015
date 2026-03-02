@@ -849,16 +849,49 @@ Day21Part2-16             11.00 +- 0%   0.00 +- 0%  -100.00% (p=0.000 n=8)
 
 == Day 22: Performance Workflow
 
-Performance workflow run for Day 22 using current implementation.
-
-b0 (baseline): captured in `benches/day22-b0.txt`.
-
-b1 (follow-up): captured in `benches/day22-b1.txt`.
-
-Raw benchstat (`benchstat benches/day22-b0.txt benches/day22-b1.txt`):
+b0 (baseline, brute-force with progress counter):
 
 ----
+Raw baseline details are captured in `benches/day22-b0.txt`.
 
+Key sampled figures:
+
+Part1 (`DAY22_PROGRESS=1 DAY22_PROGRESS_EVERY=100000 go test -run '^TestDay22Part1$' -count=1`):
+- rate 603,848/s, eta 33m41s at 100,000 processed
+- rate 616,149/s, eta 33m0s at 400,000 processed
+- rate 601,567/s, eta 33m47s at 800,000 processed
+
+Part2 (`DAY22_PROGRESS=1 DAY22_PROGRESS_EVERY=100000 go test -run '^TestDay22Part2$' -count=1`):
+- rate 576,592/s, eta 35m16s at 100,000 processed
+- rate 618,547/s, eta 32m52s at 500,000 processed
+- rate 630,048/s, eta 32m16s at 800,000 processed
+
+Derived expectation from b0 rates:
+- Total candidates: 1,220,703,125 (`5^13`)
+- Part1 ETA band: ~33m0s..33m47s
+- Part2 ETA band: ~32m16s..35m16s
+----
+
+b1 (iterative best-first state search):
+
+----
+benchmark             time/op      B/op       allocs/op
+Day22Part1            3.784 ms   3,186,608 B   27,197
+Day22Part2            2.894 ms   2,407,355 B   22,853
+----
+
+Benchstat-style delta summary (computed manually, no benchstat tool):
+
+- Day22Part1 time: -99.99981% .. -99.99981% (about 523k..536k x faster, using b0 ETA band)
+- Day22Part2 time: -99.99985% .. -99.99986% (about 669k..731k x faster, using b0 ETA band)
+- Day22Part1 B/op, allocs/op: b0 not available as benchmark line items (pseudo-b0 by progress), so no direct delta
+- Day22Part2 B/op, allocs/op: b0 not available as benchmark line items (pseudo-b0 by progress), so no direct delta
+
+Optimization performed:
+
+- Replaced brute-force base-5 spell-sequence enumeration with iterative best-first state search
+- Added state deduplication keyed by combat state and spent mana
+- Kept implementation non-recursive and deterministic
 ----
 
 == Day 23: Opening the Turing Lock

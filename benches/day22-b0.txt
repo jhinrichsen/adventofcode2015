@@ -1,0 +1,22 @@
+mode: progress-counter pseudo-b0 (brute-force)
+
+Part1 command:
+DAY22_PROGRESS=1 DAY22_PROGRESS_EVERY=100000 go test -run '^TestDay22Part1$' -count=1
+
+Part1 sampled output:
+day22 hard=false processed=100000/1220703125 (0.01%) elapsed=100ms rate=603848/s eta=33m41s best=1269
+day22 hard=false processed=400000/1220703125 (0.03%) elapsed=600ms rate=616149/s eta=33m0s best=1269
+day22 hard=false processed=800000/1220703125 (0.07%) elapsed=1.3s rate=601567/s eta=33m47s best=1269
+
+Part2 command:
+DAY22_PROGRESS=1 DAY22_PROGRESS_EVERY=100000 go test -run '^TestDay22Part2$' -count=1
+
+Part2 sampled output:
+day22 hard=true processed=100000/1220703125 (0.01%) elapsed=100ms rate=576592/s eta=35m16s best=1309
+day22 hard=true processed=500000/1220703125 (0.04%) elapsed=800ms rate=618547/s eta=32m52s best=1309
+day22 hard=true processed=800000/1220703125 (0.07%) elapsed=1.2s rate=630048/s eta=32m16s best=1309
+
+Derived baseline expectation:
+- Total candidates: 1,220,703,125 (5^13)
+- Part1 rate band: ~601k..616k/s -> ETA ~33m0s..33m47s
+- Part2 rate band: ~577k..630k/s -> ETA ~32m16s..35m16s

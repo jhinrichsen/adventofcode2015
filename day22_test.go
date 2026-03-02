@@ -104,3 +104,11 @@ func TestDay22Part1(t *testing.T) {
 func TestDay22Part2(t *testing.T) {
 	testWithParser(t, 22, filename, false, NewDay22, Day22, uint(1_309))
 }
+
+func BenchmarkDay22Part1(b *testing.B) {
+	benchWithParser(b, 22, true, NewDay22, Day22)
+}
+
+func BenchmarkDay22Part2(b *testing.B) {
+	benchWithParser(b, 22, false, NewDay22, Day22)
+}
