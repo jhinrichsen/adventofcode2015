@@ -890,7 +890,6 @@ Optimization performed:
 - Replaced brute-force base-5 spell-sequence enumeration with iterative best-first state search
 - Added state deduplication keyed by combat state and spent mana
 - Kept implementation non-recursive and deterministic
-----
 
 == Day 23: Opening the Turing Lock
 
@@ -917,13 +916,7 @@ Optimization performed:
 - Replaced per-step `strings.Fields`/`strconv.Atoi` with pre-decoded opcode/register/offset dispatch
 - Kept execution loop iterative with direct register pointer access
 
-Raw benchstat:
-
-----
-Benchmark details are summarized above.
-----
-
-== Day 24
+== Day 24: It Hangs in the Balance
 
 b0 (baseline, brute-force permutation enumeration):
 
@@ -989,12 +982,6 @@ Optimization performed:
 - Computed sequence index directly from `(x, y)` via diagonal arithmetic
 - Replaced linear stepping with iterative binary modular exponentiation
 - Kept parser and public Day25 entrypoint signatures unchanged
-
-Raw benchstat:
-
-----
-Benchmark details are summarized above.
-----
 
 == SAST (Static Application Security Testing)
 
