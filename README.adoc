@@ -4,7 +4,7 @@
 
 image:https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015?status.svg["godoc", link="https://godoc.org/gitlab.com/jhinrichsen/adventofcode2015"]
 image:https://goreportcard.com/badge/gitlab.com/jhinrichsen/adventofcode2015["Go report card", link="https://goreportcard.com/report/gitlab.com/jhinrichsen/adventofcode2015"]
-image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/main/pipeline.svg[link="https://gitlab.com/jhinrichsen/adventofcode2015/-/commits/main",title="pipeline status"]
+image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/master/pipeline.svg[link="https://gitlab.com/jhinrichsen/adventofcode2015/-/commits/master",title="pipeline status"]
 image:https://gitlab.com/jhinrichsen/adventofcode2015/badges/master/coverage.svg?style=flat["coverage", link="https://gitlab.com/jhinrichsen/adventofcode2015/-/jobs"]
 image:https://img.shields.io/badge/runtime-0.4s-brightgreen.svg["runtime"]
 
