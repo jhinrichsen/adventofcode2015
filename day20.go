@@ -64,16 +64,3 @@ func day20Part2(target uint) uint {
 	}
 	return 0
 }
-
-func day20PresentsPart1(house uint) uint {
-	if house == 0 {
-		return 0
-	}
-	sum := uint(0)
-	for elf := uint(1); elf <= house; elf++ {
-		if house%elf == 0 {
-			sum += elf * 10
-		}
-	}
-	return sum
-}

@@ -25,11 +25,12 @@ func TestDay25Sequence(t *testing.T) {
 		77061,
 		32451966,
 	}
-	d := newDay25State()
-	for l := uint(len(exampleCodes)); d.n < l; d.next() {
-		if got := d.code; got != exampleCodes[d.n] {
-			t.Fatalf("n=%d: want %d but got %d", d.n, exampleCodes[d.n], got)
+	code := uint(20151125)
+	for n := uint(1); n < uint(len(exampleCodes)); n++ {
+		if code != exampleCodes[n] {
+			t.Fatalf("n=%d: want %d but got %d", n, exampleCodes[n], code)
 		}
+		code = code * 252533 % 33554393
 	}
 }
 

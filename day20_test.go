@@ -39,3 +39,16 @@ func TestDay20Part1(t *testing.T) {
 func TestDay20Part2(t *testing.T) {
 	testWithParser(t, 20, filename, false, NewDay20, Day20, uint(786_240))
 }
+
+func day20PresentsPart1(house uint) uint {
+	if house == 0 {
+		return 0
+	}
+	sum := uint(0)
+	for elf := uint(1); elf <= house; elf++ {
+		if house%elf == 0 {
+			sum += elf * 10
+		}
+	}
+	return sum
+}

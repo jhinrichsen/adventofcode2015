@@ -54,8 +54,10 @@ func TestDay18EvolutionExample(t *testing.T) {
 
 	buf := make([]byte, len(puzzle.buf))
 	copy(buf, puzzle.buf)
+	next := make([]byte, len(buf))
 	for i := 1; i < len(steps); i++ {
-		buf = day18Step(buf, puzzle.w, puzzle.h)
+		day18StepInto(buf, next, puzzle.w, puzzle.h)
+		buf, next = next, buf
 		if got := day18String(buf, puzzle.w, puzzle.h); got != steps[i] {
 			t.Fatalf("step %d mismatch\nwant:\n%s\n\ngot:\n%s", i, steps[i], got)
 		}
@@ -78,9 +80,11 @@ func TestDay18Part2Example(t *testing.T) {
 	}
 	buf := make([]byte, len(puzzle.buf))
 	copy(buf, puzzle.buf)
+	next := make([]byte, len(buf))
 	day18SetCorners(buf, puzzle.w, puzzle.h, day18LightOn)
 	for range 5 {
-		buf = day18Step(buf, puzzle.w, puzzle.h)
+		day18StepInto(buf, next, puzzle.w, puzzle.h)
+		buf, next = next, buf
 		day18SetCorners(buf, puzzle.w, puzzle.h, day18LightOn)
 	}
 	if got := day18CountOn(buf); got != 17 {

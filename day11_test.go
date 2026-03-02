@@ -11,41 +11,45 @@ func BenchmarkDay11Part2(b *testing.B) {
 }
 
 func TestDay11Inc(t *testing.T) {
-	s := "xx"
-	s = inc(s)
-	if s != "xy" {
-		t.Fatalf("want %q but got %q", "xy", s)
+	bs := []byte("xx")
+	incBytes(bs)
+	if got := string(bs); got != "xy" {
+		t.Fatalf("want %q but got %q", "xy", got)
 	}
-	s = inc(s)
-	if s != "xz" {
-		t.Fatalf("want %q but got %q", "xz", s)
+	incBytes(bs)
+	if got := string(bs); got != "xz" {
+		t.Fatalf("want %q but got %q", "xz", got)
 	}
-	s = inc(s)
-	if s != "ya" {
-		t.Fatalf("want %q but got %q", "ya", s)
+	incBytes(bs)
+	if got := string(bs); got != "ya" {
+		t.Fatalf("want %q but got %q", "ya", got)
 	}
-	s = inc(s)
-	if s != "yb" {
-		t.Fatalf("want %q but got %q", "yb", s)
+	incBytes(bs)
+	if got := string(bs); got != "yb" {
+		t.Fatalf("want %q but got %q", "yb", got)
 	}
 }
 
 func TestDay11hijklmn(t *testing.T) {
-	const s = "hijklmn"
-	if !req1(s) {
+	bs := []byte("hijklmn")
+	if !req1Bytes(bs) {
+		s := string(bs)
 		t.Fatalf("%q does not meet requirement #1", s)
 	}
-	if req2(s) {
+	if req2Bytes(bs) {
+		s := string(bs)
 		t.Fatalf("%q does meet requirement #2", s)
 	}
 }
 
 func TestDay11abbceffg(t *testing.T) {
-	const s = "abbceffg"
-	if req1(s) {
+	bs := []byte("abbceffg")
+	if req1Bytes(bs) {
+		s := string(bs)
 		t.Fatalf("%q does meet requirement #1", s)
 	}
-	if !req3(s) {
+	if !req3Bytes(bs) {
+		s := string(bs)
 		t.Fatalf("%q does not meet requirement #3", s)
 	}
 

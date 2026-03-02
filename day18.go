@@ -57,12 +57,6 @@ func Day18(puzzle Day18Puzzle, part1 bool) uint {
 	return day18CountOn(buf)
 }
 
-func day18Step(buf []byte, w, h int) []byte {
-	next := make([]byte, len(buf))
-	day18StepInto(buf, next, w, h)
-	return next
-}
-
 func day18StepInto(buf, next []byte, w, h int) {
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {

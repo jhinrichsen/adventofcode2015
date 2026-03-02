@@ -34,6 +34,23 @@ tidy: ## Format check and lint
 	test -z "$$(gofmt -l .)"
 	$(GO) vet
 	$(GO) run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run
+	@with_tests=$$(mktemp); \
+	without_tests=$$(mktemp); \
+	with_funcs=$$(mktemp); \
+	without_funcs=$$(mktemp); \
+	test_only_funcs=$$(mktemp); \
+	trap 'rm -f "$$with_tests" "$$without_tests" "$$with_funcs" "$$without_funcs" "$$test_only_funcs"' EXIT; \
+	$(GO) run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run --enable-only unused --tests=true --out-format tab ./... > "$$with_tests" 2>/dev/null || true; \
+	$(GO) run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run --enable-only unused --tests=false --out-format tab ./... > "$$without_tests" 2>/dev/null || true; \
+	LC_ALL=C grep -E 'unused[[:space:]]+func `.*` is unused$$' "$$with_tests" | sed -E 's/[[:space:]]+/ /g' | sort -u > "$$with_funcs" || true; \
+	LC_ALL=C grep -E 'unused[[:space:]]+func `.*` is unused$$' "$$without_tests" | sed -E 's/[[:space:]]+/ /g' | sort -u > "$$without_funcs" || true; \
+	comm -23 "$$without_funcs" "$$with_funcs" > "$$test_only_funcs"; \
+	if [ -s "$$test_only_funcs" ]; then \
+		echo "WARNING: functions only kept alive by tests:"; \
+		cat "$$test_only_funcs"; \
+	else \
+		echo "No functions are only kept alive by tests."; \
+	fi
 
 .PHONY: test
 test: ## Run all days part 1 and 2 but no additional tests

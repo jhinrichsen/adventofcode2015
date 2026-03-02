@@ -1,99 +1,45 @@
 package adventofcode2015
 
 import (
-	"bytes"
-	"fmt"
-	"io"
-	"os"
-	"strings"
+	"errors"
 	"testing"
 )
 
-// numbered turns multiple strings into one, separated by newline, and prefixed with the line number.
-func numbered(ss []string) string {
-	var sb strings.Builder
-	for i, s := range ss {
-		sb.WriteString(fmt.Sprintf("%3d %s\n", i, s))
-	}
-	return sb.String()
-}
-
-func testWizardSimulator(tb testing.TB, players [2]day22Player,
-	spells []spellID, example uint) error {
-	filename := fmt.Sprintf("testdata/day22_example%d.txt", example)
-	wantLines := linesFromFilename(tb, filename)
-
-	var w bytes.Buffer
-	i := -1
-	g := newWizardSimulator(players, func() spellID {
-		i++
-		return spells[i]
-	}, &w)
-	for !g.gameOver() {
-		err := g.step(false)
-		if err != nil {
-			if _, copyErr := io.Copy(os.Stdout, &w); copyErr != nil {
-				return fmt.Errorf("step error: %w, copy error: %w", err, copyErr)
-			}
-			return err
-		}
-	}
-	gotLines := linesFromReader(tb, &w)
-	for i := range wantLines {
-		if wantLines[i] != gotLines[i] {
-			s := numbered(gotLines)
-			return fmt.Errorf("line %d: want %q but got %q\n%+v", i,
-				wantLines[i], gotLines[i], s)
-		}
-	}
-	return nil
-}
-
 func TestDay22Example1(t *testing.T) {
-	players := [...]day22Player{
-		{hitPoints: 10, armor: 0, mana: 250},
-		{hitPoints: 13, damage: 8},
+	start := day22State{
+		playerHP:   10,
+		playerMana: 250,
+		bossHP:     13,
+		bossDamage: 8,
 	}
-	spells := []spellID{
-		poison,
-		magicMissile,
-	}
-	err := testWizardSimulator(t, players, spells, 1)
+	got, err := day22Replay(start, []spellID{poison, magicMissile})
 	if err != nil {
 		t.Fatal(err)
+	}
+	if got.bossHP > 0 {
+		t.Fatalf("want boss dead but hp=%d", got.bossHP)
+	}
+	if got.spent != 226 {
+		t.Fatalf("want %d but got %d", 226, got.spent)
 	}
 }
 
 func TestDay22Example2(t *testing.T) {
-	players := [...]day22Player{
-		{hitPoints: 10, armor: 0, mana: 250},
-		{hitPoints: 14, damage: 8},
+	start := day22State{
+		playerHP:   10,
+		playerMana: 250,
+		bossHP:     14,
+		bossDamage: 8,
 	}
-	spells := []spellID{
-		recharge,
-		shield,
-		drain,
-		poison,
-		magicMissile,
-	}
-	err := testWizardSimulator(t, players, spells, 2)
+	got, err := day22Replay(start, []spellID{recharge, shield, drain, poison, magicMissile})
 	if err != nil {
 		t.Fatal(err)
 	}
-}
-
-func TestDay22CastActiveSpell(t *testing.T) {
-	players := [...]day22Player{
-		{hitPoints: 10, armor: 0, mana: 500},
-		{hitPoints: 14, damage: 8},
+	if got.bossHP > 0 {
+		t.Fatalf("want boss dead but hp=%d", got.bossHP)
 	}
-	spells := []spellID{
-		recharge,
-		recharge,
-	}
-	err := testWizardSimulator(t, players, spells, 2)
-	if err == nil {
-		t.Fatal("want error but got none")
+	if got.spent != 641 {
+		t.Fatalf("want %d but got %d", 641, got.spent)
 	}
 }
 
@@ -111,4 +57,42 @@ func BenchmarkDay22Part1(b *testing.B) {
 
 func BenchmarkDay22Part2(b *testing.B) {
 	benchWithParser(b, 22, false, NewDay22, Day22)
+}
+
+func day22Replay(start day22State, spells []spellID) (day22State, error) {
+	s := start
+	i := 0
+	for s.playerHP > 0 && s.bossHP > 0 {
+		s.tickEffects()
+		if s.bossHP <= 0 {
+			return s, nil
+		}
+		if i >= len(spells) {
+			return s, errors.New("not enough spells in sequence")
+		}
+		next, ok := s.cast(spells[i])
+		if !ok {
+			return s, errors.New("invalid spell cast")
+		}
+		s = next
+		i++
+		if s.bossHP <= 0 {
+			return s, nil
+		}
+
+		s.tickEffects()
+		if s.bossHP <= 0 {
+			return s, nil
+		}
+		armor := 0
+		if s.shieldTimer > 0 {
+			armor = 7
+		}
+		damage := s.bossDamage - armor
+		if damage < 1 {
+			damage = 1
+		}
+		s.playerHP -= damage
+	}
+	return s, nil
 }

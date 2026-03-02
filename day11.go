@@ -19,12 +19,6 @@ func Day11(puzzle Day11Puzzle, part1 bool) string {
 	return next(first)
 }
 
-func inc(s string) string {
-	bs := []byte(s)
-	incBytes(bs)
-	return string(bs)
-}
-
 func incBytes(bs []byte) {
 	for idx := len(bs) - 1; idx >= 0; idx-- {
 		if bs[idx] == 'z' {
@@ -37,10 +31,6 @@ func incBytes(bs []byte) {
 }
 
 // Passwords must include one increasing straight of at least three letters.
-func req1(s string) bool {
-	return req1Bytes([]byte(s))
-}
-
 func req1Bytes(bs []byte) bool {
 	for i := 0; i+2 < len(bs); i++ {
 		if bs[i]+1 == bs[i+1] && bs[i+1]+1 == bs[i+2] {
@@ -51,10 +41,6 @@ func req1Bytes(bs []byte) bool {
 }
 
 // Passwords may not contain the letters i, o, or l.
-func req2(s string) bool {
-	return req2Bytes([]byte(s))
-}
-
 func req2Bytes(bs []byte) bool {
 	for i := range len(bs) {
 		if bs[i] == 'i' || bs[i] == 'o' || bs[i] == 'l' {
@@ -66,10 +52,6 @@ func req2Bytes(bs []byte) bool {
 
 // Passwords must contain at least two different, non-overlapping pairs of
 // letters.
-func req3(s string) bool {
-	return req3Bytes([]byte(s))
-}
-
 func req3Bytes(bs []byte) bool {
 	var pairs [26]bool
 	nPairs := 0
